@@ -1237,7 +1237,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
 
            if(sqlite.get_pigs_sqlite().size()!=0){
                count_scanned = sqlite.get_pigs_sqlite().size(); //set counter scanned
-               txt_eartag_saved.setText(String.valueOf("saved/success/total: "+count_scanned+"/"));
+               txt_eartag_saved.setText(String.valueOf("Ear tag saved: "+count_scanned));
                transfer_pen_model_list_pig = sqlite.get_pigs_sqlite();
                adapter_pig = new Transfer_adapter(getContext(), transfer_pen_model_list_pig,TransferPen_main.this);
                rec_pigs.setLayoutManager(new LinearLayoutManager(getActivity()));
