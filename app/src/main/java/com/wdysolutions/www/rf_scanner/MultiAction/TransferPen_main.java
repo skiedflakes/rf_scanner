@@ -1035,54 +1035,67 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
     }
 
     // current used
+    boolean isModalTransfer = false;
     public void saveTransfer_other_branch(final String swine_id, final String pen_id, final String remarks, final String transfer_date,final String selectedLocation) {
-       // showLoading(loadingScan, "Transferring...").show();
+        // showLoading(loadingScan, "Transferring...").show();
         String URL = getString(R.string.URL_online)+"transfer_pen/pig_transfer_pen_add_other_loc.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+
                 try {
-                    if (response.equals("1")){
 
-                        counter_transfer++;
-                        if(total_transfer==counter_transfer){
-                            showLoading(loadingScan, null).dismiss();
-                            set_modal("System Message","Success! All ear tag was transfered!","green");
-                            counter_transfer = 0;
+                    if (!isModalTransfer){
 
-                            count_scanned=0;
-                            String total  = String.valueOf(count_scanned);
-                            txt_eartag_saved.setText("Ear tag saved: "+total);
-                        }
+                        if (response.equals("1")){
 
-                        if(transfer_pen_model_list_pig.size()>0) {
+                            counter_transfer++;
+                            if(total_transfer==counter_transfer){
+                                isModalTransfer = true;
+                                showLoading(loadingScan, null).dismiss();
+                                set_modal("System Message","Success! All ear tag was transfered!","green");
+                                counter_transfer = 0;
 
-                            JSONArray jsonArray = new JSONArray(new Gson().toJson(transfer_pen_model_list_pig));
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject r = jsonArray.getJSONObject(i);
-                                int swine_id2 = r.getInt("swine_id");
+                                count_scanned=0;
+                                String total = String.valueOf(count_scanned);
+                                txt_eartag_saved.setText("Ear tag saved: "+total);
+                            }
 
-                                if(swine_id2==Integer.valueOf(swine_id)){
-                                    transfer_pen_model_list_pig.remove(i);
-                                    adapter_pig.notifyDataSetChanged();
+                            if(transfer_pen_model_list_pig.size()>0) {
+
+                                JSONArray jsonArray = new JSONArray(new Gson().toJson(transfer_pen_model_list_pig));
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject r = jsonArray.getJSONObject(i);
+                                    int swine_id2 = r.getInt("swine_id");
+
+                                    if(swine_id2==Integer.valueOf(swine_id)){
+                                        //delete sqlite
+                                        count_scanned--;
+                                        sqlite.delete_table_pig(swine_id);
+                                        txt_eartag_saved.setText("Ear tag saved: "+String.valueOf(count_scanned));
+                                        transfer_pen_model_list_pig.remove(i);
+                                        adapter_pig.notifyDataSetChanged();
+                                    }
                                 }
                             }
-                        }
 
-                    } else if (response.equals("2")){
-                        showLoading(loadingScan, null).dismiss();
-                        set_modal("System Message","Pen is Full!","red");
-                    } else if (response.equals("3")){
-                        showLoading(loadingScan, null).dismiss();
-                       set_modal("System Message","Unable to transfer Non-weaner to Farrowing Pen","red");
+                        } else if (response.equals("2")){
+                            isModalTransfer = true;
+                            showLoading(loadingScan, null).dismiss();
+                            set_modal("System Message","Pen is Full!","red");
+                        } else if (response.equals("3")){
+                            isModalTransfer = true;
+                            showLoading(loadingScan, null).dismiss();
+                            set_modal("System Message","Unable to transfer Non-weaner to Farrowing Pen","red");
+                        }
                     }
+
                 } catch (Exception e){}
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try{
-                    showLoading(loadingScan, null).dismiss();
                     set_modal("System Message","Some ear tag failed please transfer again remaining ear tag","red");
                     showLoading(loadingScan, null).dismiss();
                     Toast.makeText(getActivity(), "Connection Error, please try again.", Toast.LENGTH_SHORT).show();
@@ -1103,7 +1116,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                 return hashMap;
             }
         };
-        AppController.getInstance().setVolleyDuration(stringRequest);
+        //AppController.getInstance().setVolleyDuration(stringRequest);
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
@@ -1219,16 +1232,19 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
 
     @Override
     public void senddata(int okay) {
+
        if(okay==1){
 
            if(sqlite.get_pigs_sqlite().size()!=0){
                count_scanned = sqlite.get_pigs_sqlite().size(); //set counter scanned
-               txt_eartag_saved.setText(String.valueOf("Ear tag saved: "+count_scanned));
+               txt_eartag_saved.setText(String.valueOf("saved/success/total: "+count_scanned+"/"));
                transfer_pen_model_list_pig = sqlite.get_pigs_sqlite();
                adapter_pig = new Transfer_adapter(getContext(), transfer_pen_model_list_pig,TransferPen_main.this);
                rec_pigs.setLayoutManager(new LinearLayoutManager(getActivity()));
                rec_pigs.setAdapter(adapter_pig);
            }
+       } else {
+           isModalTransfer = false;
        }
     }
 

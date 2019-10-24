@@ -3,7 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DeviceList/DeviceList.iml" filepath="$PROJECT_DIR$/DeviceList/DeviceList.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DeviceList/DeviceList.iml" filepath="$PROJECT_DIR$/DeviceList/DeviceList.iml" />
       <module fileurl="file://$PROJECT_DIR$/Rfid.AsciiProtocol-Library/Rfid.AsciiProtocol-Library.iml" filepath="$PROJECT_DIR$/Rfid.AsciiProtocol-Library/Rfid.AsciiProtocol-Library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Rfid.AsciiProtocol-Library/Rfid.AsciiProtocol-Library.iml" filepath="$PROJECT_DIR$/Rfid.AsciiProtocol-Library/Rfid.AsciiProtocol-Library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/rf_scanner.iml" filepath="$PROJECT_DIR$/rf_scanner.iml" />
       <module fileurl="file://$PROJECT_DIR$/rf_scanner.iml" filepath="$PROJECT_DIR$/rf_scanner.iml" />
