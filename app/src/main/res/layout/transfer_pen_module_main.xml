@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="10dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <EditText
             android:id="@+id/et_test"
