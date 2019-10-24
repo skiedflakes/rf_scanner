@@ -1,0 +1,531 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="1000dp"
+    android:orientation="vertical"
+    android:padding="5dp"
+    tools:context="com.wdysolutions.www.rf_scanner.SwineSales.dialog_viewDetails.swineSales_viewDetails_main">
+
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_border"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_border"
+                        android:padding="10dp"
+                        android:text="Delivery No.:*" />
+
+                    <TextView
+                        android:id="@+id/tv_dr_num"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_border_shade"
+                        android:gravity="left|center"
+                        android:paddingLeft="5dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_border"
+                        android:padding="10dp"
+                        android:text="Date:*" />
+
+                    <TextView
+                        android:id="@+id/tv_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_border_shade"
+                        android:gravity="left|center"
+                        android:paddingLeft="5dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:background="@drawable/bg_border"
+                        android:padding="10dp"
+                        android:text="Customer:*" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_border"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/tv_customer"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_border_shade"
+                            android:gravity="left|center"
+                            android:paddingLeft="5dp" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_border"
+                        android:padding="10dp"
+                        android:text="Discount:*" />
+
+                    <TextView
+                        android:id="@+id/tv_discount"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_border_shade"
+                        android:gravity="left|center"
+                        android:paddingLeft="5dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+
+                        android:background="@drawable/bg_border"
+                        android:padding="10dp"
+                        android:text="Payment Type:*" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_border">
+
+                        <TextView
+                            android:id="@+id/tv_payment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_border_shade"
+                            android:gravity="left|center"
+                            android:paddingLeft="5dp" />
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_border"
+                        android:padding="10dp"
+                        android:text="Invoice No.:*" />
+
+                    <TextView
+                        android:id="@+id/tv_invoice"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_border_shade"
+                        android:gravity="left|center"
+                        android:paddingLeft="5dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_border"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Remarks:*" />
+
+                    <TextView
+                        android:id="@+id/tv_remarks"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_border_shade"
+                        android:gravity="left|center"
+                        android:paddingLeft="5dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_border"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Trucking Amount:" />
+
+                    <TextView
+                        android:id="@+id/tv_tracking_amount"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_border_shade"
+                        android:gravity="left|center"
+                        android:paddingLeft="5dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_border"
+                        android:padding="10dp"
+                        android:text="Trucker:*" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_border">
+
+                        <TextView
+                            android:id="@+id/tv_trucker"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_border_shade"
+                            android:gravity="left|center"
+                            android:paddingLeft="5dp" />
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_border"
+                        android:padding="10dp"
+                        android:text="Trucking Expense:*" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_border">
+
+                        <TextView
+                            android:id="@+id/tv_tracking_expense"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_border_shade"
+                            android:gravity="left|center"
+                            android:paddingLeft="5dp" />
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_border"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="right|center"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:background="@drawable/btn_ripple_light_red"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="Cancel Delivery"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="left"
+                            android:orientation="horizontal"
+
+                            >
+
+                            <TextView
+                                android:layout_width="110dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginRight="1dp"
+                                android:background="#CECDCD"
+                                android:gravity="center"
+                                android:padding="2dp"
+                                android:paddingLeft="10dp"
+                                android:text="Ear Tag"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="110dp"
+                                android:layout_height="match_parent"
+
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginRight="1dp"
+                                android:background="#CECDCD"
+                                android:gravity="center"
+                                android:padding="2dp"
+                                android:paddingLeft="10dp"
+                                android:text="Age(days)"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="110dp"
+                                android:layout_height="match_parent"
+
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginRight="1dp"
+                                android:background="#CECDCD"
+                                android:gravity="center"
+                                android:padding="2dp"
+                                android:paddingLeft="10dp"
+                                android:text="Feed Consumed(kg)"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="110dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginRight="1dp"
+                                android:background="#CECDCD"
+                                android:gravity="center"
+                                android:padding="2dp"
+                                android:paddingLeft="10dp"
+                                android:text="Weight(kg)"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="110dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginRight="1dp"
+                                android:background="#CECDCD"
+                                android:gravity="center"
+                                android:padding="2dp"
+                                android:paddingLeft="10dp"
+                                android:text="Price/kg"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="110dp"
+                                android:layout_height="match_parent"
+
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginRight="1dp"
+                                android:background="#CECDCD"
+                                android:gravity="center"
+                                android:padding="2dp"
+                                android:paddingLeft="10dp"
+                                android:text="Subtotal"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/recyclerView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="#FFC9F7C8"
+                            android:gravity="left"
+
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="110dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginRight="1dp"
+                                android:gravity="center"
+                                android:padding="2dp"
+                                android:paddingRight="10dp"
+                                android:textSize="15dp" />
+
+                            <TextView
+                                android:layout_width="110dp"
+                                android:layout_height="match_parent"
+
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginRight="1dp"
+                                android:gravity="center"
+                                android:padding="2dp"
+                                android:paddingRight="10dp"
+                                android:textSize="15dp" />
+
+                            <TextView
+                                android:layout_width="110dp"
+                                android:layout_height="match_parent"
+
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginRight="1dp"
+                                android:gravity="center"
+                                android:padding="2dp"
+                                android:paddingRight="10dp"
+                                android:textSize="15dp" />
+
+                            <TextView
+                                android:layout_width="110dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginRight="1dp"
+                                android:gravity="center"
+                                android:padding="2dp"
+                                android:paddingRight="10dp"
+                                android:textSize="15dp" />
+
+                            <TextView
+                                android:layout_width="110dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginRight="1dp"
+                                android:gravity="right|center"
+                                android:padding="2dp"
+                                android:paddingRight="10dp"
+                                android:text="Total: "
+                                android:textSize="15dp" />
+
+                            <TextView
+                                android:id="@+id/tv_total"
+                                android:layout_width="110dp"
+
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginRight="1dp"
+                                android:gravity="left|center"
+                                android:padding="2dp"
+                                android:paddingRight="10dp"
+                                android:text="Total"
+                                android:textSize="15dp" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/loading"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="0.5dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:orientation="horizontal"
+
+      >
+
+
+        <TextView
+            android:id="@+id/btn_remove"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/btn_ripple_red"
+            android:gravity="center"
+            android:text="X"
+            android:textColor="@color/white"
+            android:layout_marginRight="2dp"/>
+
+        <TextView
+            android:id="@+id/text_"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:background="#E7E4B5"
+            android:gravity="left"
+            android:padding="5dp"
+            android:paddingRight="10sp"
+            android:text="test"
+            android:textSize="15dp" />
+
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:background="#E7E4B5"
+            android:gravity="left"
+            android:padding="5dp"
+            android:paddingRight="10sp"
+            android:text="hello">
+
+            <EditText
+                android:id="@+id/et_weight"
+                android:layout_width="wrap_content"
+                android:minWidth="90dp"
+                android:layout_height="match_parent"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:gravity="left"
+                android:hint="Weight"
+                android:inputType="number|text"
+                android:background="@drawable/bg_border_white"
+                android:textSize="15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="90dp"
+            android:layout_height="match_parent"
+            android:paddingTop="5dp"
+            android:text="hello"
+            android:gravity="left"
+            android:paddingRight="10sp"
+            android:background="#E7E4B5"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:padding="5dp">
+
+            <EditText
+                android:id="@+id/et_price"
+                android:layout_width="wrap_content"
+                android:minWidth="90dp"
+                android:layout_height="match_parent"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:gravity="left"
+                android:hint="Price"
+                android:inputType="number|text"
+                android:background="@drawable/bg_border_white"
+                android:textSize="15dp"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_total"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:textSize="15dp"
+            android:text="0"
+            android:gravity="left"
+            android:paddingRight="10sp"
+            android:background="#E7E4B5"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:padding="5dp"/>
+
+        <TextView
+            android:id="@+id/tv_age"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:textSize="15dp"
+            android:text="hello"
+            android:gravity="left"
+            android:paddingRight="10sp"
+            android:background="#E7E4B5"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:padding="5dp" />
+
+        <TextView
+            android:id="@+id/tv_feed_cons"
+            android:layout_width="110dp"
+            android:layout_height="match_parent"
+            android:textSize="15dp"
+            android:text="hello"
+            android:gravity="left"
+            android:paddingRight="10sp"
+            android:background="#E7E4B5"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:padding="5dp" />
+
+
+    </LinearLayout>
+</RelativeLayout>

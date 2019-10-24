@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#44c940</color>
+    <color name="colorPrimaryDark">#5dc45a</color>
+    <color name="colorAccent">#50a44d</color>
+
+    <color name="btn_color1">#3a9436</color>
+    <color name="btn_color2">#54c450</color>
+
+    <color name="btn_red_color1">#ca2429</color>
+    <color name="btn_red_color2">#dc676b</color>
+
+    <color name="btn_blue_color1">#345f92</color>
+    <color name="btn_blue_color2">#58789e</color>
+
+    <color name="btn_brown_color1">#765547</color>
+    <color name="btn_brown_color2">#876b60</color>
+
+    <color name="btn_yellow_color1">#decf5d</color>
+    <color name="btn_yellow_color2">#e4d97d</color>
+
+    <color name="btn_violet_color1">#6836bb</color>
+    <color name="btn_violet_color2">#865fc7</color>
+
+    <color name="btn_violet_light_color1">#6836bb</color>
+    <color name="btn_violet_light_color2">#9f7dd7</color>
+
+    <color name="btn_yellow_light_color1">#decf5d</color>
+    <color name="btn_yellow_light_color2">#dcd388</color>
+
+    <color name="btn_brown_light_color1">#765547</color>
+    <color name="btn_brown_light_color2">#a39590</color>
+
+    <color name="btn_red_light_color1">#ea4431</color>
+    <color name="btn_red_light_color2">#df9990</color>
+
+    <color name="btn_light_red_color1">#ea4431</color>
+    <color name="btn_light_red_color2">#d45447</color>
+
+    <color name="btn_light_blue_color1">#74a2d0</color>
+    <color name="btn_light_blue_color2">#94bce4</color>
+
+    <color name="btn_lightgreen_color1">#83e67e</color>
+    <color name="btn_lightgreen_color2">#54c450</color>
+
+    <color name="color_text_light_black">#535353</color>
+
+    <color name="text_grey">#FF6A6A6A</color>
+
+    <color name="light_black">#bfbfbf</color>
+    <color name="light_black2">#737373</color>
+
+    <color name="dark_blue">#1a5dba</color>
+    <color name="dark_blue2">#4b89df</color>
+
+    <color name="light2x_blue">#FFD6DDE7</color>
+    <color name="grey">#ababab</color>
+    <color name="light_grey">#dcdcdc</color>
+    <color name="white">#ffffff</color>
+    <color name="default_">#fafafa</color>
+
+    <color name="btn_color11">#4EAC4A</color>
+    <color name="btn_color22">#6BCC67</color>
+    <color name="color_red">#D50511</color>
+
+</resources>
