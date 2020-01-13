@@ -42,7 +42,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String BUILDING_ID = "building_id";
     private static final String PEN_ID = "pen_id";
     private static final String CHECK_STATUS = "check_status";
-    private static final String CREATE_TABLE_MC = "CREATE TABLE " + TABLE_MA_PIG + " ( " + ID_MA_PIG + " INTEGER PRIMARY KEY AUTOINCREMENT , "+ SWINE_ID + " INTEGER(255), "  + SWINE_CODE + " VARCHAR(255), " + BRANCH_ID + " INTEGER(255), " + BUILDING_ID + " INTEGER(255), " + PEN_ID + " INTEGER(255), " + CHECK_STATUS + " INTEGER(255));";
+    private static final String GENDER = "gender";
+    private static final String CREATE_TABLE_MC = "CREATE TABLE " + TABLE_MA_PIG + " ( " + ID_MA_PIG + " INTEGER PRIMARY KEY AUTOINCREMENT , "+ SWINE_ID + " INTEGER(255), "  + SWINE_CODE + " VARCHAR(255), " + BRANCH_ID + " INTEGER(255), " + BUILDING_ID + " INTEGER(255), " + PEN_ID + " INTEGER(255), " + CHECK_STATUS + " INTEGER(255), " + GENDER + " INTEGER(255));";
 
 
     //tbl_audit_pigs
@@ -230,6 +231,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 values.put(BUILDING_ID, pigs.getBuilding_id());
                 values.put(PEN_ID, pigs.getPen_id());
                 values.put(CHECK_STATUS, pigs.getCheck_status());
+                values.put(GENDER, pigs.getGender());
                 db.insert(TABLE_MA_PIG, null, values);
             }
             db.setTransactionSuccessful();
@@ -243,7 +245,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         ArrayList<Transfer_model_pig> questionsList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
-        String coloumn[] = {SWINE_ID, SWINE_CODE, BRANCH_ID, BUILDING_ID, PEN_ID, CHECK_STATUS};
+        String coloumn[] = {SWINE_ID, SWINE_CODE, BRANCH_ID, BUILDING_ID, PEN_ID, CHECK_STATUS, GENDER};
         Cursor cursor = db.query(TABLE_MA_PIG, coloumn, null, null, null, null, null);
 
         while (cursor.moveToNext()) {
@@ -253,7 +255,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                     cursor.getInt(2),
                     cursor.getInt(3),
                     cursor.getInt(4),
-                    cursor.getInt(5)
+                    cursor.getInt(5),
+                    cursor.getString(6)
             );
             questionsList.add(question);
         }
