@@ -1102,7 +1102,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
 
                                         if (gender.equals("Male")){
                                             countMale--;
-                                        } else {
+                                        } else if (gender.equals("Female")){
                                             countFemale--;
                                         }
 
@@ -1161,7 +1161,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
 
         if (gender.equals("Male")){
             countMale--;
-        } else {
+        } else if (gender.equals("Female")){
             countFemale--;
         }
 
