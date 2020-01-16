@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Demo RF Scanner</string>
 
-    <string name="URL_online">https://demo.wdysolutions.com/v11/rf_scanner_v2/</string>
+    <string name="URL_online">https://mobile.wdysolutions.com/rf_scanner/demo/</string>
+<!--    <string name="URL_online">https://demo.wdysolutions.com/v11/rf_scanner_v2/</string>-->
 
 </resources>
