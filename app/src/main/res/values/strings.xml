@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">RF Scanner</string>
 
-    <string name="URL_online">https://notes.wdysolutions.com/v6/rf_scanner_v2/</string>
+    <string name="URL_online">https://mobile.wdysolutions.com/rf_scanner/main/</string>
+<!--    <string name="URL_online">https://notes.wdysolutions.com/v6/rf_scanner_v2/</string>-->
     <!--<string name="URL_online">http://192.168.0.110/rf_scanner_v2/</string>-->
     <!--<string name="URL_online">https://demo.wdysolutions.com/v11/rf_scanner_v2/</string>-->
     <string name="title_activity_main_menu">Main_menu</string>
