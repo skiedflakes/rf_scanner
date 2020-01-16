@@ -243,7 +243,8 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                                         dialogBox_msg("Scanned ear tag is invalid.");
                                     }
 
-                                }catch (Exception e){
+                                }
+                                catch (Exception e){
                                     Toast.makeText(context, "Ear tag invalid", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
@@ -258,22 +259,37 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         }
         getActivity().registerReceiver(epcReceiver, new IntentFilter("epc_receive"));
 
-
-        //if sqlite is not empty set previously scanned
-        if(sqlite.get_pigs_sqlite().size()!=0){
-            transfer_pen_model_list_pig = sqlite.get_pigs_sqlite();
-            count_scanned = sqlite.get_pigs_sqlite().size(); //set counter scanned
-            txt_eartag_saved.setText("Ear tag saved: "+String.valueOf(count_scanned));
-            adapter_pig = new Transfer_adapter(getContext(), transfer_pen_model_list_pig,TransferPen_main.this);
-            rec_pigs.setLayoutManager(new LinearLayoutManager(getActivity()));
-            rec_pigs.setAdapter(adapter_pig);
-        }
-
+        displaySQLiteSaved();
         test_eartag(view);
         scan_status();
         initMenu(view);
         get_branch(company_id, company_code, "get_branch");
         return view;
+    }
+
+    int countFemale=0, countMale=0;
+    private void displaySQLiteSaved(){
+        //if sqlite is not empty set previously scanned
+        if(sqlite.get_pigs_sqlite().size()!=0){
+            transfer_pen_model_list_pig = sqlite.get_pigs_sqlite();
+            count_scanned = sqlite.get_pigs_sqlite().size();
+
+            // gender counter
+            for (int i=0; i<transfer_pen_model_list_pig.size(); i++){
+                Transfer_model_pig model = transfer_pen_model_list_pig.get(i);
+
+                if (model.getGender().equals("Male")){
+                    countMale++;
+                } else if (model.getGender().equals("Female")){
+                    countFemale++;
+                }
+            }
+
+            txt_eartag_saved.setText("Ear tag saved: "+String.valueOf(count_scanned)+" / Male: "+countMale+" / Female: "+countFemale);
+            adapter_pig = new Transfer_adapter(getContext(), transfer_pen_model_list_pig,TransferPen_main.this);
+            rec_pigs.setLayoutManager(new LinearLayoutManager(getActivity()));
+            rec_pigs.setAdapter(adapter_pig);
+        }
     }
 
     private void test_eartag(View view){
@@ -358,7 +374,6 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                         set_modal("System Message","Invalid ear tag","red");
                     }else{
 
-
                         JSONObject Object = new JSONObject(response);
 
                         JSONArray diag2 = Object.getJSONArray("get_pen");
@@ -407,10 +422,8 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                 hashMap.put("company_id", company_id);
                 hashMap.put("branch_id", selectedBranch);
                 hashMap.put("company_code", company_code);
-
                 hashMap.put("swine_id", swine_id);
                 hashMap.put("request_type", request_type);
-
                 return hashMap;
             }
         };
@@ -420,7 +433,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
 
     public void request_data_swine(final String swine_id,final String request_type){
         showLoading(loadingScan, "Loading...").show();
-        String URL = getString(R.string.URL_online) + "swine_sales/request_swine_data.php";
+        String URL = getString(R.string.URL_online) + "swine_sales/request_swine_data2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -438,6 +451,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                         JSONObject cusObj = (JSONObject) diag.get(0);
                         String swine_code = cusObj.getString("swine_code");
                         String age = cusObj.getString("age");
+                        String gender = cusObj.getString("gender");
 
                         String piglet_status = cusObj.getString("piglet_status");
 
@@ -452,10 +466,15 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
 
                                     if (!isSwineExist(Integer.valueOf(swine_id))) {
 
+                                        if (gender.equals("Male")){
+                                            countMale++;
+                                        } else if (gender.equals("Female")){
+                                            countFemale++;
+                                        }
+
                                         //counter
                                         count_scanned++;
-                                        String total = String.valueOf(count_scanned);
-                                        txt_eartag_saved.setText("Ear tag saved: " + total);
+                                        txt_eartag_saved.setText(String.valueOf("Ear tag saved: "+count_scanned+" / Male: "+countMale+" / Female: "+countFemale));
 
                                         //add data to recycler view
                                         transfer_pen_model_list_pig.add(0, new Transfer_model_pig(Integer.valueOf(swine_id),
@@ -463,7 +482,8 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                                                 model_pig.getBranch_id(),
                                                 model_pig.getBuilding_id(),
                                                 model_pig.getPen_id(),
-                                                0));
+                                                0,
+                                                gender));
                                         adapter_pig = new Transfer_adapter(getActivity(), transfer_pen_model_list_pig, TransferPen_main.this);
                                         rec_pigs.setLayoutManager(new LinearLayoutManager(getActivity()));
                                         rec_pigs.setAdapter(adapter_pig);
@@ -474,13 +494,14 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                                                 model_pig.getBranch_id(),
                                                 model_pig.getBuilding_id(),
                                                 model_pig.getPen_id(),
-                                                0));
+                                                0,
+                                                gender));
                                         sqlite.add_pigs_sqlite(transfer_pen_model_list_pig_new);
 
-                                        Toast.makeText(getActivity(), "ear tag saved", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "Ear tag save", Toast.LENGTH_SHORT).show();
 
                                     } else {
-                                        Toast.makeText(getActivity(), "already saved", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "Ear tag already save", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
@@ -803,7 +824,9 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+
                 try{
+                    //((ActivityMain)getActivity()).dialogBox(response);
                     showLoading(loadingScan, null).dismiss();
                     getPigsStatus = "1";
                     scan_status();
@@ -820,7 +843,8 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                                     Integer.valueOf(selectedBranch),
                                     Integer.valueOf(selectedBuilding),
                                     Integer.valueOf(selectedPen),
-                                    0));
+                                    0,
+                                    r.getString("gender")));
                         }
 
                     }else{
@@ -963,6 +987,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         }catch (Exception e){}
     }
 
+    // not use
     public void saveTransfer(final String swine_id, final String pen_id, final String remarks, final String transfer_date) {
     // dialogBox("swine_id: "+swine_id+" company_id: "+company_id+" selectedBranch: "+selectedBranch+" user_id: "+user_id+" pen_id: "+pen_id);
         String URL = getString(R.string.URL_online)+"transfer_pen/pig_transfer_pen_add2.php";
@@ -977,8 +1002,9 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
 
                             count_scanned--;
                             count_total_pigs--;
-                            String total  = String.valueOf(count_scanned);
-                            txt_eartag_saved.setText("Ear tag saved: "+total);
+                            if (countMale > 0) { countMale--; }
+                            if (countFemale > 0) { countFemale--; }
+                            txt_eartag_saved.setText(String.valueOf("Ear tag saved: "+count_scanned+" / Male: "+countMale+" / Female: "+countFemale));
 
                             JSONArray jsonArray = new JSONArray(new Gson().toJson(transfer_pen_model_list_pig));
                             for (int i = 0; i < jsonArray.length(); i++) {
@@ -1057,8 +1083,9 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                                 counter_transfer = 0;
 
                                 count_scanned=0;
-                                String total = String.valueOf(count_scanned);
-                                txt_eartag_saved.setText("Ear tag saved: "+total);
+                                countMale=0;
+                                countFemale=0;
+                                txt_eartag_saved.setText(String.valueOf("Ear tag saved: "+count_scanned+" / Male: "+countMale+" / Female: "+countFemale));
                             }
 
                             if(transfer_pen_model_list_pig.size()>0) {
@@ -1067,12 +1094,20 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject r = jsonArray.getJSONObject(i);
                                     int swine_id2 = r.getInt("swine_id");
+                                    String gender = r.getString("gender");
 
                                     if(swine_id2==Integer.valueOf(swine_id)){
                                         //delete sqlite
                                         count_scanned--;
+
+                                        if (gender.equals("Male")){
+                                            countMale--;
+                                        } else if (gender.equals("Female")){
+                                            countFemale--;
+                                        }
+
                                         sqlite.delete_table_pig(swine_id);
-                                        txt_eartag_saved.setText("Ear tag saved: "+String.valueOf(count_scanned));
+                                        txt_eartag_saved.setText(String.valueOf("Ear tag saved: "+count_scanned+" / Male: "+countMale+" / Female: "+countFemale));
                                         transfer_pen_model_list_pig.remove(i);
                                         adapter_pig.notifyDataSetChanged();
                                     }
@@ -1121,10 +1156,16 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
     }
 
     @Override
-    public void onEvent(String swine_id) {
+    public void onEvent(String swine_id, String gender) {
         count_scanned--;
-        String total = String.valueOf(count_scanned);
-        txt_eartag_saved.setText("Ear tag saved: "+total);
+
+        if (gender.equals("Male")){
+            countMale--;
+        } else if (gender.equals("Female")){
+            countFemale--;
+        }
+
+        txt_eartag_saved.setText(String.valueOf("Ear tag saved: "+count_scanned+" / Male: "+countMale+" / Female: "+countFemale));
 
         //delete sqlite
         sqlite.delete_table_pig(swine_id);
@@ -1144,10 +1185,15 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                 if (!isSwineExist(eartag)){
                     if (model_pig.getSwine_id() == eartag){
 
+                        if (model_pig.getGender().equals("Male")){
+                            countMale++;
+                        } else if (model_pig.getGender().equals("Female")){
+                            countFemale++;
+                        }
+
                         //counter
                         count_scanned++;
-                        String total = String.valueOf(count_scanned);
-                        txt_eartag_saved.setText("Ear tag saved: "+total);
+                        txt_eartag_saved.setText(String.valueOf("Ear tag saved: "+count_scanned+" / Male: "+countMale+" / Female: "+countFemale));
 
                         //add data to recycler view
                         transfer_pen_model_list_pig.add(0, new Transfer_model_pig(model_pig.getSwine_id(),
@@ -1155,7 +1201,8 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                                 model_pig.getBranch_id(),
                                 model_pig.getBuilding_id(),
                                 model_pig.getPen_id(),
-                                0));
+                                0,
+                                model_pig.getGender()));
                         adapter_pig = new Transfer_adapter(getActivity(), transfer_pen_model_list_pig, TransferPen_main.this);
                         rec_pigs.setLayoutManager(new LinearLayoutManager(getActivity()));
                         rec_pigs.setAdapter(adapter_pig);
@@ -1166,7 +1213,8 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                                 model_pig.getBranch_id(),
                                 model_pig.getBuilding_id(),
                                 model_pig.getPen_id(),
-                                0));
+                                0,
+                                model_pig.getGender()));
                         sqlite.add_pigs_sqlite(transfer_pen_model_list_pig_new);
 
                         return "saved";
@@ -1216,7 +1264,9 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                         transfer_pen_model_list_pig.clear();
                         rec_pigs.setAdapter(null);
                         count_scanned=0;
-                        txt_eartag_saved.setText("Ear tag saved: 0");
+                        countMale=0;
+                        countFemale=0;
+                        txt_eartag_saved.setText(String.valueOf("Ear tag saved: "+count_scanned+" / Male: "+countMale+" / Female: "+countFemale));
                         Toast.makeText(getActivity(), "Successfully deleted", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -1237,8 +1287,19 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
 
            if(sqlite.get_pigs_sqlite().size()!=0){
                count_scanned = sqlite.get_pigs_sqlite().size(); //set counter scanned
-               txt_eartag_saved.setText(String.valueOf("Ear tag saved: "+count_scanned));
                transfer_pen_model_list_pig = sqlite.get_pigs_sqlite();
+
+               for (int i=0; i<transfer_pen_model_list_pig.size(); i++){
+                   Transfer_model_pig model = transfer_pen_model_list_pig.get(i);
+
+                   if (model.getGender().equals("Male")){
+                       countMale++;
+                   } else if (model.getGender().equals("Female")){
+                       countFemale++;
+                   }
+               }
+
+               txt_eartag_saved.setText(String.valueOf("Ear tag saved: "+count_scanned+" / Male: "+countMale+" / Female: "+countFemale));
                adapter_pig = new Transfer_adapter(getContext(), transfer_pen_model_list_pig,TransferPen_main.this);
                rec_pigs.setLayoutManager(new LinearLayoutManager(getActivity()));
                rec_pigs.setAdapter(adapter_pig);
@@ -1264,3 +1325,6 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         alertDialog.show();
     }
 }
+
+// bug delete female/male counter onEvent
+// bug request_data_swine

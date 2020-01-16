@@ -115,10 +115,8 @@ public class Login_main extends Fragment {
                     btn_txt.setText("Login");
                     btn_login.setEnabled(true);
                     btn_loading.setVisibility(View.GONE);
-                    Toast.makeText(getActivity(), "Connection Error, please try again.", Toast.LENGTH_SHORT).show();
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
+                    Toast.makeText(getActivity(), "Connection error, please try again.", Toast.LENGTH_SHORT).show();
+                } catch (Exception e){}
             }
         }){
             @Override
