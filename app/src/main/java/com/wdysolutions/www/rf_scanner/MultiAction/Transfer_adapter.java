@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,18 +40,26 @@ public class Transfer_adapter extends RecyclerView.Adapter<Transfer_adapter.MyHo
     @Override
     public void onBindViewHolder(final Transfer_adapter.MyHolder holder, final int position) {
         final String eartag = mdata.get(position).getSwine_code();
+        final String gender = mdata.get(position).getGender();
         int check_status = mdata.get(position).getCheck_status();
         final int swine_id = mdata.get(position).getSwine_id();
         final String swine_code = mdata.get(position).getSwine_code();
 
+        if (gender.equals("Male")){
+            holder.img_gender.setBackgroundResource(R.drawable.ic_male);
+        } else if (gender.equals("Female")){
+            holder.img_gender.setBackgroundResource(R.drawable.ic_woman);
+        } else {
+            holder.img_gender.setBackgroundResource(0);
+        }
 
         holder.text_.setText(eartag);
+        holder.txt_gender.setText(gender);
         holder.btn_remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 holder.btn_remove.setEnabled(false);
                 dialogBox(holder,position, eartag);
-
             }
         });
     }
@@ -61,11 +70,13 @@ public class Transfer_adapter extends RecyclerView.Adapter<Transfer_adapter.MyHo
     }
 
     public class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView text_;
+        TextView text_,txt_gender;
         Button btn_remove;
-
+        ImageView img_gender;
         public MyHolder(View itemView) {
             super(itemView);
+            img_gender = itemView.findViewById(R.id.img_gender);
+            txt_gender = itemView.findViewById(R.id.txt_gender);
             text_ = itemView.findViewById(R.id.text_);
             btn_remove = itemView.findViewById(R.id.btn_remove);
             itemView.setOnClickListener(this);
@@ -101,9 +112,10 @@ public class Transfer_adapter extends RecyclerView.Adapter<Transfer_adapter.MyHo
 //        }
 //    }
 
-    public void removeAt(final int position) {
+    public void removeAt(final int position) { // delete bug female/male
         final int swine_id = mdata.get(position).getSwine_id();
-        listener.onEvent(String.valueOf(swine_id));
+        final String gender = mdata.get(position).getGender();
+        listener.onEvent(String.valueOf(swine_id), gender);
         mdata.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, mdata.size());
@@ -136,10 +148,8 @@ public class Transfer_adapter extends RecyclerView.Adapter<Transfer_adapter.MyHo
     }
 
     public interface EventListener {
-        void onEvent(String swine_id);
+        void onEvent(String swine_id, String gender);
         void open_delete(boolean yes_no);
-
     }
-
 
 }
