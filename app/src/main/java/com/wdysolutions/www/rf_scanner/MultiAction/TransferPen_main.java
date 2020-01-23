@@ -399,9 +399,9 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                         alertDialog.setCancelable(false);
                         alertDialog.show();
                     }
-
-
-                } catch (Exception e) {}
+                }
+                catch (JSONException e){}
+                catch (Exception e){}
             }
         }, new Response.ErrorListener() {
             @Override
@@ -431,7 +431,9 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
+    int checker=0;
     public void request_data_swine(final String swine_id,final String request_type){
+        checker=0;
         showLoading(loadingScan, "Loading...").show();
         String URL = getString(R.string.URL_online) + "swine_sales/request_swine_data2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -498,11 +500,18 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                                                 gender));
                                         sqlite.add_pigs_sqlite(transfer_pen_model_list_pig_new);
 
-                                        Toast.makeText(getActivity(), "Ear tag save", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getActivity(), "Ear tag save", Toast.LENGTH_SHORT).show();
+                                        checker=1;
 
                                     } else {
-                                        Toast.makeText(getActivity(), "Ear tag already save", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getActivity(), "Ear tag already save", Toast.LENGTH_SHORT).show();
                                     }
+                                }
+
+                                if (checker==1){
+                                    Toast.makeText(getActivity(), "Ear tag save", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getActivity(), "Ear tag already save", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
@@ -510,7 +519,9 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                     showLoading(loadingScan, null).dismiss();
                     isModalOpen=false;
 
-                } catch (Exception e) {}
+                }
+                catch (JSONException e){}
+                catch (Exception e){}
             }
         }, new Response.ErrorListener() {
             @Override
@@ -605,7 +616,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                     });
 
                 }
-                catch (JSONException e) {}
+                catch (JSONException e){}
                 catch (Exception e){}
             }
         }, new Response.ErrorListener() {
@@ -851,7 +862,9 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                         Toast.makeText(getActivity(), "Pen is empty", Toast.LENGTH_SHORT).show();
                     }
 
-                } catch (Exception e){}
+                }
+                catch (JSONException e){}
+                catch (Exception e){}
             }
         }, new Response.ErrorListener() {
             @Override
@@ -1098,12 +1111,12 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
 
                                     if(swine_id2==Integer.valueOf(swine_id)){
                                         //delete sqlite
-                                        count_scanned--;
+                                        if (count_scanned > 0){ count_scanned--; }
 
                                         if (gender.equals("Male")){
-                                            countMale--;
+                                            if (countMale > 0) { countMale--; }
                                         } else if (gender.equals("Female")){
-                                            countFemale--;
+                                            if (countFemale > 0) { countFemale--; }
                                         }
 
                                         sqlite.delete_table_pig(swine_id);
@@ -1125,7 +1138,9 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                         }
                     }
 
-                } catch (Exception e){}
+                }
+                catch (JSONException e){}
+                catch (Exception e){}
             }
         }, new Response.ErrorListener() {
             @Override
@@ -1325,6 +1340,3 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         alertDialog.show();
     }
 }
-
-// bug delete female/male counter onEvent
-// bug request_data_swine
