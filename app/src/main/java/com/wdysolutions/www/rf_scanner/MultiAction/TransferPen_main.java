@@ -359,7 +359,6 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         showLoading(loadingScan, "Loading...").show();
 //        loading_table.setVisibility(View.VISIBLE);
 //        layout_table.setVisibility(View.GONE);
-
         String URL = getString(R.string.URL_online) + "swine_sales/request_swine_data.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -370,7 +369,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
 //                    loading_table.setVisibility(View.GONE);
 //                    layout_table.setVisibility(View.VISIBLE);
 
-                    if(response.equals("{\"get_swine\":[]}")){
+                    if(response.equals("{\"get_pen\":[]}")){
                         set_modal("System Message","Invalid ear tag","red");
                     }else{
 
@@ -393,7 +392,6 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                                     public void onClick(DialogInterface dialog,int which) {
                                         dialog.dismiss();
                                         isModalOpen=false;
-
                                     }
                                 });
                         alertDialog.setCancelable(false);
@@ -407,11 +405,10 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
             @Override
             public void onErrorResponse(VolleyError error) {
                 try {
-                    showLoading(loadingScan, null).dismiss();
 //                    loading_table.setVisibility(View.GONE);
 //                    layout_table.setVisibility(View.VISIBLE);
                     isModalOpen=false;
-
+                    showLoading(loadingScan, null).dismiss();
                     Toast.makeText(getActivity(), "Connection error, please try again.", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {}
             }
@@ -1295,6 +1292,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         alertDialog.show();
     }
 
+    // modal_fragment
     @Override
     public void senddata(int okay) {
 
@@ -1320,6 +1318,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                rec_pigs.setAdapter(adapter_pig);
            }
        } else {
+           isModalOpen = false;
            isModalTransfer = false;
        }
     }
