@@ -296,7 +296,7 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
         count_nip=0;
         tv_nip.setText(String.valueOf(count_nip));
         tv_scaned_total.setText("");
-        String URL = getString(R.string.URL_online)+"audit_pen/audit_pen_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -386,7 +386,7 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
         audit_pen_model_list_building = new ArrayList<>();
         count_nip=0;
         tv_nip.setText(String.valueOf(count_nip));
-        String URL = getString(R.string.URL_online)+"audit_pen/audit_pen_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -484,7 +484,7 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
         spinner_pen.setAdapter(null);
         count_scanned=0;
         count_total_pigs=0;
-        String URL = getString(R.string.URL_online)+"audit_pen/audit_pen_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -573,6 +573,7 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
         listLoading(true);
         audit_pen_model_list_pig = new ArrayList<>();
         txt_error.setVisibility(View.GONE);
+        txt_error.setTextColor(getResources().getColor(R.color.color_text_light_black));
         tv_scaned_total.setText("");
         count_scanned=0;
         count_total_pigs=0;
@@ -580,12 +581,13 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
         getPigsStatus = "";
         scan_status();
         tv_nip.setText(String.valueOf(count_nip));
-        String URL = getString(R.string.URL_online)+"audit_pen/audit_pen_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-//                    dialogBox(response);
+
                 try{
+                    //dialogBox(response);
                     listLoading(false);
                     getPigsStatus = "1";
                     scan_status();
@@ -654,7 +656,9 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
 
                     }else{
                         adapter_pig.notifyDataSetChanged();
-                        Toast.makeText(getActivity(), "Pen is empty", Toast.LENGTH_SHORT).show();
+                        txt_error.setVisibility(View.VISIBLE);
+                        txt_error.setText("Pen is empty");
+                        txt_error.setTextColor(getResources().getColor(R.color.color_red));
                     }
 
                 } catch (Exception e){}
@@ -667,7 +671,7 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
                     scan_status();
                     listLoading(false);
                     txt_error.setVisibility(View.VISIBLE);
-                    Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
+                    txt_error.setText(getResources().getString(R.string.volley_error));
                 } catch (Exception e){}
             }
         }){
@@ -689,8 +693,8 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
     private void updateSingleItem(String scanned_swine_id,String actual_id) {
         int found = 0;
         if(audit_pen_model_list_pig.size()==0){
-            check_swine_id(company_id,company_code,scanned_swine_id,actual_id);
-
+            //check_swine_id(company_id,company_code,scanned_swine_id,actual_id);
+            Toast.makeText(getActivity(), "Pen is empty", Toast.LENGTH_SHORT).show();
         }else{
 
             try{

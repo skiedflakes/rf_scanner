@@ -84,7 +84,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
     int counter_transfer=0;
     int total_transfer=0;
     SQLiteHelper sqlite;
-    TextView tx_range, txt_error_pen, txt_error_building;
+    TextView tx_range, txt_error_pen, txt_error_building, txt_pen_empty;
 
     private void initMenu(final View view){
         final Toolbar toolbar = view.findViewById(R.id.toolbar);
@@ -174,6 +174,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         txt_eartag_saved = view.findViewById(R.id.txt_eartag_saved);
         tv_clear = view.findViewById(R.id.tv_clear);
         tx_range = view.findViewById(R.id.tx_range);
+        txt_pen_empty = view.findViewById(R.id.txt_pen_empty);
 
         tv_clear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -236,10 +237,10 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                                             Toast.makeText(context, "Ear tag saved.", Toast.LENGTH_SHORT).show();
                                         } else if (saveSQLiteSwine(Integer.valueOf(separated[1])).equals("already saved")){
                                             dialogBox_msg("Ear tag already saved.");
-                                        } else {
+                                        } else if (saveSQLiteSwine(Integer.valueOf(separated[1])).equals("wrong pen")){
                                             yes_no_alert_dialog(separated[1],"Scanned ear tag is in WRONG PEN or invalid. Do you wish to proceed?");
-//
-//                                          dialogBox_msg("No ear tag found or wrong selected pen.");
+                                        } else {
+                                            Toast.makeText(getContext(), "Pen is empty", Toast.LENGTH_SHORT).show();
                                         }
                                     }else{
                                         dialogBox_msg("Scanned ear tag is invalid.");
@@ -322,8 +323,10 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                             dialogBox_msg("Ear tag saved.");
                         } else if (saveSQLiteSwine(Integer.valueOf(separated[1])).equals("already saved")){
                             Toast.makeText(getContext(), "Some scanned ear tag is already saved", Toast.LENGTH_SHORT).show();
-                        } else {
+                        } else if (saveSQLiteSwine(Integer.valueOf(separated[1])).equals("wrong pen")){
                             yes_no_alert_dialog(separated[1],"Scanned ear tag is in WRONG PEN or invalid. Do you wish to proceed?");
+                        } else {
+                            Toast.makeText(getContext(), "Pen is empty", Toast.LENGTH_SHORT).show();
                         }
                     }else{
                         dialogBox_msg("Scanned ear tag is invalid.");
@@ -562,7 +565,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         layout_.setVisibility(View.GONE);
         loading_.setVisibility(View.VISIBLE);
         scan_status();
-        String URL = getString(R.string.URL_online)+"audit_pen/audit_pen_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -648,7 +651,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         bg_building.setBackgroundResource(R.drawable.bg_border_red);
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
         buildingLoading(true);
-        String URL = getString(R.string.URL_online)+"audit_pen/audit_pen_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -740,7 +743,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         selectedPen = "";
         penLoading(true);
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
-        String URL = getString(R.string.URL_online)+"audit_pen/audit_pen_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -830,7 +833,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         getPigsStatus = "";
         scan_status();
         transfer_model_pig_views = new ArrayList<>();
-        String URL = getString(R.string.URL_online)+"audit_pen/audit_pen_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -842,6 +845,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                     scan_status();
 
                     if(!response.equals("{\"response_swine\":[]}")){
+
                         JSONObject Object = new JSONObject(response);
 
                         JSONArray details = Object.getJSONArray("response_swine");
@@ -858,7 +862,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                         }
 
                     }else{
-                        Toast.makeText(getActivity(), "Pen is empty", Toast.LENGTH_SHORT).show();
+                        dialogBox_msg("Pen is empty");
                     }
 
                 }
@@ -1338,6 +1342,8 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                         sqlite.add_pigs_sqlite(transfer_pen_model_list_pig_new);
 
                         return "saved";
+                    } else {
+                        return "wrong pen";
                     }
 
                 } else {
