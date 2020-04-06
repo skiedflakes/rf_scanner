@@ -1,0 +1,169 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.wdysolutions.www.rf_scanner.ChangeNameTemp.Change_temp_name">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Change Temp Name"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tx_range"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="helllo"
+                android:textColor="#FFFF" />
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <LinearLayout
+            android:id="@+id/bg_branch"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialogFragment_height_spinner"
+            android:background="@drawable/bg_border_red"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/dialogFragment_layout_spinner">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Branch: "
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinner_branch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bg_building"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialogFragment_height_spinner"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/bg_border_red"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/dialogFragment_layout_spinner">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Building: "
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/loading_building"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:indeterminateOnly="true"
+                android:visibility="gone" />
+
+            <Spinner
+                android:id="@+id/spinner_building"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/txt_error_building"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center|start"
+                android:text="TextView"
+                android:textColor="@color/color_red"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bg_pen"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialogFragment_height_spinner"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/bg_border_red"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/dialogFragment_layout_spinner">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Pen: "
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/loading_pen"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:indeterminateOnly="true"
+                android:visibility="gone" />
+
+            <Spinner
+                android:id="@+id/spinner_pen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/txt_error_pen"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center|start"
+                android:text="TextView"
+                android:textColor="@color/color_red"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/txt_find"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Find eartag"
+            android:inputType="textPersonName"
+            android:textSize="14sp" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+</LinearLayout>
