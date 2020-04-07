@@ -47,7 +47,7 @@ public class Change_temp_name_adapter extends RecyclerView.Adapter<Change_temp_n
         holder.btn_tap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                callback.c_callback(getId);
+                callback.c_callback(getId, getSwine_code);
             }
         });
     }

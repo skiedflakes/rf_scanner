@@ -3,7 +3,9 @@ package com.wdysolutions.www.rf_scanner.ChangeNameTemp;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +31,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
+import com.wdysolutions.www.rf_scanner.ChangeNameTemp.ChangeNameDialog.Change_temp_name_dialog;
 import com.wdysolutions.www.rf_scanner.Constant;
 import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.MultiAction.TransferPen_main;
@@ -57,11 +60,11 @@ public class Change_temp_name extends Fragment implements clickCallback {
     Change_temp_name_adapter change_temp_name_adapter;
     EditText txt_find;
     Spinner spinner_pen, spinner_branch, spinner_building;
-    LinearLayout bg_branch, bg_building, bg_pen, layout_pig;
+    LinearLayout bg_branch, bg_building, bg_pen, layout_pig, layout_whole;
     ProgressBar loading_building, loading_pen;
-    TextView txt_error_building, txt_error_pen;
-    String company_code, company_id;
-    ProgressBar loading_pigs;
+    TextView txt_error_building, txt_error_pen, txt_empty;
+    String company_code, company_id, category_id, user_id;
+    ProgressBar loading_pigs, loading_whole;
 
     private void initMenu(final View view){
         final Toolbar toolbar = view.findViewById(R.id.toolbar);
@@ -111,6 +114,8 @@ public class Change_temp_name extends Fragment implements clickCallback {
         SessionPreferences sessionPreferences = new SessionPreferences(getActivity());
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
+        user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
 
         company_id = "135";
 
@@ -129,6 +134,9 @@ public class Change_temp_name extends Fragment implements clickCallback {
         loading_pen = view.findViewById(R.id.loading_pen);
         txt_error_building = view.findViewById(R.id.txt_error_building);
         txt_error_pen = view.findViewById(R.id.txt_error_pen);
+        layout_whole = view.findViewById(R.id.layout_whole);
+        loading_whole = view.findViewById(R.id.loading_whole);
+        txt_empty = view.findViewById(R.id.txt_empty);
 
         txt_find.addTextChangedListener(new TextWatcher() {
             @Override
@@ -151,6 +159,8 @@ public class Change_temp_name extends Fragment implements clickCallback {
     ArrayList<Transfer_model_branch> transfer_model_branches = new ArrayList<>();
     public void get_branch(final String company_id, final String company_code, final String get_type){
         selectedBuilding = "";
+        loading_whole.setVisibility(View.VISIBLE);
+        layout_whole.setVisibility(View.GONE);
         String URL = "http://192.168.1.181/test_swine/pen_list.php";
         //String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -158,6 +168,9 @@ public class Change_temp_name extends Fragment implements clickCallback {
             public void onResponse(String response) {
 
                 try {
+                    loading_whole.setVisibility(View.GONE);
+                    layout_whole.setVisibility(View.VISIBLE);
+
                     transfer_model_branches.add(new Transfer_model_branch(0,"Please Select"));
                     JSONObject Object = new JSONObject(response);
                     JSONArray diag = Object.getJSONArray("response_branch");
@@ -208,8 +221,6 @@ public class Change_temp_name extends Fragment implements clickCallback {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try{
-//                    loading_.setVisibility(View.GONE);
-//                    error_.setVisibility(View.VISIBLE);
                     get_branch(company_id, company_code, "get_branch");
                 } catch (Exception e){}
             }
@@ -411,6 +422,7 @@ public class Change_temp_name extends Fragment implements clickCallback {
     public void get_pigs(final String company_id, final String company_code, final String get_type,final String branch_id,final String pen_code){
         loading_pigs.setVisibility(View.VISIBLE);
         layout_pig.setVisibility(View.GONE);
+        txt_empty.setVisibility(View.GONE);
         String URL = "http://192.168.1.181/test_swine/pen_list.php";
         //String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -420,10 +432,11 @@ public class Change_temp_name extends Fragment implements clickCallback {
                 try{
                     //((ActivityMain)getActivity()).dialogBox(response);
                     loading_pigs.setVisibility(View.GONE);
-                    layout_pig.setVisibility(View.VISIBLE);
                     change_temp_name_models = new ArrayList<>();
 
                     if(!response.equals("{\"response_swine\":[]}")){
+
+                        layout_pig.setVisibility(View.VISIBLE);
 
                         JSONObject Object = new JSONObject(response);
 
@@ -435,15 +448,17 @@ public class Change_temp_name extends Fragment implements clickCallback {
                                     r.getString("swine_code")));
                         }
 
-                        change_temp_name_adapter = new Change_temp_name_adapter(getActivity(), change_temp_name_models, Change_temp_name.this);
-                        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recyclerView.setAdapter(change_temp_name_adapter);
-
                     }else{
-                        change_temp_name_adapter.notifyDataSetChanged();
-                        Toast.makeText(getActivity(), "Pen is empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "No temp name", Toast.LENGTH_SHORT).show();
+                        txt_empty.setVisibility(View.VISIBLE);
+                        txt_empty.setText("No Temp name found");
                     }
+
+                    change_temp_name_adapter = new Change_temp_name_adapter(getActivity(), change_temp_name_models, Change_temp_name.this);
+                    recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                    recyclerView.setAdapter(change_temp_name_adapter);
+
                 }
                 catch (JSONException e){}
                 catch (Exception e){}
@@ -495,7 +510,23 @@ public class Change_temp_name extends Fragment implements clickCallback {
     }
 
     @Override
-    public void c_callback(String id) {
-        Toast.makeText(getActivity(), id, Toast.LENGTH_SHORT).show();
+    public void c_callback(String id, String swine_code) {
+        openChangeNameDialog(id, swine_code);
+    }
+
+    private void openChangeNameDialog(String id, String swine_code){
+        Bundle bundle = new Bundle();
+        bundle.putString("swine_code", swine_code);
+        bundle.putString("id", id);
+        bundle.putString("company_id", company_id);
+        bundle.putString("user_id", user_id);
+        bundle.putString("category_id", category_id);
+        DialogFragment fragment = new Change_temp_name_dialog();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog_");
+        if (prev != null) {ft.remove(prev);}
+        fragment.setArguments(bundle);
+        fragment.show(ft, "dialog_");
+        fragment.setCancelable(false);
     }
 }
