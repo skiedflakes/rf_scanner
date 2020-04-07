@@ -1,21 +1,16 @@
 package com.wdysolutions.www.rf_scanner.ChangeNameTemp;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_adapter;
-import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_model_pig;
 import com.wdysolutions.www.rf_scanner.R;
 
 import java.util.ArrayList;
@@ -26,11 +21,13 @@ public class Change_temp_name_adapter extends RecyclerView.Adapter<Change_temp_n
     ArrayList<Change_temp_name_model> data_filter;
     private Context context;
     private LayoutInflater inflater;
+    clickCallback callback;
 
-    public Change_temp_name_adapter(Context context, ArrayList<Change_temp_name_model> data){
+    public Change_temp_name_adapter(Context context, ArrayList<Change_temp_name_model> data, clickCallback callback){
         this.context = context;
         this.mdata = data;
         this.data_filter = data;
+        this.callback = callback;
         inflater = LayoutInflater.from(context);
     }
 
@@ -47,6 +44,12 @@ public class Change_temp_name_adapter extends RecyclerView.Adapter<Change_temp_n
         final String getSwine_code = mdata.get(position).getSwine_code();
 
         holder.swine_code.setText(getSwine_code);
+        holder.btn_tap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callback.c_callback(getId);
+            }
+        });
     }
 
     @Override
@@ -56,8 +59,10 @@ public class Change_temp_name_adapter extends RecyclerView.Adapter<Change_temp_n
 
     public class MyHolder extends RecyclerView.ViewHolder {
         TextView swine_code;
+        LinearLayout btn_tap;
         public MyHolder(View itemView) {
             super(itemView);
+            btn_tap = itemView.findViewById(R.id.btn_tap);
             swine_code = itemView.findViewById(R.id.swine_code);
         }
     }

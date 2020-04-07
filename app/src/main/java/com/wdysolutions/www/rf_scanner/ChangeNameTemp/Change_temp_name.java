@@ -36,6 +36,7 @@ import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_adapter;
 import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_model_branch;
 import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_model_building;
 import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_model_pen;
+import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_model_pig;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
 
@@ -49,18 +50,18 @@ import java.util.List;
 import java.util.Map;
 
 
-public class Change_temp_name extends Fragment {
+public class Change_temp_name extends Fragment implements clickCallback {
 
     TextView tx_range;
     RecyclerView recyclerView;
     Change_temp_name_adapter change_temp_name_adapter;
-    ArrayList<Change_temp_name_model> change_temp_name_models;
     EditText txt_find;
     Spinner spinner_pen, spinner_branch, spinner_building;
-    LinearLayout bg_branch, bg_building, bg_pen;
+    LinearLayout bg_branch, bg_building, bg_pen, layout_pig;
     ProgressBar loading_building, loading_pen;
     TextView txt_error_building, txt_error_pen;
     String company_code, company_id;
+    ProgressBar loading_pigs;
 
     private void initMenu(final View view){
         final Toolbar toolbar = view.findViewById(R.id.toolbar);
@@ -111,6 +112,10 @@ public class Change_temp_name extends Fragment {
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
 
+        company_id = "135";
+
+        layout_pig = view.findViewById(R.id.layout_pig);
+        loading_pigs = view.findViewById(R.id.loading_pigs);
         tx_range = view.findViewById(R.id.tx_range);
         recyclerView = view.findViewById(R.id.recyclerView);
         txt_find = view.findViewById(R.id.txt_find);
@@ -137,28 +142,17 @@ public class Change_temp_name extends Fragment {
             }
         });
 
-        change_temp_name_adapter = new Change_temp_name_adapter(getActivity(), getData());
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(change_temp_name_adapter);
-
         get_branch(company_id, company_code, "get_branch");
         initMenu(view);
         return view;
-    }
-
-    private ArrayList<Change_temp_name_model> getData(){
-        change_temp_name_models = new ArrayList<>();
-        change_temp_name_models.add(new Change_temp_name_model("", "test"));
-        change_temp_name_models.add(new Change_temp_name_model("", "test 2"));
-        return change_temp_name_models;
     }
 
     String selectedBranch="";
     ArrayList<Transfer_model_branch> transfer_model_branches = new ArrayList<>();
     public void get_branch(final String company_id, final String company_code, final String get_type){
         selectedBuilding = "";
-        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
+        String URL = "http://192.168.1.181/test_swine/pen_list.php";
+        //String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -240,7 +234,8 @@ public class Change_temp_name extends Fragment {
         bg_building.setBackgroundResource(R.drawable.bg_border_red);
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
         buildingLoading(true);
-        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
+        String URL = "http://192.168.1.181/test_swine/pen_list.php";
+        //String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -330,7 +325,8 @@ public class Change_temp_name extends Fragment {
         selectedPen = "";
         penLoading(true);
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
-        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
+        String URL = "http://192.168.1.181/test_swine/pen_list.php";
+        //String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -365,7 +361,7 @@ public class Change_temp_name extends Fragment {
                             if (!click.getPen_name().equals("Please Select")){
                                 selectedPen = click.getPen_id();
                                 selectedPen_name = click.getPen_name();
-                                //get_pigs(company_id,company_code,"get_swine",selectedBranch,selectedPen);
+                                get_pigs(company_id,company_code,"get_swine",selectedBranch,selectedPen);
                                 bg_pen.setBackgroundResource(R.drawable.bg_border);
                             } else {
                                 selectedPen = "";
@@ -411,6 +407,71 @@ public class Change_temp_name extends Fragment {
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
+    ArrayList<Change_temp_name_model> change_temp_name_models;
+    public void get_pigs(final String company_id, final String company_code, final String get_type,final String branch_id,final String pen_code){
+        loading_pigs.setVisibility(View.VISIBLE);
+        layout_pig.setVisibility(View.GONE);
+        String URL = "http://192.168.1.181/test_swine/pen_list.php";
+        //String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try{
+                    //((ActivityMain)getActivity()).dialogBox(response);
+                    loading_pigs.setVisibility(View.GONE);
+                    layout_pig.setVisibility(View.VISIBLE);
+                    change_temp_name_models = new ArrayList<>();
+
+                    if(!response.equals("{\"response_swine\":[]}")){
+
+                        JSONObject Object = new JSONObject(response);
+
+                        JSONArray details = Object.getJSONArray("response_swine");
+                        for(int i = 0; i < details.length(); i++){
+                            JSONObject r = details.getJSONObject(i);
+
+                            change_temp_name_models.add(new Change_temp_name_model(r.getString("swine_id"),
+                                    r.getString("swine_code")));
+                        }
+
+                        change_temp_name_adapter = new Change_temp_name_adapter(getActivity(), change_temp_name_models, Change_temp_name.this);
+                        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        recyclerView.setAdapter(change_temp_name_adapter);
+
+                    }else{
+                        change_temp_name_adapter.notifyDataSetChanged();
+                        Toast.makeText(getActivity(), "Pen is empty", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                catch (JSONException e){}
+                catch (Exception e){}
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                try{
+                    loading_pigs.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), getString(R.string.volley_error), Toast.LENGTH_SHORT).show();
+                } catch (Exception e){}
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> hashMap = new HashMap<>();
+                hashMap.put("company_id", company_id);
+                hashMap.put("get_type",get_type);
+                hashMap.put("company_code", company_code);
+                hashMap.put("pen_code", pen_code);
+                hashMap.put("branch_id", branch_id);
+                return hashMap;
+            }
+        };
+        AppController.getInstance().setVolleyDuration(stringRequest);
+        AppController.getInstance().addToRequestQueue(stringRequest);
+    }
+
     private void buildingLoading(boolean status){
         if (status){
             txt_error_building.setVisibility(View.GONE);
@@ -433,4 +494,8 @@ public class Change_temp_name extends Fragment {
         }
     }
 
+    @Override
+    public void c_callback(String id) {
+        Toast.makeText(getActivity(), id, Toast.LENGTH_SHORT).show();
+    }
 }
