@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,7 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_main;
-import com.wdysolutions.www.rf_scanner.ChangeNameTemp.Change_temp_name;
+import com.wdysolutions.www.rf_scanner.ChangeNameTemp.Change_temp_name_main;
 import com.wdysolutions.www.rf_scanner.Feeding.Feeding_module_main;
 import com.wdysolutions.www.rf_scanner.LocateEartag.LocateEartag_main;
 import com.wdysolutions.www.rf_scanner.Login_main;
@@ -184,7 +183,7 @@ public class Main_menu extends Fragment {
                             isFeeding=true;
                             break;
                         case 8:
-                            selectedFragment = new Change_temp_name();
+                            selectedFragment = new Change_temp_name_main();
                             isFeeding=false;
                             break;
                     }

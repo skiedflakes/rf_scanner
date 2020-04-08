@@ -1,7 +1,5 @@
 package com.wdysolutions.www.rf_scanner.ChangeNameTemp;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -31,15 +29,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
-import com.wdysolutions.www.rf_scanner.ChangeNameTemp.ChangeNameDialog.Change_temp_name_dialog;
+import com.wdysolutions.www.rf_scanner.ChangeNameTemp.ChangeNameDialog.Change_temp_name_dialog_main;
 import com.wdysolutions.www.rf_scanner.Constant;
 import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
-import com.wdysolutions.www.rf_scanner.MultiAction.TransferPen_main;
-import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_adapter;
 import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_model_branch;
 import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_model_building;
 import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_model_pen;
-import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_model_pig;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
 
@@ -53,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class Change_temp_name extends Fragment implements clickCallback {
+public class Change_temp_name_main extends Fragment implements clickCallback {
 
     TextView tx_range;
     RecyclerView recyclerView;
@@ -110,7 +105,7 @@ public class Change_temp_name extends Fragment implements clickCallback {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.change_temp_name, container, false);
+        View view = inflater.inflate(R.layout.change_temp_name_main, container, false);
         SessionPreferences sessionPreferences = new SessionPreferences(getActivity());
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
@@ -454,7 +449,7 @@ public class Change_temp_name extends Fragment implements clickCallback {
                         txt_empty.setText("No Temp name found");
                     }
 
-                    change_temp_name_adapter = new Change_temp_name_adapter(getActivity(), change_temp_name_models, Change_temp_name.this);
+                    change_temp_name_adapter = new Change_temp_name_adapter(getActivity(), change_temp_name_models, Change_temp_name_main.this);
                     recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
                     recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                     recyclerView.setAdapter(change_temp_name_adapter);
@@ -480,6 +475,7 @@ public class Change_temp_name extends Fragment implements clickCallback {
                 hashMap.put("company_code", company_code);
                 hashMap.put("pen_code", pen_code);
                 hashMap.put("branch_id", branch_id);
+                hashMap.put("search", "4");
                 return hashMap;
             }
         };
@@ -521,7 +517,7 @@ public class Change_temp_name extends Fragment implements clickCallback {
         bundle.putString("company_id", company_id);
         bundle.putString("user_id", user_id);
         bundle.putString("category_id", category_id);
-        DialogFragment fragment = new Change_temp_name_dialog();
+        DialogFragment fragment = new Change_temp_name_dialog_main();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog_");
         if (prev != null) {ft.remove(prev);}

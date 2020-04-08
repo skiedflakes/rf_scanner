@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.wdysolutions.www.rf_scanner.ChangeNameTemp.Change_temp_name">
+    tools:context="com.wdysolutions.www.rf_scanner.ChangeNameTemp.Change_temp_name_main">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

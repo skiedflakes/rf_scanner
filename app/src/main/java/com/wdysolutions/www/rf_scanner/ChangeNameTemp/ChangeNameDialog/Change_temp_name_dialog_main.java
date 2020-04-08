@@ -5,19 +5,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -26,32 +26,29 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
-import com.wdysolutions.www.rf_scanner.ChangeNameTemp.Change_temp_name;
-import com.wdysolutions.www.rf_scanner.ChangeNameTemp.Change_temp_name_adapter;
-import com.wdysolutions.www.rf_scanner.ChangeNameTemp.Change_temp_name_model;
 import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.Modal_fragment;
 import com.wdysolutions.www.rf_scanner.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class Change_temp_name_dialog extends DialogFragment implements Modal_fragment.dialog_interface {
+public class Change_temp_name_dialog_main extends DialogFragment {
 
-    Button btn_change_name, btn_cancel;
+    Button btn_change_name, btn_cancel, btn_close, btn_create;
     EditText edit_text;
     BroadcastReceiver epcReceiver;
     String selected_swine;
+    ProgressBar loading_, scan_load;
+    LinearLayout layout_button, layout_1, layout_2;
+    TextView txt_success_msg, txt_success_title;
+    ImageView img_check;
+    View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.change_temp_name_dialog, container, false);
+        view = inflater.inflate(R.layout.change_temp_name_dialog_main, container, false);
 
         selected_swine = getArguments().getString("id");
         final String swine_code = getArguments().getString("swine_code");
@@ -62,6 +59,10 @@ public class Change_temp_name_dialog extends DialogFragment implements Modal_fra
         btn_cancel = view.findViewById(R.id.btn_cancel);
         btn_change_name = view.findViewById(R.id.btn_change_name);
         edit_text = view.findViewById(R.id.edit_text);
+        loading_ = view.findViewById(R.id.loading_);
+        layout_button = view.findViewById(R.id.layout_button);
+        layout_1 = view.findViewById(R.id.layout_1);
+        layout_2 = view.findViewById(R.id.layout_2);
 
         edit_text.setText(swine_code);
 
@@ -72,8 +73,12 @@ public class Change_temp_name_dialog extends DialogFragment implements Modal_fra
 
                 if (new_swine_code.replace(" ", "").equals("")){
                     Toast.makeText(getActivity(), "Please enter swine name", Toast.LENGTH_SHORT).show();
-                } else {
-                    updateName(company_id, selected_swine, new_swine_code, swine_code, category_id, user_id);
+                } else if (new_swine_code.equals(swine_code)){
+                    Toast.makeText(getActivity(), "Ear tag name still the same", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    //updateName(company_id, selected_swine, new_swine_code, swine_code, category_id, user_id);
+                    showLayout_2(new_swine_code, swine_code);
                 }
             }
         });
@@ -85,11 +90,45 @@ public class Change_temp_name_dialog extends DialogFragment implements Modal_fra
             }
         });
 
-        init_epc();
         return view;
     }
 
+    private void showLayout_2(String old_, String new_){
+
+        scan_load = view.findViewById(R.id.scan_load);
+        txt_success_msg = view.findViewById(R.id.txt_success_msg);
+        txt_success_title = view.findViewById(R.id.txt_success_title);
+        btn_close = view.findViewById(R.id.btn_close);
+        btn_create = view.findViewById(R.id.btn_create);
+        img_check = view.findViewById(R.id.img_check);
+
+        layout_1.setVisibility(View.GONE);
+        layout_2.setVisibility(View.VISIBLE);
+        txt_success_msg.setText("Updated Ear Tag From "+new_+" to "+old_+".\n\nWould you like to write this to ear tag? \n\npress create to write.");
+
+        btn_create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btn_close.setText("Cancel");
+                btn_create.setVisibility(View.GONE);
+                txt_success_title.setText("Write ear tag");
+                txt_success_msg.setText("You scan now");
+                scan_load.setVisibility(View.VISIBLE);
+                init_epc();
+            }
+        });
+
+        btn_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+    }
+
     public void updateName(final String company_id, final String id, final String swine_code, final String old_swine_code, final String category_id, final String user_id){
+        layout_button.setVisibility(View.GONE);
+        loading_.setVisibility(View.VISIBLE);
         String URL = "http://192.168.1.181/test_swine/pig_updateSwineCode.php";
         //String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -97,12 +136,17 @@ public class Change_temp_name_dialog extends DialogFragment implements Modal_fra
             public void onResponse(String response) {
 
                 try {
+                    loading_.setVisibility(View.GONE);
+                    layout_button.setVisibility(View.VISIBLE);
+
                     if (response.equals("not available")){
                         Toast.makeText(getActivity(), "Ear Tag : "+swine_code+" is not available.", Toast.LENGTH_SHORT).show(); // red
                     } else if (response.equals("duplicate")){
                         Toast.makeText(getActivity(), "Duplicate name", Toast.LENGTH_SHORT).show(); // blue
                     } else if (response.equals("success update")){
-                        Toast.makeText(getActivity(), "Updated Ear Tag From "+old_swine_code+" to "+swine_code+".", Toast.LENGTH_SHORT).show(); // green
+
+                        showLayout_2(old_swine_code, swine_code);
+
                     } else {
                         Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
                     }
@@ -112,6 +156,8 @@ public class Change_temp_name_dialog extends DialogFragment implements Modal_fra
             @Override
             public void onErrorResponse(VolleyError error) {
                 try{
+                    loading_.setVisibility(View.GONE);
+                    layout_button.setVisibility(View.VISIBLE);
                     Toast.makeText(getActivity(), getString(R.string.volley_error), Toast.LENGTH_SHORT).show();
                 } catch (Exception e){}
             }
@@ -131,26 +177,9 @@ public class Change_temp_name_dialog extends DialogFragment implements Modal_fra
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
-    public void set_modal(String tittle, String text, String color){
-        Bundle bundle = new Bundle();
-        bundle.putString("tittle",tittle);
-        bundle.putString("text",text);
-        bundle.putString("color",color);
-        Modal_fragment fragment = new Modal_fragment();
-        fragment.setTargetFragment(this, 0);
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction ft = manager.beginTransaction();
-        fragment.setArguments(bundle);
-        fragment.show(ft, "UploadDialogFragment");
-        fragment.setCancelable(false);
-        isModalOpen = true;
-    }
-
     int max = 8;
     int min = 2;
     String target_tag ="";
-    boolean isVolleyLoad = false;
-    boolean isModalOpen = false;
     public void init_epc(){
         if(epcReceiver == null){
 
@@ -161,45 +190,38 @@ public class Change_temp_name_dialog extends DialogFragment implements Modal_fra
                     String tag = intent.getExtras().get("epc").toString();
                     String write =intent.getExtras().get("epc").toString();
 
-                    if (!isModalOpen){
-                        if (!isVolleyLoad) {
+                    if (!tag.equals("No transponders seen")) {
 
-                            if (!tag.equals("No transponders seen")) {
+                        // updateSingleItem(hexToASCII(tag));
 
-                                // updateSingleItem(hexToASCII(tag));
+                        if (tag.equals(String.valueOf(max))) {
+                            //set_modal("System message", "Write success", "green");
+                            scan_load.setVisibility(View.GONE);
+                            img_check.setVisibility(View.VISIBLE);
+                            txt_success_msg.setText("Successfully written");
+                            btn_close.setText("Close");
 
-                                if (tag.equals(String.valueOf(max))) {
+                        }else {
 
-                                    isVolleyLoad = true;
-                                    set_modal("System message", "Write success", "green");
+                            try {
+                                String eart_tag = hexToASCII(tag);
 
-                                }else {
+                                String[] separated = eart_tag.split("-");
+                                String newstr = separated[0].replaceAll("[^A-Za-z]+", "");
+                                if (newstr.equals("wdy")) {
+                                    target_tag = tag;
+                                    ((ActivityMain) getActivity()).write_tag(target_tag, set_new_tag(), max, min);
 
-                                    try {
-                                        String eart_tag = hexToASCII(tag);
+                                    // update_counter(target_tag, String.valueOf(selected_swine), String.valueOf(selected_count + 1));
 
-                                        String[] separated = eart_tag.split("-");
-                                        String newstr = separated[0].replaceAll("[^A-Za-z]+", "");
-                                        if (newstr.equals("wdy")) {
-                                            target_tag = tag;
-                                            ((ActivityMain) getActivity()).write_tag(target_tag, set_new_tag(), max, min);
+                                } else {
 
-                                            // update_counter(target_tag, String.valueOf(selected_swine), String.valueOf(selected_count + 1));
-
-                                        } else {
-
-                                            Toast.makeText(context, "invalid tag", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }catch (Exception e){}
+                                    Toast.makeText(context, "invalid tag", Toast.LENGTH_SHORT).show();
                                 }
-                            } else {
-                                Toast.makeText(context, "No eartag seen", Toast.LENGTH_SHORT).show();
-                            }
-                        }else{
-                            Toast.makeText(context, "Please wait... tag is writting", Toast.LENGTH_SHORT).show();
+                            }catch (Exception e){}
                         }
                     } else {
-                        Toast.makeText(context, "Please finish action", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "No eartag seen", Toast.LENGTH_SHORT).show();
                     }
                 }
             };
@@ -211,14 +233,6 @@ public class Change_temp_name_dialog extends DialogFragment implements Modal_fra
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         if (epcReceiver != null) { getActivity().unregisterReceiver(epcReceiver); }
-    }
-
-    @Override
-    public void senddata(int okay) {
-        Toast.makeText(getActivity(), String.valueOf(okay), Toast.LENGTH_SHORT).show();
-
-        isVolleyLoad = false;
-        isModalOpen = false;
     }
 
     private static String hexToASCII(String hexValue) {
