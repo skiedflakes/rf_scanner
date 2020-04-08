@@ -1,10 +1,16 @@
 package com.wdysolutions.www.rf_scanner.ChangeNameTemp.ChangeNameDialog;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
@@ -23,6 +29,8 @@ import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.ChangeNameTemp.Change_temp_name;
 import com.wdysolutions.www.rf_scanner.ChangeNameTemp.Change_temp_name_adapter;
 import com.wdysolutions.www.rf_scanner.ChangeNameTemp.Change_temp_name_model;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
+import com.wdysolutions.www.rf_scanner.Modal_fragment;
 import com.wdysolutions.www.rf_scanner.R;
 
 import org.json.JSONArray;
@@ -34,16 +42,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class Change_temp_name_dialog extends DialogFragment {
+public class Change_temp_name_dialog extends DialogFragment implements Modal_fragment.dialog_interface {
 
     Button btn_change_name, btn_cancel;
     EditText edit_text;
+    BroadcastReceiver epcReceiver;
+    String selected_swine;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.change_temp_name_dialog, container, false);
 
-        final String id = getArguments().getString("id");
+        selected_swine = getArguments().getString("id");
         final String swine_code = getArguments().getString("swine_code");
         final String user_id = getArguments().getString("user_id");
         final String company_id = getArguments().getString("company_id");
@@ -63,7 +73,7 @@ public class Change_temp_name_dialog extends DialogFragment {
                 if (new_swine_code.replace(" ", "").equals("")){
                     Toast.makeText(getActivity(), "Please enter swine name", Toast.LENGTH_SHORT).show();
                 } else {
-                    updateName(company_id, id, new_swine_code, swine_code, category_id, user_id);
+                    updateName(company_id, selected_swine, new_swine_code, swine_code, category_id, user_id);
                 }
             }
         });
@@ -75,6 +85,7 @@ public class Change_temp_name_dialog extends DialogFragment {
             }
         });
 
+        init_epc();
         return view;
     }
 
@@ -120,5 +131,135 @@ public class Change_temp_name_dialog extends DialogFragment {
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
+    public void set_modal(String tittle, String text, String color){
+        Bundle bundle = new Bundle();
+        bundle.putString("tittle",tittle);
+        bundle.putString("text",text);
+        bundle.putString("color",color);
+        Modal_fragment fragment = new Modal_fragment();
+        fragment.setTargetFragment(this, 0);
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+        fragment.setArguments(bundle);
+        fragment.show(ft, "UploadDialogFragment");
+        fragment.setCancelable(false);
+        isModalOpen = true;
+    }
 
+    int max = 8;
+    int min = 2;
+    String target_tag ="";
+    boolean isVolleyLoad = false;
+    boolean isModalOpen = false;
+    public void init_epc(){
+        if(epcReceiver == null){
+
+            epcReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+
+                    String tag = intent.getExtras().get("epc").toString();
+                    String write =intent.getExtras().get("epc").toString();
+
+                    if (!isModalOpen){
+                        if (!isVolleyLoad) {
+
+                            if (!tag.equals("No transponders seen")) {
+
+                                // updateSingleItem(hexToASCII(tag));
+
+                                if (tag.equals(String.valueOf(max))) {
+
+                                    isVolleyLoad = true;
+                                    set_modal("System message", "Write success", "green");
+
+                                }else {
+
+                                    try {
+                                        String eart_tag = hexToASCII(tag);
+
+                                        String[] separated = eart_tag.split("-");
+                                        String newstr = separated[0].replaceAll("[^A-Za-z]+", "");
+                                        if (newstr.equals("wdy")) {
+                                            target_tag = tag;
+                                            ((ActivityMain) getActivity()).write_tag(target_tag, set_new_tag(), max, min);
+
+                                            // update_counter(target_tag, String.valueOf(selected_swine), String.valueOf(selected_count + 1));
+
+                                        } else {
+
+                                            Toast.makeText(context, "invalid tag", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }catch (Exception e){}
+                                }
+                            } else {
+                                Toast.makeText(context, "No eartag seen", Toast.LENGTH_SHORT).show();
+                            }
+                        }else{
+                            Toast.makeText(context, "Please wait... tag is writting", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(context, "Please finish action", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            };
+        }
+        getActivity().registerReceiver(epcReceiver, new IntentFilter("epc_receive"));
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (epcReceiver != null) { getActivity().unregisterReceiver(epcReceiver); }
+    }
+
+    @Override
+    public void senddata(int okay) {
+        Toast.makeText(getActivity(), String.valueOf(okay), Toast.LENGTH_SHORT).show();
+
+        isVolleyLoad = false;
+        isModalOpen = false;
+    }
+
+    private static String hexToASCII(String hexValue) {
+        StringBuilder output = new StringBuilder("");
+        for (int i = 0; i < hexValue.length(); i += 2)
+        {
+            String str = hexValue.substring(i, i + 2);
+            output.append((char) Integer.parseInt(str, 16));
+        }
+        return output.toString().replaceAll(" ","");
+    }
+
+    private static String asciiToHex(String asciiValue) {
+        char[] chars = asciiValue.toCharArray();
+        StringBuffer hex = new StringBuffer();
+        for (int i = 0; i < chars.length; i++)
+        {
+            hex.append(Integer.toHexString((int) chars[i]));
+        }
+        return hex.toString();
+    }
+
+    String new_tag;
+    public String set_new_tag(){
+        new_tag = "wdy-"+String.valueOf(selected_swine);
+        int max2 = 12-getCount(new_tag);
+
+        for(int i=0;i<max2;i++){
+            new_tag = new_tag+" ";
+        }
+        new_tag = asciiToHex(new_tag);
+        return new_tag;
+    }
+
+    public static int getCount(String number) {
+        int flag = 0;
+        for (int i = 0; i < number.length(); i++) {
+            if (Character.isDigit(number.charAt(i))) {
+                flag++;
+            }
+        }
+        return flag;
+    }
 }

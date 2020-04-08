@@ -162,7 +162,7 @@ public class Change_temp_name extends Fragment implements clickCallback {
         loading_whole.setVisibility(View.VISIBLE);
         layout_whole.setVisibility(View.GONE);
         String URL = "http://192.168.1.181/test_swine/pen_list.php";
-        //String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
+        //String URL = getString(R.string.URL_online)+"change_temp_name/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -246,7 +246,7 @@ public class Change_temp_name extends Fragment implements clickCallback {
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
         buildingLoading(true);
         String URL = "http://192.168.1.181/test_swine/pen_list.php";
-        //String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
+        //String URL = getString(R.string.URL_online)+"change_temp_name/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -337,7 +337,7 @@ public class Change_temp_name extends Fragment implements clickCallback {
         penLoading(true);
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
         String URL = "http://192.168.1.181/test_swine/pen_list.php";
-        //String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
+        //String URL = getString(R.string.URL_online)+"change_temp_name/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -424,7 +424,7 @@ public class Change_temp_name extends Fragment implements clickCallback {
         layout_pig.setVisibility(View.GONE);
         txt_empty.setVisibility(View.GONE);
         String URL = "http://192.168.1.181/test_swine/pen_list.php";
-        //String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
+        //String URL = getString(R.string.URL_online)+"change_temp_name/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

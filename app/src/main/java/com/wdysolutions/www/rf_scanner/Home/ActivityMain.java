@@ -83,7 +83,7 @@ public class ActivityMain extends AppCompatActivity {
             }
         });
 
-        //initBluetooth();
+        initBluetooth();
     }
 
     private void setDefaultFragment(Bundle savedInstanceState){
@@ -483,56 +483,56 @@ public class ActivityMain extends AppCompatActivity {
     }
 
 
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        // Remove observers for changes
-//        ReaderManager.sharedInstance().getReaderList().readerAddedEvent().removeObserver(mAddedObserver);
-//        ReaderManager.sharedInstance().getReaderList().readerUpdatedEvent().removeObserver(mUpdatedObserver);
-//        ReaderManager.sharedInstance().getReaderList().readerRemovedEvent().removeObserver(mRemovedObserver);
-//    }
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        mModel.setEnabled(true);
-//
-//        // Register to receive notifications from the AsciiCommander
-//        LocalBroadcastManager.getInstance(this).registerReceiver(mCommanderMessageReceiver, new IntentFilter(AsciiCommander.STATE_CHANGED_NOTIFICATION));
-//
-//        // Remember if the pause/resume was caused by ReaderManager - this will be cleared when ReaderManager.onResume() is called
-//        boolean readerManagerDidCauseOnPause = ReaderManager.sharedInstance().didCauseOnPause();
-//
-//        // The ReaderManager needs to know about Activity lifecycle changes
-//        ReaderManager.sharedInstance().onResume();
-//
-//        // The Activity may start with a reader already connected (perhaps by another App)
-//        // Update the ReaderList which will add any unknown reader, firing events appropriately
-//        ReaderManager.sharedInstance().updateList();
-//
-//        // Locate a Reader to use when necessary
-//        AutoSelectReader(!readerManagerDidCauseOnPause);
-//
-//        mIsSelectingReader = false;
-//
-//        displayReaderState();
-//    }
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        mModel.setEnabled(false);
-//
-//        // Unregister to receive notifications from the AsciiCommander
-//        LocalBroadcastManager.getInstance(this).unregisterReceiver(mCommanderMessageReceiver);
-//
-//        // Disconnect from the reader to allow other Apps to use it
-//        // unless pausing when USB device attached or using the DeviceListActivity to select a Reader
-//        if( !mIsSelectingReader && !ReaderManager.sharedInstance().didCauseOnPause() && mReader != null )
-//        {
-//            mReader.disconnect();
-//        }
-//
-//        ReaderManager.sharedInstance().onPause();
-//    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Remove observers for changes
+        ReaderManager.sharedInstance().getReaderList().readerAddedEvent().removeObserver(mAddedObserver);
+        ReaderManager.sharedInstance().getReaderList().readerUpdatedEvent().removeObserver(mUpdatedObserver);
+        ReaderManager.sharedInstance().getReaderList().readerRemovedEvent().removeObserver(mRemovedObserver);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        mModel.setEnabled(true);
+
+        // Register to receive notifications from the AsciiCommander
+        LocalBroadcastManager.getInstance(this).registerReceiver(mCommanderMessageReceiver, new IntentFilter(AsciiCommander.STATE_CHANGED_NOTIFICATION));
+
+        // Remember if the pause/resume was caused by ReaderManager - this will be cleared when ReaderManager.onResume() is called
+        boolean readerManagerDidCauseOnPause = ReaderManager.sharedInstance().didCauseOnPause();
+
+        // The ReaderManager needs to know about Activity lifecycle changes
+        ReaderManager.sharedInstance().onResume();
+
+        // The Activity may start with a reader already connected (perhaps by another App)
+        // Update the ReaderList which will add any unknown reader, firing events appropriately
+        ReaderManager.sharedInstance().updateList();
+
+        // Locate a Reader to use when necessary
+        AutoSelectReader(!readerManagerDidCauseOnPause);
+
+        mIsSelectingReader = false;
+
+        displayReaderState();
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        mModel.setEnabled(false);
+
+        // Unregister to receive notifications from the AsciiCommander
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mCommanderMessageReceiver);
+
+        // Disconnect from the reader to allow other Apps to use it
+        // unless pausing when USB device attached or using the DeviceListActivity to select a Reader
+        if( !mIsSelectingReader && !ReaderManager.sharedInstance().didCauseOnPause() && mReader != null )
+        {
+            mReader.disconnect();
+        }
+
+        ReaderManager.sharedInstance().onPause();
+    }
 
     public void read_tag(){
 
