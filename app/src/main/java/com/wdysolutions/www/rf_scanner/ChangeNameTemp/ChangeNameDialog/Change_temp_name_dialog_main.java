@@ -1,5 +1,6 @@
 package com.wdysolutions.www.rf_scanner.ChangeNameTemp.ChangeNameDialog;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,14 +10,18 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,9 +33,12 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.Modal_fragment;
+import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_model_branch;
 import com.wdysolutions.www.rf_scanner.R;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -40,21 +48,26 @@ public class Change_temp_name_dialog_main extends DialogFragment {
     EditText edit_text;
     BroadcastReceiver epcReceiver;
     String selected_swine;
-    ProgressBar loading_, scan_load;
-    LinearLayout layout_button, layout_1, layout_2;
+    ProgressBar scan_load;
+    LinearLayout layout_button, layout_1, layout_2, loading_, layout_edit, layout_range;
     TextView txt_success_msg, txt_success_title;
     ImageView img_check;
     View view;
+    Spinner spinner_range;
+    Change_name_dialog_callback callback;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.change_temp_name_dialog_main, container, false);
+
+        callback = (Change_name_dialog_callback) getTargetFragment();
 
         selected_swine = getArguments().getString("id");
         final String swine_code = getArguments().getString("swine_code");
         final String user_id = getArguments().getString("user_id");
         final String company_id = getArguments().getString("company_id");
         final String category_id = getArguments().getString("category_id");
+        final String company_code = getArguments().getString("company_code");
 
         btn_cancel = view.findViewById(R.id.btn_cancel);
         btn_change_name = view.findViewById(R.id.btn_change_name);
@@ -63,6 +76,7 @@ public class Change_temp_name_dialog_main extends DialogFragment {
         layout_button = view.findViewById(R.id.layout_button);
         layout_1 = view.findViewById(R.id.layout_1);
         layout_2 = view.findViewById(R.id.layout_2);
+        layout_edit = view.findViewById(R.id.layout_edit);
 
         edit_text.setText(swine_code);
 
@@ -74,11 +88,10 @@ public class Change_temp_name_dialog_main extends DialogFragment {
                 if (new_swine_code.replace(" ", "").equals("")){
                     Toast.makeText(getActivity(), "Please enter swine name", Toast.LENGTH_SHORT).show();
                 } else if (new_swine_code.equals(swine_code)){
-                    Toast.makeText(getActivity(), "Ear tag name still the same", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Swine name still the same", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    //updateName(company_id, selected_swine, new_swine_code, swine_code, category_id, user_id);
-                    showLayout_2(new_swine_code, swine_code);
+                    dialogBox(company_id, new_swine_code, swine_code, category_id, user_id, company_code);
                 }
             }
         });
@@ -93,6 +106,27 @@ public class Change_temp_name_dialog_main extends DialogFragment {
         return view;
     }
 
+    public void dialogBox(final String company_id, final String new_swine_code, final String swine_code, final String category_id, final String user_id, final String company_code){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setMessage(Html.fromHtml("Are you sure you wan't to rename <font color='#de4e35'>"+swine_code+"</font> to <font color='#de4e35'>"+new_swine_code+"</font>?"));
+        alertDialog.setPositiveButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialog.setNegativeButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+
+                        updateName(company_id, selected_swine, new_swine_code, swine_code, category_id, user_id, company_code);
+                        //showLayout_2(new_swine_code, swine_code);
+                    }
+                });
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+    }
+
     private void showLayout_2(String old_, String new_){
 
         scan_load = view.findViewById(R.id.scan_load);
@@ -101,10 +135,12 @@ public class Change_temp_name_dialog_main extends DialogFragment {
         btn_close = view.findViewById(R.id.btn_close);
         btn_create = view.findViewById(R.id.btn_create);
         img_check = view.findViewById(R.id.img_check);
+        layout_range = view.findViewById(R.id.layout_range);
+        spinner_range = view.findViewById(R.id.spinner_range);
 
         layout_1.setVisibility(View.GONE);
         layout_2.setVisibility(View.VISIBLE);
-        txt_success_msg.setText("Updated Ear Tag From "+new_+" to "+old_+".\n\nWould you like to write this to ear tag? \n\npress create to write.");
+        txt_success_msg.setText(Html.fromHtml("Updated Ear Tag From <font color='#de4e35'>"+old_+"</font> to <font color='#de4e35'>"+new_+"</font>.<br><br>Would you like to write this to ear tag? <br><br>press create to write."));
 
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +151,7 @@ public class Change_temp_name_dialog_main extends DialogFragment {
                 txt_success_msg.setText("You scan now");
                 scan_load.setVisibility(View.VISIBLE);
                 init_epc();
+                initSpinner();
             }
         });
 
@@ -122,22 +159,52 @@ public class Change_temp_name_dialog_main extends DialogFragment {
             @Override
             public void onClick(View view) {
                 dismiss();
+                callback.dialogCallback();
             }
         });
     }
 
-    public void updateName(final String company_id, final String id, final String swine_code, final String old_swine_code, final String category_id, final String user_id){
-        layout_button.setVisibility(View.GONE);
+    private void initSpinner(){
+        final List<String> lables = new ArrayList<>();
+        lables.add("Short");
+        lables.add("Medium");
+        lables.add("Max");
+
+        layout_range.setVisibility(View.VISIBLE);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.custom_spinner, lables);
+        spinnerAdapter.setDropDownViewResource(R.layout.custom_spinner);
+        spinner_range.setAdapter(spinnerAdapter);
+        spinner_range.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                String click = lables.get(position);
+                if (click.equals("Short")){
+                    ((ActivityMain)getActivity()).setPower("short");
+                    Toast.makeText(getActivity(), "Scan range set to Short", Toast.LENGTH_SHORT).show();
+                } else if (click.equals("Medium")){
+                    ((ActivityMain)getActivity()).setPower("med");
+                    Toast.makeText(getActivity(), "Scan range set to Medium", Toast.LENGTH_SHORT).show();
+                } else {
+                    ((ActivityMain)getActivity()).setPower("max");
+                    Toast.makeText(getActivity(), "Scan range set to Max", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+    }
+
+    public void updateName(final String company_id, final String id, final String swine_code, final String old_swine_code, final String category_id, final String user_id, final String company_code){
+        layout_edit.setVisibility(View.GONE);
         loading_.setVisibility(View.VISIBLE);
-        String URL = "http://192.168.1.181/test_swine/pig_updateSwineCode.php";
-        //String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
+        String URL = getString(R.string.URL_online)+"change_temp_name/pig_updateSwineCode.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try {
                     loading_.setVisibility(View.GONE);
-                    layout_button.setVisibility(View.VISIBLE);
+                    layout_edit.setVisibility(View.VISIBLE);
 
                     if (response.equals("not available")){
                         Toast.makeText(getActivity(), "Ear Tag : "+swine_code+" is not available.", Toast.LENGTH_SHORT).show(); // red
@@ -157,7 +224,7 @@ public class Change_temp_name_dialog_main extends DialogFragment {
             public void onErrorResponse(VolleyError error) {
                 try{
                     loading_.setVisibility(View.GONE);
-                    layout_button.setVisibility(View.VISIBLE);
+                    layout_edit.setVisibility(View.VISIBLE);
                     Toast.makeText(getActivity(), getString(R.string.volley_error), Toast.LENGTH_SHORT).show();
                 } catch (Exception e){}
             }
@@ -170,6 +237,7 @@ public class Change_temp_name_dialog_main extends DialogFragment {
                 hashMap.put("swine_code", swine_code);
                 hashMap.put("category_id", category_id);
                 hashMap.put("user_id", user_id);
+                hashMap.put("company_code", company_code);
                 return hashMap;
             }
         };

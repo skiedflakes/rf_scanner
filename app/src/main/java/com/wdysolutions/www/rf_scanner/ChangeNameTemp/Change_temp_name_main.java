@@ -29,6 +29,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
+import com.wdysolutions.www.rf_scanner.ChangeNameTemp.ChangeNameDialog.Change_name_dialog_callback;
 import com.wdysolutions.www.rf_scanner.ChangeNameTemp.ChangeNameDialog.Change_temp_name_dialog_main;
 import com.wdysolutions.www.rf_scanner.Constant;
 import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
@@ -48,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class Change_temp_name_main extends Fragment implements clickCallback {
+public class Change_temp_name_main extends Fragment implements clickCallback, Change_name_dialog_callback {
 
     TextView tx_range;
     RecyclerView recyclerView;
@@ -70,37 +71,6 @@ public class Change_temp_name_main extends Fragment implements clickCallback {
                 getFragmentManager().popBackStack();
             }
         });
-
-        toolbar.inflateMenu(R.menu.menu_scan_eartag);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-
-                if(menuItem.getItemId() == R.id.max) {
-                    Constant.power_level = "Max";
-                    tx_range.setText(Constant.power_level);
-                    ((ActivityMain)getActivity()).setPower("max");
-                    Toast.makeText(getActivity(), "Scan range set to Max", Toast.LENGTH_SHORT).show();
-                }
-                else if(menuItem.getItemId() == R.id.min) {
-                    Constant.power_level = "Medium";
-                    tx_range.setText(Constant.power_level);
-                    ((ActivityMain)getActivity()).setPower("med");
-                    Toast.makeText(getActivity(), "Scan range set to Med", Toast.LENGTH_SHORT).show();
-                }
-                else if(menuItem.getItemId() == R.id.low) {
-                    Constant.power_level = "Short";
-                    tx_range.setText(Constant.power_level);
-                    ((ActivityMain)getActivity()).setPower("short");
-                    Toast.makeText(getActivity(), "Scan range set to Short", Toast.LENGTH_SHORT).show();
-                }
-                return false;
-            }
-        });
-
-        // set default power level
-        Constant.power_level = "Max";
-        tx_range.setText(Constant.power_level);
     }
 
     @Override
@@ -112,7 +82,7 @@ public class Change_temp_name_main extends Fragment implements clickCallback {
         category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
 
-        company_id = "135";
+        //company_id = "135";
 
         layout_pig = view.findViewById(R.id.layout_pig);
         loading_pigs = view.findViewById(R.id.loading_pigs);
@@ -156,8 +126,8 @@ public class Change_temp_name_main extends Fragment implements clickCallback {
         selectedBuilding = "";
         loading_whole.setVisibility(View.VISIBLE);
         layout_whole.setVisibility(View.GONE);
-        String URL = "http://192.168.1.181/test_swine/pen_list.php";
-        //String URL = getString(R.string.URL_online)+"change_temp_name/pen_list.php";
+        //String URL = "http://192.168.1.181/test_swine/pen_list.php";
+        String URL = getString(R.string.URL_online)+"change_temp_name/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -240,8 +210,8 @@ public class Change_temp_name_main extends Fragment implements clickCallback {
         bg_building.setBackgroundResource(R.drawable.bg_border_red);
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
         buildingLoading(true);
-        String URL = "http://192.168.1.181/test_swine/pen_list.php";
-        //String URL = getString(R.string.URL_online)+"change_temp_name/pen_list.php";
+        //String URL = "http://192.168.1.181/test_swine/pen_list.php";
+        String URL = getString(R.string.URL_online)+"change_temp_name/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -331,8 +301,8 @@ public class Change_temp_name_main extends Fragment implements clickCallback {
         selectedPen = "";
         penLoading(true);
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
-        String URL = "http://192.168.1.181/test_swine/pen_list.php";
-        //String URL = getString(R.string.URL_online)+"change_temp_name/pen_list.php";
+        //String URL = "http://192.168.1.181/test_swine/pen_list.php";
+        String URL = getString(R.string.URL_online)+"change_temp_name/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -418,8 +388,8 @@ public class Change_temp_name_main extends Fragment implements clickCallback {
         loading_pigs.setVisibility(View.VISIBLE);
         layout_pig.setVisibility(View.GONE);
         txt_empty.setVisibility(View.GONE);
-        String URL = "http://192.168.1.181/test_swine/pen_list.php";
-        //String URL = getString(R.string.URL_online)+"change_temp_name/pen_list.php";
+        //String URL = "http://192.168.1.181/test_swine/pen_list.php";
+        String URL = getString(R.string.URL_online)+"change_temp_name/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -517,12 +487,25 @@ public class Change_temp_name_main extends Fragment implements clickCallback {
         bundle.putString("company_id", company_id);
         bundle.putString("user_id", user_id);
         bundle.putString("category_id", category_id);
+        bundle.putString("company_code", company_code);
         DialogFragment fragment = new Change_temp_name_dialog_main();
+        fragment.setTargetFragment(this, 0);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog_");
         if (prev != null) {ft.remove(prev);}
         fragment.setArguments(bundle);
         fragment.show(ft, "dialog_");
         fragment.setCancelable(false);
+    }
+
+    @Override
+    public void dialogCallback() {
+        get_pigs(company_id,company_code,"get_swine",selectedBranch,selectedPen);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        ((ActivityMain)getActivity()).setPower("max");
     }
 }

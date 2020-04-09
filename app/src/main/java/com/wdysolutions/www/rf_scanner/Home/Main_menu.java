@@ -250,7 +250,7 @@ public class Main_menu extends Fragment {
         arrayMenu.add(new Main_menu_model(5, "Swine Sales", "ic_peso", R.drawable.bg_menu_icon_3, "", 0));
         arrayMenu.add(new Main_menu_model(6, "Vaccination / Medication", "ic_syringe", R.drawable.bg_menu_icon_6, "", 0));
         arrayMenu.add(new Main_menu_model(7, "Feeding", "ic_restaurant", R.drawable.bg_menu_icon_7, "", 0));
-        arrayMenu.add(new Main_menu_model(8, "Change Temp Name", "ic_restaurant", R.drawable.bg_menu_icon_7, "", 0));
+        arrayMenu.add(new Main_menu_model(8, "Change Temp Name", "ic_change", R.drawable.bg_menu_icon_8, "", 0));
         adapter = new adapterMenu(getContext(), arrayMenu);
     }
 
