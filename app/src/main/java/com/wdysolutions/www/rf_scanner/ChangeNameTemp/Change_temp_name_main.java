@@ -82,8 +82,6 @@ public class Change_temp_name_main extends Fragment implements clickCallback, Ch
         category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
 
-        //company_id = "135";
-
         layout_pig = view.findViewById(R.id.layout_pig);
         loading_pigs = view.findViewById(R.id.loading_pigs);
         tx_range = view.findViewById(R.id.tx_range);

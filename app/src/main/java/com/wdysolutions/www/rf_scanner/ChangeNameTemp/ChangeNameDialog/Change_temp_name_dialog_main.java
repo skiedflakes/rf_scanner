@@ -266,6 +266,7 @@ public class Change_temp_name_dialog_main extends DialogFragment {
                             //set_modal("System message", "Write success", "green");
                             scan_load.setVisibility(View.GONE);
                             img_check.setVisibility(View.VISIBLE);
+                            layout_range.setVisibility(View.GONE);
                             txt_success_msg.setText("Successfully written");
                             btn_close.setText("Close");
 

@@ -655,13 +655,15 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
                         getActivity().registerReceiver(epcReceiver, new IntentFilter("epc_receive"));
 
                     }else{
-                        adapter_pig.notifyDataSetChanged();
+                        rec_pigs.setVisibility(View.GONE);
                         txt_error.setVisibility(View.VISIBLE);
                         txt_error.setText("Pen is empty");
                         txt_error.setTextColor(getResources().getColor(R.color.color_red));
                     }
 
-                } catch (Exception e){}
+                }
+                catch (JSONException e){}
+                catch (Exception e){}
             }
         }, new Response.ErrorListener() {
             @Override
