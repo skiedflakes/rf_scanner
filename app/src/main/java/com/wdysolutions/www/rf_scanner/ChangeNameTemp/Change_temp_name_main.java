@@ -443,7 +443,7 @@ public class Change_temp_name_main extends Fragment implements clickCallback, Ch
                 hashMap.put("company_code", company_code);
                 hashMap.put("pen_code", pen_code);
                 hashMap.put("branch_id", branch_id);
-                hashMap.put("search", "4");
+                hashMap.put("search", "temp");
                 return hashMap;
             }
         };

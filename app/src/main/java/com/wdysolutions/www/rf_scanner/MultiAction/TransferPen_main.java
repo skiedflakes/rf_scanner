@@ -237,10 +237,12 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                                             Toast.makeText(context, "Ear tag saved.", Toast.LENGTH_SHORT).show();
                                         } else if (saveSQLiteSwine(Integer.valueOf(separated[1])).equals("already saved")){
                                             dialogBox_msg("Ear tag already saved.");
-                                        } else if (saveSQLiteSwine(Integer.valueOf(separated[1])).equals("wrong pen")){
-                                            yes_no_alert_dialog(separated[1],"Scanned ear tag is in WRONG PEN or invalid. Do you wish to proceed?");
                                         } else {
-                                            Toast.makeText(getContext(), "Pen is empty", Toast.LENGTH_SHORT).show();
+                                            if (transfer_model_pig_views.size() > 0){
+                                                yes_no_alert_dialog(separated[1],"Scanned ear tag is in WRONG PEN or invalid. Do you wish to proceed?");
+                                            } else {
+                                                Toast.makeText(context, "Pen is Empty", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
                                     }else{
                                         dialogBox_msg("Scanned ear tag is invalid.");
@@ -318,15 +320,17 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                     Toast.makeText(getActivity(), "Scan status must be check", Toast.LENGTH_SHORT).show();
                 } else {
                     if(str_characters.equals("wdy")){
-
+                        Toast.makeText(getActivity(), separated[1], Toast.LENGTH_SHORT).show();
                         if (saveSQLiteSwine(Integer.valueOf(separated[1])).equals("saved")){
                             dialogBox_msg("Ear tag saved.");
                         } else if (saveSQLiteSwine(Integer.valueOf(separated[1])).equals("already saved")){
                             Toast.makeText(getContext(), "Some scanned ear tag is already saved", Toast.LENGTH_SHORT).show();
-                        } else if (saveSQLiteSwine(Integer.valueOf(separated[1])).equals("wrong pen")){
-                            yes_no_alert_dialog(separated[1],"Scanned ear tag is in WRONG PEN or invalid. Do you wish to proceed?");
                         } else {
-                            Toast.makeText(getContext(), "Pen is empty", Toast.LENGTH_SHORT).show();
+                            if (transfer_model_pig_views.size() > 0){
+                                yes_no_alert_dialog(separated[1],"Scanned ear tag is in WRONG PEN or invalid. Do you wish to proceed?");
+                            } else {
+                                Toast.makeText(getActivity(), "Pen is Empty", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }else{
                         dialogBox_msg("Scanned ear tag is invalid.");
@@ -1342,8 +1346,6 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                         sqlite.add_pigs_sqlite(transfer_pen_model_list_pig_new);
 
                         return "saved";
-                    } else {
-                        return "wrong pen";
                     }
 
                 } else {
