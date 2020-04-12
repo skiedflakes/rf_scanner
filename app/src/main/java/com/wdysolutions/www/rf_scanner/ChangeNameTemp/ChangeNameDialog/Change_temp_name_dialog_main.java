@@ -241,7 +241,7 @@ public class Change_temp_name_dialog_main extends DialogFragment {
                 return hashMap;
             }
         };
-        //AppController.getInstance().setVolleyDuration(stringRequest);
+        AppController.getInstance().setVolleyDuration(stringRequest);
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
