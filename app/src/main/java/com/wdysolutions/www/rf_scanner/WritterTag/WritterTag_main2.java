@@ -827,7 +827,7 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
 
                                             String[] separated = eart_tag.split("-");
                                             String newstr = separated[0].replaceAll("[^A-Za-z]+", "");
-                                            if (newstr.equals("wdy")) {
+                                            if (newstr.substring(0,3).equals("wdy")) {
                                                 target_tag = tag;
                                                 ((ActivityMain) getActivity()).write_tag(target_tag, set_new_tag(), max, min);
 
