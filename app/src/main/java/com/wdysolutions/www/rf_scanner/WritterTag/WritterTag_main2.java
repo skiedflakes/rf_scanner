@@ -263,7 +263,7 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
         layout_error.setVisibility(View.GONE);
         layout_.setVisibility(View.GONE);
         loading_.setVisibility(View.VISIBLE);
-        String URL = getString(R.string.URL_online)+"writter_tag/writter_pen_details.php";
+        String URL = getString(R.string.URL_online)+"writter_tag/writter_pen_details2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -345,7 +345,7 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
         bg_building.setBackgroundResource(R.drawable.bg_border_red);
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
         buildingLoading(true);
-        String URL = getString(R.string.URL_online)+"writter_tag/writter_pen_details.php";
+        String URL = getString(R.string.URL_online)+"writter_tag/writter_pen_details2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -437,7 +437,7 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
         spinner_pen.setAdapter(null);
         count_scanned=0;
         count_total_pigs=0;
-        String URL = getString(R.string.URL_online)+"writter_tag/writter_pen_details.php";
+        String URL = getString(R.string.URL_online)+"writter_tag/writter_pen_details2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -535,15 +535,16 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
         count_scanned=0;
         count_total_pigs=0;
         txt_error.setVisibility(View.GONE);
-        String URL = getString(R.string.URL_online)+"writter_tag/writter_pen_details.php";
+        txt_error.setTextColor(getResources().getColor(R.color.color_text_light_black));
+        String URL = getString(R.string.URL_online)+"writter_tag/writter_pen_details2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try{
-                    listLoading(false);
                     getPigsStatus = "1";
                     scan_status();
+                    listLoading(false);
 
                     if(!response.equals("{\"response_swine\":[]}")){
                         JSONObject Object = new JSONObject(response);
@@ -555,7 +556,7 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
                             writter_pen_model_list_pig.add(new WritterTag_model_pig(r.getInt("swine_id"),
                                     r.getString("swine_code"),0, r.getInt("tag_counter")));
                         }
-
+                        
                         //counter set text of total count of pigs inside the pen
                         count_total_pigs = details.length();
                         String total  = String.valueOf(count_scanned)+"/"+String.valueOf(count_total_pigs);
@@ -573,11 +574,14 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
                         init_epc();
 
                     } else {
-                        adapter_pig.notifyDataSetChanged();
-                        Toast.makeText(getActivity(), "Pen is empty", Toast.LENGTH_SHORT).show();
+                        rec_pigs.setVisibility(View.GONE);
+                        txt_error.setVisibility(View.VISIBLE);
+                        txt_error.setText("Pen is empty");
+                        txt_error.setTextColor(getResources().getColor(R.color.color_red));
                     }
-
-                } catch (Exception e){}
+                }
+                catch (JSONException e){}
+                catch (Exception e){}
 
             }
         }, new Response.ErrorListener() {
@@ -588,7 +592,7 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
                     scan_status();
                     listLoading(false);
                     txt_error.setVisibility(View.VISIBLE);
-                    Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
+                    txt_error.setText(getResources().getString(R.string.volley_error));
                 } catch (Exception e){}
             }
         }){
@@ -823,7 +827,7 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
 
                                             String[] separated = eart_tag.split("-");
                                             String newstr = separated[0].replaceAll("[^A-Za-z]+", "");
-                                            if (newstr.equals("wdy")) {
+                                            if (newstr.substring(0,3).equals("wdy")) {
                                                 target_tag = tag;
                                                 ((ActivityMain) getActivity()).write_tag(target_tag, set_new_tag(), max, min);
 

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_main;
+import com.wdysolutions.www.rf_scanner.ChangeNameTemp.Change_temp_name_main;
 import com.wdysolutions.www.rf_scanner.Feeding.Feeding_module_main;
 import com.wdysolutions.www.rf_scanner.LocateEartag.LocateEartag_main;
 import com.wdysolutions.www.rf_scanner.Login_main;
@@ -182,6 +182,10 @@ public class Main_menu extends Fragment {
                             selectedFragment = new Feeding_module_main();
                             isFeeding=true;
                             break;
+                        case 8:
+                            selectedFragment = new Change_temp_name_main();
+                            isFeeding=false;
+                            break;
                     }
 
                     if (getDisable_status != 1){
@@ -246,6 +250,7 @@ public class Main_menu extends Fragment {
         arrayMenu.add(new Main_menu_model(5, "Swine Sales", "ic_peso", R.drawable.bg_menu_icon_3, "", 0));
         arrayMenu.add(new Main_menu_model(6, "Vaccination / Medication", "ic_syringe", R.drawable.bg_menu_icon_6, "", 0));
         arrayMenu.add(new Main_menu_model(7, "Feeding", "ic_restaurant", R.drawable.bg_menu_icon_7, "", 0));
+        arrayMenu.add(new Main_menu_model(8, "Change Temp Name", "ic_change", R.drawable.bg_menu_icon_8, "", 0));
         adapter = new adapterMenu(getContext(), arrayMenu);
     }
 
