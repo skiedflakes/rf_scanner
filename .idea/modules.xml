@@ -3,9 +3,13 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DeviceList/DeviceList.iml" filepath="$PROJECT_DIR$/DeviceList/DeviceList.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GitHub-rf_scanner.iml" filepath="$PROJECT_DIR$/GitHub-rf_scanner.iml" group="rf_scanner" />
       <module fileurl="file://$PROJECT_DIR$/Rfid.AsciiProtocol-Library/Rfid.AsciiProtocol-Library.iml" filepath="$PROJECT_DIR$/Rfid.AsciiProtocol-Library/Rfid.AsciiProtocol-Library.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/rf_scanner.iml" filepath="$PROJECT_DIR$/rf_scanner.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DeviceList/rf_scanner-DeviceList.iml" filepath="$PROJECT_DIR$/DeviceList/rf_scanner-DeviceList.iml" group="rf_scanner/DeviceList" />
+      <module fileurl="file://$PROJECT_DIR$/Rfid.AsciiProtocol-Library/rf_scanner-Rfid.AsciiProtocol-Library.iml" filepath="$PROJECT_DIR$/Rfid.AsciiProtocol-Library/rf_scanner-Rfid.AsciiProtocol-Library.iml" group="rf_scanner/Rfid.AsciiProtocol-Library" />
+      <module fileurl="file://$PROJECT_DIR$/app/rf_scanner-app.iml" filepath="$PROJECT_DIR$/app/rf_scanner-app.iml" group="rf_scanner/app" />
     </modules>
   </component>
 </project>

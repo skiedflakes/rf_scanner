@@ -62,7 +62,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
     String dr_header_id="";
 
     //session
-    String company_code,company_id,user_id;
+    String company_code,company_id,user_id,category_id;
 
     //dr number
     TextView tv_dr_num, tv_total;
@@ -146,7 +146,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
-
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         //      ~ initialize ids~
         //dr_num
         loadingScan = new ProgressDialog(getActivity(), R.style.MyAlertDialogStyle);
@@ -840,8 +840,6 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
-
                         try{
                             String status="";
                             JSONObject Object = new JSONObject(response);
@@ -969,7 +967,6 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         }
     }
 
-
     public void update_dr(){
         discount = et_discount.getText().toString();
         remarks = et_remarks.getText().toString();
@@ -1060,10 +1057,8 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
-
-
     public void finish_dr(){
-        showLoading(loadingScan, "Loading...").show();
+        showLoading(loadingScan, "loading...").show();
         btn_finish.setEnabled(false);
         String URL = getString(R.string.URL_online)+"swine_sales/finishDelivery.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -1108,13 +1103,13 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 hashMap.put("pay_type", paymentSelected);
                 hashMap.put("dr_date", dateSelected);
                 hashMap.put("user_id", user_id);
+                hashMap.put("category_id", category_id);
                 return hashMap;
             }
         };
         AppController.getInstance().setVolleyDuration(stringRequest);
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
-
 
     @Override
     public void passData(int position, String id) {
