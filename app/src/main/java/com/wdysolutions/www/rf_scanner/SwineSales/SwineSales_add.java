@@ -1133,7 +1133,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                         Toast.makeText(getActivity(), "Successfully finished Delivery. ", Toast.LENGTH_SHORT).show();
 
                     }else if(response.equals("2")){
-                        Toast.makeText(getActivity(), "No delivery details fond", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "No delivery details found", Toast.LENGTH_SHORT).show();
                     } else {
 
                         Toast.makeText(getActivity(), "Query failed", Toast.LENGTH_SHORT).show();
