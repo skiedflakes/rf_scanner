@@ -36,9 +36,8 @@
                     android:weightSum="3">
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:background="@drawable/bg_border"
                         android:padding="10dp"
                         android:text="Delivery No.:*" />
