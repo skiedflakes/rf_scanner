@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,7 +72,7 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
     //initialize bundle
     String branch_id="", dr_header_id="",ave_price="",ave_weight="",dr_date="",dr_num="",yes_no="";
     BroadcastReceiver epcReceiver;
-    String company_code, company_id,user_id;
+    String company_code, company_id,user_id, category_id;
     SessionPreferences sessionPreferences;
     ArrayList<SwineSales_scan_model> swine_sales_list_pig = new ArrayList<>();
     ArrayList<SwineSales_scan_model> swine_sales_list_pig_temp = new ArrayList<>();
@@ -120,6 +121,7 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         sqlite  = new SQLiteHelper(getActivity());
 
         bg_scan_status = view.findViewById(R.id.bg_scan_status);
@@ -188,7 +190,7 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
         btn_add_cd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                add_to_delivery();
+                dialogBox_cofirmation();
             }
         });
 
@@ -617,7 +619,7 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
             }
 
         }else{
-
+            Toast.makeText(getActivity(), "Pen is empty", Toast.LENGTH_SHORT).show();
         }
 
 
@@ -659,6 +661,7 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
             public void onResponse(String response) {
 
                 try {
+                    //dialogBox(response);
                     loading_table.setVisibility(View.GONE);
                     layout_table.setVisibility(View.VISIBLE);
 
@@ -911,6 +914,148 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
         alertDialog.show();
     }
 
+    void dialogBox_cofirmation(){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setMessage("Are you sure you wan't to save?");
+        alertDialog.setPositiveButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialog.setNegativeButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        //add_to_delivery();
+                        savePigSale();
+                    }
+                });
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+    }
+
+    public void savePigSale(){
+
+        if (swine_sales_list_pig.size() > 0) {
+
+            if (!checkInputIsZero()) {
+                isLoading = true;
+                showLoading(loadingScan, "Saving...").show();
+                String URL = getString(R.string.URL_online) + "swine_sales/add_dr_details2.php";
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            isLoading = false;
+                            //dialogBox(response);
+                            String str = "";
+                            showLoading(loadingScan, null).dismiss();
+                            JSONObject jsonObject = new JSONObject(response);
+
+                            JSONArray jsonArray_data = jsonObject.getJSONArray("data");
+                            for (int i = 0; i < jsonArray_data.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray_data.getJSONObject(i);
+
+                                String swine_id = jsonObject1.getString("swine_id");
+                                String msg = jsonObject1.getString("message");
+                                String status = jsonObject1.getString("status");
+
+                                if (status.equals("1")) {
+                                    str += "<font color='#50a44d'>" + msg + "</font><br>";
+                                } else {
+                                    str += "<font color='#de4e35'>" + msg + "</font><br>";
+                                }
+
+
+                                //delete sqlite
+                                for (int k = 0; k < swine_sales_list_pig.size(); k++) {
+                                    SwineSales_scan_model model_pig = swine_sales_list_pig.get(k);
+
+                                    if (swine_id.equals(String.valueOf(model_pig.getSwine_id())) && status.equals("1")) {
+
+                                        swine_sales_list_pig.remove(k);
+                                        adapter_pig.notifyDataSetChanged();
+
+                                        //sql_lite remove
+                                        sqlite.ss_delete_table_pig(swine_id);
+                                    }
+                                }
+                            }
+
+
+                            JSONArray jsonArray_data_status = jsonObject.getJSONArray("data_status");
+                            JSONObject data_status = jsonArray_data_status.getJSONObject(0);
+
+                            if (data_status.getString("status").equals("complete")) {
+                                set_modal("System Message", "Successfully save All ear tag!", "green");
+                            } else {
+                                dialogBox_msg(str);
+                            }
+
+                        } catch (Exception e) {
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        try {
+                            isLoading = false;
+                            showLoading(loadingScan, null).dismiss();
+                            Toast.makeText(getActivity(), getString(R.string.volley_error), Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                        }
+                    }
+                }) {
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        HashMap<String, String> hashMap = new HashMap<>();
+                        hashMap.put("company_id", company_id);
+                        hashMap.put("branch_id", branch_id);
+                        hashMap.put("company_code", company_code);
+                        hashMap.put("category_id", category_id);
+                        hashMap.put("dr_number", dr_num);
+                        hashMap.put("dr_date", dr_date);
+                        hashMap.put("checkedCounter", String.valueOf(swine_sales_list_pig.size()));
+                        hashMap.put("array_pig", new Gson().toJson(swine_sales_list_pig));
+                        return hashMap;
+                    }
+                };
+                AppController.getInstance().setVolleyDuration(stringRequest);
+                AppController.getInstance().addToRequestQueue(stringRequest);
+            } else {
+                Toast.makeText(getActivity(), "Please complete all fields of weight and price", Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            Toast.makeText(getActivity(), "No Scanned ear tag", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    void dialogBox_msg(String msg){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setMessage(Html.fromHtml(msg));
+        alertDialog.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+    }
+
+    private boolean checkInputIsZero(){
+        for (int i=0; i<swine_sales_list_pig.size(); i++){
+            SwineSales_scan_model model = swine_sales_list_pig.get(i);
+
+            if (model.getPrice() == 0 || model.getWeight() == 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void insert_dr_details(final String swine_id, final String dr_number, final String dr_date, final String weight, final String price){
         btn_add_cd.setEnabled(false);
         String URL = getString(R.string.URL_online) + "swine_sales/add_dr_details.php";
@@ -1081,7 +1226,7 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
         tv_scaned_total.setText("");
         loading_.setVisibility(View.VISIBLE);
         layout_.setVisibility(View.GONE);
-        String URL = getString(R.string.URL_online)+"audit_pen/audit_pen_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -1163,7 +1308,7 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
         bg_building.setBackgroundResource(R.drawable.bg_border_red);
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
         buildingLoading(true);
-        String URL = getString(R.string.URL_online)+"audit_pen/audit_pen_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -1252,7 +1397,7 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
 
         penLoading(true);
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
-        String URL = getString(R.string.URL_online)+"audit_pen/audit_pen_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -1340,14 +1485,17 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
     public void get_pigs(final String company_id, final String company_code, final String get_type,final String branch_id,final String pen_code){
         getPigsStatus = "";
         scan_status();
+        isLoading = true;
         loading_table.setVisibility(View.VISIBLE);
         layout_table.setVisibility(View.GONE);
         String URL = getString(R.string.URL_online)+"swine_sales/get_pigs_details.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                boolean check_if_pen_has_piglet=false;
+
                 try{
+                    isLoading = false;
+                    boolean check_if_pen_has_piglet=false;
                     loading_table.setVisibility(View.GONE);
                     layout_table.setVisibility(View.VISIBLE);
                     getPigsStatus = "1";
@@ -1377,11 +1525,10 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
                             set_modal("Start Scan","You may start scanning","green");
                         }
 
-
                     }else{
 
                         // set_modal("System Message","failed to load please refre","red");
-                        Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Pen is empty", Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (Exception e){}
@@ -1390,6 +1537,7 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
             @Override
             public void onErrorResponse(VolleyError error) {
                 try{
+                    isLoading = false;
                     getPigsStatus = "";
                     scan_status();
 

@@ -90,7 +90,7 @@ public class SwineSales_adapter extends RecyclerView.Adapter<SwineSales_adapter.
         myHolder.tv_delivery_number.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, String.valueOf(checked_status), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, String.valueOf(checked_status), Toast.LENGTH_SHORT).show();
             }
         });
 

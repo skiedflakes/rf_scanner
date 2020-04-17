@@ -62,7 +62,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
     String dr_header_id="";
 
     //session
-    String company_code,company_id,user_id;
+    String company_code,company_id,user_id,category_id;
 
     //dr number
     TextView tv_dr_num, tv_total;
@@ -146,7 +146,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
-
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         //      ~ initialize ids~
         //dr_num
         loadingScan = new ProgressDialog(getActivity(), R.style.MyAlertDialogStyle);
@@ -276,7 +276,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish_dr();
+                dialogBox_cofirmation(false);
             }
         });
 
@@ -359,7 +359,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 @Override
                 public void onClick(View view) {
 
-                    save_dr();
+                    dialogBox_cofirmation(true);
                 }
             });
 
@@ -387,10 +387,27 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 }
             });
 
+            // update
             btn_save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    update_dr();
+
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                    alertDialog.setMessage("Are you sure you wan't to update?");
+                    alertDialog.setPositiveButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                    alertDialog.setNegativeButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int which) {
+                                    update_dr();
+                                }
+                            });
+                    alertDialog.setCancelable(false);
+                    alertDialog.show();
                 }
             });
 
@@ -680,7 +697,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
 
 
 
-                 //   json truckers spinner
+                    //   json truckers spinner
                     String trucker,trucker_id;
                     truckers_list_spinner.add(new Truckers_model("","Please Select"));
                     JSONArray truckers = Object.getJSONArray("truckers");
@@ -743,7 +760,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                     for (int i = 0; i < trucking_expense_list_spinner.size(); i++) {
                         trucking_expense_labels.add(trucking_expense_list_spinner.get(i).getTrucking_expense());
                     }
-                   // ArrayAdapter<String> trucking_expense_Adapter = new ArrayAdapter<>(getActivity(), R.layout.custom_spinner, trucking_expense_labels);
+                    // ArrayAdapter<String> trucking_expense_Adapter = new ArrayAdapter<>(getActivity(), R.layout.custom_spinner, trucking_expense_labels);
                     ArrayAdapter<String> trucking_expense_Adapter = new ArrayAdapter<String>(getActivity(), R.layout.custom_spinner, trucking_expense_labels) {
                         // disabled click
                         @Override
@@ -768,7 +785,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                             Trucking_expense_model click = trucking_expense_list_spinner.get(position);
                             if (!click.getTrucking_expense().equals("Please Select")){
 
-                             //   Toast.makeText(getActivity(), click.getTrucking_expense(), Toast.LENGTH_SHORT).show();
+                                //   Toast.makeText(getActivity(), click.getTrucking_expense(), Toast.LENGTH_SHORT).show();
                                 trucking_expenseSelected =  String.valueOf(click.getTrucking_expense_id());
                                 trucking_expenseSelected_name =  String.valueOf(click.getTrucking_expense());
                             } else {
@@ -820,6 +837,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
     }
 
     public void save_dr(){
+        showLoading(loadingScan, "Saving...").show();
         btn_save.setEnabled(false);
         //get text
         remarks = et_remarks.getText().toString();
@@ -831,7 +849,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 invoice_number.equals("")) {
             Toast.makeText(getActivity(), "Please fill up required fields", Toast.LENGTH_SHORT).show();
             btn_save.setEnabled(true);
-
+            showLoading(loadingScan, null).dismiss();
 
         }else{
 
@@ -841,8 +859,8 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                     @Override
                     public void onResponse(String response) {
 
-
                         try{
+                            showLoading(loadingScan, null).dismiss();
                             String status="";
                             JSONObject Object = new JSONObject(response);
                             JSONArray diag = Object.getJSONArray("data");
@@ -852,7 +870,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                             if(status.equals("1")){
                                 init_add_edit("edit");
                                 add_status="yes";
-                                 dr_header_id = cusObj.getString("dr_header_id");
+                                dr_header_id = cusObj.getString("dr_header_id");
                                 btn_save.setEnabled(true);
 
                                 set_modal("System Message","Swine delivery added","green");
@@ -870,6 +888,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                         try{
                             Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
                             btn_save.setEnabled(true);
+                            showLoading(loadingScan, null).dismiss();
                         } catch (Exception e){}
                     }
                 }){
@@ -908,33 +927,34 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                         @Override
                         public void onResponse(String response) {
 
-                        try{
+                            try{
+                                showLoading(loadingScan, null).dismiss();
+                                String status="";
+                                JSONObject Object = new JSONObject(response);
+                                JSONArray diag = Object.getJSONArray("data");
+                                JSONObject cusObj = (JSONObject) diag.get(0);
+                                status =  cusObj.getString("status");
 
-                            String status="";
-                            JSONObject Object = new JSONObject(response);
-                            JSONArray diag = Object.getJSONArray("data");
-                            JSONObject cusObj = (JSONObject) diag.get(0);
-                            status =  cusObj.getString("status");
+                                if(status.equals("1")){
+                                    add_status="yes";
+                                    init_add_edit("edit");
+                                    dr_header_id = cusObj.getString("dr_header_id");
+                                    btn_save.setEnabled(true);
+                                    set_modal("System Message","Swine delivery added","green");
+                                }else{
+                                    btn_save.setEnabled(true);
+                                    set_modal("System Message","Swine delivery insert failed","red");
+                                }
+                            }catch (Exception e){
 
-                            if(status.equals("1")){
-                                add_status="yes";
-                                init_add_edit("edit");
-                                dr_header_id = cusObj.getString("dr_header_id");
-                                btn_save.setEnabled(true);
-                                set_modal("System Message","Swine delivery added","green");
-                            }else{
-                                btn_save.setEnabled(true);
-                                set_modal("System Message","Swine delivery insert failed","red");
                             }
-                        }catch (Exception e){
-
-                        }
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             try{
                                 btn_save.setEnabled(true);
+                                showLoading(loadingScan, null).dismiss();
                                 Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
 
                             } catch (Exception e){}
@@ -969,31 +989,34 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         }
     }
 
-
     public void update_dr(){
         discount = et_discount.getText().toString();
         remarks = et_remarks.getText().toString();
         btn_save.setEnabled(false);
-
+        showLoading(loadingScan, "Updating...").show();
         String URL = getString(R.string.URL_online)+"swine_sales/update_dr.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-               if(response.equals("1")){
-                   btn_save.setEnabled(true);
-                   set_modal("System Message","Swine delivery updated","green");
+                try {
+                    showLoading(loadingScan, null).dismiss();
+                    if(response.equals("1")){
+                        btn_save.setEnabled(true);
+                        set_modal("System Message","Swine delivery updated","green");
 
-               }else{
-                   btn_save.setEnabled(true);
-                   set_modal("System Message","Swine delivery insert failed","red");
-               }
+                    }else{
+                        btn_save.setEnabled(true);
+                        set_modal("System Message","Swine delivery insert failed","red");
+                    }
+                } catch (Exception e){}
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try{
-                    Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
+                    showLoading(loadingScan, null).dismiss();
+                    Toast.makeText(getActivity(), getString(R.string.volley_error), Toast.LENGTH_SHORT).show();
                     btn_save.setEnabled(true);
                 } catch (Exception e){}
             }
@@ -1021,30 +1044,36 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
     }
 
     public void delete_dr(final String id, final int position){
+        showLoading(loadingScan, "Deleting...").show();
         String URL = getString(R.string.URL_online)+"swine_sales/deleteDR.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                if (response.equals("1")){
+                try {
+                    showLoading(loadingScan, null).dismiss();
+                    if (response.equals("1")){
 
-                    for (int i=0; i<viewDetails_models.size(); i++){
-                        viewDetails_model r = viewDetails_models.get(i);
-                        if (r.getId().equals(id)){
-                            viewDetails_models.remove(position);
-                            swineSales_add_adapter.notifyDataSetChanged();
+                        for (int i=0; i<viewDetails_models.size(); i++){
+                            viewDetails_model r = viewDetails_models.get(i);
+                            if (r.getId().equals(id)){
+                                viewDetails_models.remove(position);
+                                swineSales_add_adapter.notifyDataSetChanged();
+                            }
                         }
+
+                        Toast.makeText(getActivity(), "Successfully deleted", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Query failed to delete", Toast.LENGTH_SHORT).show();
                     }
 
-                    Toast.makeText(getActivity(), "Successfully deleted", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "Query failed to delete", Toast.LENGTH_SHORT).show();
-                }
+                } catch (Exception e){}
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(), "Connection error, please try again.", Toast.LENGTH_SHORT).show();
+                showLoading(loadingScan, null).dismiss();
+                Toast.makeText(getActivity(), getString(R.string.volley_error), Toast.LENGTH_SHORT).show();
             }
         }){
             @Override
@@ -1060,34 +1089,56 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
-
+    void dialogBox_cofirmation(final boolean isAdd){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setMessage(isAdd ? "Are you sure you wan't to add?" : "Are you sure you wan't to finish?");
+        alertDialog.setPositiveButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialog.setNegativeButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        //add_to_delivery();
+                        if (isAdd){
+                            save_dr();
+                        } else {
+                            finish_dr();
+                        }
+                    }
+                });
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+    }
 
     public void finish_dr(){
-        showLoading(loadingScan, "Loading...").show();
+        showLoading(loadingScan, "loading...").show();
         btn_finish.setEnabled(false);
         String URL = getString(R.string.URL_online)+"swine_sales/finishDelivery.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-            try {
-                //dialogBox(response);
-                btn_finish.setEnabled(true);
-                showLoading(loadingScan, null).dismiss();
+                try {
+                    //dialogBox(response);
+                    btn_finish.setEnabled(true);
+                    showLoading(loadingScan, null).dismiss();
 
-                if (response.equals("1")) {
-                    Intent intent = new Intent(getContext(), SwineSales_scan.class);
-                    intent.putExtra("branch_id", branch_id);
-                    getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, intent);
-                    getFragmentManager().popBackStack();
-                    Toast.makeText(getActivity(), "Successfully finished Delivery. ", Toast.LENGTH_SHORT).show();
+                    if (response.equals("1")) {
+                        Intent intent = new Intent(getContext(), SwineSales_scan.class);
+                        intent.putExtra("branch_id", branch_id);
+                        getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, intent);
+                        getFragmentManager().popBackStack();
+                        Toast.makeText(getActivity(), "Successfully finished Delivery. ", Toast.LENGTH_SHORT).show();
 
-                }else if(response.equals("2")){
-                    Toast.makeText(getActivity(), "No delivery details fond", Toast.LENGTH_SHORT).show();
-                } else {
+                    }else if(response.equals("2")){
+                        Toast.makeText(getActivity(), "No delivery details fond", Toast.LENGTH_SHORT).show();
+                    } else {
 
-                    Toast.makeText(getActivity(), "Query failed", Toast.LENGTH_SHORT).show();
-                }
-            }catch (Exception e){}
+                        Toast.makeText(getActivity(), "Query failed", Toast.LENGTH_SHORT).show();
+                    }
+                }catch (Exception e){}
 
             }
         }, new Response.ErrorListener() {
@@ -1108,13 +1159,13 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 hashMap.put("pay_type", paymentSelected);
                 hashMap.put("dr_date", dateSelected);
                 hashMap.put("user_id", user_id);
+                hashMap.put("category_id", category_id);
                 return hashMap;
             }
         };
         AppController.getInstance().setVolleyDuration(stringRequest);
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
-
 
     @Override
     public void passData(int position, String id) {
@@ -1178,7 +1229,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         Intent intent = new Intent(getContext(), SwineSales_add.class);
         intent.putExtra("branch_id", branch_id);
         getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, intent);
-       // getFragmentManager().popBackStack();
+        // getFragmentManager().popBackStack();
     }
 
 }
