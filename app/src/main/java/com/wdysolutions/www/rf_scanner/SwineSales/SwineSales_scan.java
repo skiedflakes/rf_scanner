@@ -993,6 +993,9 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
                                 dialogBox_msg(str);
                             }
 
+                            // refresh table swine add
+                            intent_frag();
+
                         } catch (Exception e) {
                         }
                     }
