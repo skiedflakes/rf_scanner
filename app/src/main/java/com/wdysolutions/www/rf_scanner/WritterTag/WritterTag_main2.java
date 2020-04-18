@@ -834,10 +834,11 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
                                                 // update_counter(target_tag, String.valueOf(selected_swine), String.valueOf(selected_count + 1));
 
                                             } else {
-
                                                 Toast.makeText(context, "invalid tag", Toast.LENGTH_SHORT).show();
                                             }
-                                        }catch (Exception e){}
+                                        }catch (Exception e){
+                                            Toast.makeText(context, "invalid tag", Toast.LENGTH_SHORT).show();
+                                        }
                                     } else {
                                         // Toast.makeText(context, "Please Select ear tag", Toast.LENGTH_SHORT).show();
                                         set_modal("System message", "Please Select ear tag", "red");

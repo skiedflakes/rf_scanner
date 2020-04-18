@@ -1114,7 +1114,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
     }
 
     public void finish_dr(){
-        showLoading(loadingScan, "loading...").show();
+        showLoading(loadingScan, "Please wait, saving make some time.").show();
         btn_finish.setEnabled(false);
         String URL = getString(R.string.URL_online)+"swine_sales/finishDelivery.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {

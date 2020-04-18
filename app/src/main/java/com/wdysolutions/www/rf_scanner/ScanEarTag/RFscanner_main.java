@@ -331,14 +331,16 @@ public class RFscanner_main extends Fragment {
                                     String str_digits = separated[0].replaceAll("\\D+","");
                                     actual_id = str_digits;
 
-                                    if(str_characters.equals("wdy")){
+                                    if(str_characters.substring(0,3).equals("wdy")){
                                         actual_scan = separated[1].trim().replace("\\s+"," ");
                                         get_details(company_code, company_id, actual_scan);
                                     }else{
                                         dialogBox_msg("Scanned ear tag is invalid");
                                     }
 
-                                }catch (Exception e){}
+                                }catch (Exception e){
+                                    dialogBox_msg("Scanned ear tag is invalid");
+                                }
                             } else {
                                 Toast.makeText(context, "No eartag seen", Toast.LENGTH_SHORT).show();
                             }
@@ -882,7 +884,7 @@ public class RFscanner_main extends Fragment {
         } else if (result.equals("no_eartag")){
             scrollView.setVisibility(View.GONE);
             text_msg.setVisibility(View.VISIBLE);
-            text_msg.setText("Invalid ear tag...");
+            text_msg.setText("Ear tag not found on the database...");
         } else if (result.equals("found")){
             scrollView.setVisibility(View.VISIBLE);
             text_msg.setVisibility(View.GONE);

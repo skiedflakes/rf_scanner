@@ -940,7 +940,7 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
 
             if (!checkInputIsZero()) {
                 isLoading = true;
-                showLoading(loadingScan, "Saving...").show();
+                showLoading(loadingScan, "Please wait, saving make some time.").show();
                 String URL = getString(R.string.URL_online) + "swine_sales/add_dr_details2.php";
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
