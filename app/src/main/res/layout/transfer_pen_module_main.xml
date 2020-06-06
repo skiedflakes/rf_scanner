@@ -233,7 +233,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
@@ -246,25 +246,19 @@
                     android:id="@+id/txt_eartag_saved"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Ear tag saved: "
+                    android:layout_weight="2"
+                    android:text="Ear tag saved: 0 / Male: 0 / Female: 0"
                     android:textStyle="bold" />
 
-                <RelativeLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/tv_clear"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right">
 
-                    <TextView
-                        android:id="@+id/tv_clear"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="Clear all"
-
-                        android:textColor="#2196F3" />
-                </RelativeLayout>
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Clear all"
+                    android:textColor="#2196F3" />
 
             </LinearLayout>
 
@@ -313,10 +307,24 @@
                             android:layout_height="wrap_content" />
                     </LinearLayout>
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rec_list_pigs"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/txt_pen_empty"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="Pen is Empty"
+                            android:visibility="gone" />
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/rec_list_pigs"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+                    </RelativeLayout>
+
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
 

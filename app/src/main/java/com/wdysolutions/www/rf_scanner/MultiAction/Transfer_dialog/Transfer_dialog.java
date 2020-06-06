@@ -165,13 +165,7 @@ public class Transfer_dialog extends DialogFragment implements DatePickerSelecti
         }
     }
 
-    public interface uploadDialogInterface
-    {
-        void senddata(String selectedPen, String remarks, String selectedDate, String selectedLocation, String swine_id);
-    }
-
     Dialog_transferpen.uploadDialogInterface interfaceObj;
-
 
     @Override
     public void onAttach(Context context) {

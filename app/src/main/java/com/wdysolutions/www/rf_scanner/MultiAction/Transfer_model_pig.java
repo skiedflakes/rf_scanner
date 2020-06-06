@@ -7,14 +7,20 @@ public class Transfer_model_pig {
     private int branch_id;
     private int building_id;
     private int pen_id;
+    private String gender;
 
-    public Transfer_model_pig(int swine_id, String swine_code,int branch_id,int building_id,int pen_id, int check_status){
+    public Transfer_model_pig(int swine_id, String swine_code,int branch_id,int building_id,int pen_id, int check_status, String gender){
         this.swine_id = swine_id;
         this.swine_code = swine_code;
         this.check_status =check_status;
         this.building_id = building_id;
         this.branch_id = branch_id;
         this.pen_id = pen_id;
+        this.gender = gender;
+    }
+
+    public String getGender() {
+        return gender;
     }
 
     public int getPen_id() {
