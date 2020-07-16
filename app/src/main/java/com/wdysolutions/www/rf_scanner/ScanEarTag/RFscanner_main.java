@@ -376,7 +376,7 @@ public class RFscanner_main extends Fragment {
             // set default power level
             Constant.power_level = "Medium";
             tx_range.setText(Constant.power_level);
-            ((ActivityMain)getActivity()).setPower("med");
+            //((ActivityMain)getActivity()).setPower("med");
         }
 
         test_eartag(view);
@@ -465,6 +465,9 @@ public class RFscanner_main extends Fragment {
             } else if (pen_type.equals("Growout")){
                 btn_action.setBackgroundResource(R.drawable.btn_ripple_light);
                 btn_history.setBackgroundResource(R.drawable.btn_ripple_light_green);
+            }  else if (pen_type.equals("Hospital")){
+                btn_action.setBackgroundResource(R.drawable.btn_ripple_light_black);
+                btn_history.setBackgroundResource(R.drawable.btn_ripple_black);
             }
         } else {
             if (pen_type.equals("Gestating")){
@@ -482,6 +485,9 @@ public class RFscanner_main extends Fragment {
             } else if (pen_type.equals("Growout")){
                 btn_action.setBackgroundResource(R.drawable.btn_ripple_light_green);
                 btn_history.setBackgroundResource(R.drawable.btn_ripple_light);
+            }  else if (pen_type.equals("Hospital")){
+                btn_action.setBackgroundResource(R.drawable.btn_ripple_black);
+                btn_history.setBackgroundResource(R.drawable.btn_ripple_light_black);
             }
         }
     }
@@ -527,7 +533,7 @@ public class RFscanner_main extends Fragment {
             abortion="",accumulated="",days_count="",days_to_farrow="",
             expected_date_to_farrow="",cost="",ave_gest_days="",
             ave_weaning_days="",sow_index="",estimated_weight="",
-            parity_color="",rebred_color="",abortion_color="",
+            parity_color="",rebred_color="",abortion_color="", building, weight_title,
             days_count_title="",days_count_color="",days_to_farrow_color="",farrow_date_color="";
 
     public void get_details(final String company_code, final String company_id, final String swine_id){
@@ -545,21 +551,7 @@ public class RFscanner_main extends Fragment {
         swine_origin = "";
         p_boar = "";
         p_sow = "";
-        swine_parity = "";
-        parity_color = "";
-        times_rebreed = "";
-        rebred_color = "";
-        abortion = "";
-        abortion_color = "";
-        days_count = "";
-        days_count_title = "";
-        days_count_color = "";
-        days_to_farrow = "";
-        days_to_farrow_color = "";
-        expected_date_to_farrow = "";
-        farrow_date_color = "";
         cost = "";
-        ave_gest_days =  "";
         ave_weaning_days = "";
         sow_index = "";
         estimated_weight = "";
@@ -570,14 +562,13 @@ public class RFscanner_main extends Fragment {
         isVolleyLoad = true;
         scanResult("scan");
         showLoading(loadingScan,"Loading data...").show();
-        String URL = getString(R.string.URL_online)+"scan_eartag/get_swine_details3.php";
+        String URL = getString(R.string.URL_online)+"scan_eartag/get_swine_details4.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                try{ // enable
-                    showLoading(loadingScan,null).dismiss();
-                    get_computation(swine_id);
+                try{
+                    //((ActivityMain)getActivity()).dialogBox(response);
                     isVolleyLoad = false;
                     isPiglets = false;
                     arrayList_rfscan.clear();
@@ -587,9 +578,9 @@ public class RFscanner_main extends Fragment {
                     JSONObject Object = new JSONObject(response);
                     JSONArray details = Object.getJSONArray("response");
                     JSONObject r = details.getJSONObject(0);
-                    String status = r.getString("status");
+                    String check = r.getString("check");
 
-                    if(status.equals("okay")){
+                    if (check.equals("1")){
                         scanResult("found");
                         swine_scanned_id = r.getString("swine_id");
                         gender = r.getString("gender");
@@ -599,89 +590,65 @@ public class RFscanner_main extends Fragment {
                         pen_type = r.getString("pen_type");
                         pen_name = r.getString("pen_name");
                         pregnant_status = r.getString("pregnant_status");
-                        piglets_count = r.getString("piglets_count");
                         schedule_for_culling_status = r.getString("schedule_for_culling_status");
                         alert_parameter_status = r.getString("alert_parameter_status");
                         latest_breeding_date = r.getString("latest_breeding_date");
-
-                        if(!r.getString("pregnant_status").equals("")){txt_pregnant.setText(r.getString("pregnant_status"));txt_pregnant.setVisibility(View.VISIBLE);}else{txt_pregnant.setVisibility(View.GONE);}
-                        if(r.getString("parity_alert").equals("1")){parity_switch.setChecked(true);parity_switch.setText("Alert Parity On");}else{parity_switch.setChecked(false);parity_switch.setText("Alert Parity Off");}
-                        if(r.getString("litter_alert").equals("1")){litter_switch.setChecked(true);litter_switch.setText("Alert Litter Size On");}else{litter_switch.setChecked(false);litter_switch.setText("Alert Litter Size Off");}
-                        if(r.getString("times_rebred_alert").equals("1")){times_rebred_switch.setChecked(true);times_rebred_switch.setText("Alert Times Rebred On");}else{times_rebred_switch.setChecked(false);times_rebred_switch.setText("Alert Times Rebred Off");}
-                        if(r.getString("abort_alert").equals("1")){abort_switch.setChecked(true);abort_switch.setText("Alert Abort On");}else{abort_switch.setChecked(false);abort_switch.setText("Alert Abort Off");}
-                        txt_building.setText(isCulled() ? "("+r.getString("pen_type")+")" : isDeacesed() ? "("+r.getString("pen_type")+")" : r.getString("building")+" > "+r.getString("pen_name")+" ("+r.getString("pen_type")+")");
-
-
-//                        if(!actual_id.equals("")){
-//                            txt_details.setText("("+actual_id+") "+r.getString("swine_code")+" > "+r.getString("swine_type")+" "+(isGenderMale() ? "(M)" : "(F)"));
-//                        }else{
-//                            txt_details.setText("EAR TAG:"+r.getString("swine_code")+" > "+r.getString("swine_type")+" "+(isGenderMale() ? "(M)" : "(F)"));
-//                        }
-                        txt_details.setText("Ear Tag: "+r.getString("swine_code")+" > "+r.getString("swine_type")+" "+(isGenderMale() ? "(M)" : "(F)"));
-
-
                         swine_condition = r.getString("swine_condition");
                         genetic_breed = r.getString("genetic_breed");
-                        genetic_line =r.getString("genetic_line");
+                        genetic_line = r.getString("genetic_line");
                         swine_birthdate = r.getString("swine_birthdate");
-                        weight =  r.getString("weight");
+                        weight_title = r.getString("weight_title");
+                        weight = r.getString("weight");
                         weaning_date = r.getString("weaning_date");
                         weaning_wt = r.getString("weaning_wt");
                         age_days = r.getString("age_days");
-                        days_weaned= r.getString("days_weaned");
+                        days_weaned = r.getString("days_weaned");
                         progeny = r.getString("progeny");
                         swine_origin = r.getString("swine_origin");
                         p_boar = r.getString("p_boar");
                         p_sow = r.getString("p_sow");
-                        swine_parity = r.getString("swine_parity");
-                        parity_color = r.getString("parity_color");
-                        times_rebreed = r.getString("times_rebreed");
-                        rebred_color = r.getString("rebred_color");
-                        abortion = r.getString("abortion");
-                        abortion_color =  r.getString("abortion_color");
-                        days_count =  r.getString("days_count");
-                        days_count_title =  r.getString("days_count_title");
-                        days_count_color =  r.getString("days_count_color");
-                        days_to_farrow =  r.getString("days_to_farrow");
-                        days_to_farrow_color =  r.getString("days_to_farrow_color");
-                        expected_date_to_farrow =  r.getString("expected_date_to_farrow");
-                        farrow_date_color =  r.getString("farrow_date_color");
-                        ave_gest_days =  r.getString("ave_gest_days");
-                        ave_weaning_days =  r.getString("ave_weaning_days");
-                        piglets_count =  r.getString("piglets_count");
+                        ave_weaning_days = r.getString("ave_weaning_days");
+                        piglets_count = r.getString("piglets_count");
+                        accumulated = r.getString("accumulated");
+                        sow_index = r.getString("sow_index");
+                        cost = r.getString("cost");
+                        estimated_weight = r.getString("estimated_weight");
+                        building = r.getString("building");
+                        ave_gest_days = r.getString("ave_gest_days");
 
-                        accumulated =  r.getString("accumulated");
-                        sow_index =  r.getString("sow_index");
-                        cost =  r.getString("cost");
-                        estimated_weight =  r.getString("estimated_weight");
+                        // Swine card head
+                        txt_building.setText(isCulled() ? "("+pen_type+")" : isDeacesed() ? "("+pen_type+")" : building+" > "+pen_name+" ("+pen_type+")");
+                        txt_details.setText("Ear Tag: "+swine_code+" > "+swine_type+" "+(isGenderMale() ? "(M)" : "(F)"));
+                        if(!pregnant_status.equals("hide")){txt_pregnant.setText(pregnant_status);txt_pregnant.setVisibility(View.VISIBLE);}else{txt_pregnant.setVisibility(View.GONE);}
 
-
+                        // Swine card body
                         arrayList_rfscan.add(new RFscanner_model("Swine Condition:", swine_condition,""));
                         arrayList_rfscan.add(new RFscanner_model("Genetic Breed:", genetic_breed,""));
                         arrayList_rfscan.add(new RFscanner_model("Genetic Line:", genetic_line,""));
                         arrayList_rfscan.add(new RFscanner_model("Date of Birth:",swine_birthdate,""));
-                        arrayList_rfscan.add(new RFscanner_model(r.getString("purchase_title"), weight,""));
-                        if(!weaning_date.equals("")){arrayList_rfscan.add(new RFscanner_model("Weaning Date:",weaning_date,""));}
-                        if(!weaning_wt.equals("")){arrayList_rfscan.add(new RFscanner_model("Weaning Weight (kg):",weaning_wt,""));}
-                        if(!age_days.equals("")){arrayList_rfscan.add(new RFscanner_model("Age in Days:", age_days, ""));}
-                        if(!days_weaned.equals("")){arrayList_rfscan.add(new RFscanner_model("Day/s weaned:", days_weaned, ""));}
-                        arrayList_rfscan.add(new RFscanner_model("Progeny:",progeny , ""));
-                        arrayList_rfscan.add(new RFscanner_model("Swine Origin:",swine_origin, ""));
+                        arrayList_rfscan.add(new RFscanner_model(weight_title, weight,""));
+                        if(!weaning_date.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Weaning Date:",weaning_date,""));}
+                        if(!weaning_wt.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Weaning Weight (kg):",weaning_wt,""));}
+                        if(!age_days.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Age in Days:", age_days, ""));}
+                        if(!days_weaned.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Day/s weaned:", days_weaned, ""));}
+                        arrayList_rfscan.add(new RFscanner_model("Progeny:", progeny, ""));
+                        arrayList_rfscan.add(new RFscanner_model("Swine Origin:", swine_origin, ""));
                         arrayList_rfscan.add(new RFscanner_model("Parent Boar:", p_boar, ""));
                         arrayList_rfscan.add(new RFscanner_model("Parent Sow:", p_sow, ""));
-                        if(!swine_parity.equals("")){arrayList_rfscan.add(new RFscanner_model("Parity:",swine_parity, parity_color));}
-                        if(!times_rebreed.equals("")){arrayList_rfscan.add(new RFscanner_model("Times Rebred:", times_rebreed, rebred_color));}
-                        if(!abortion.equals("")){arrayList_rfscan.add(new RFscanner_model("Abortion:", abortion, abortion_color));}
-                        if(!accumulated.equals("")){arrayList_rfscan.add(new RFscanner_model("Accumulated expense for piglet cost:", accumulated, ""));}
-                        if(!days_count.equals("")){arrayList_rfscan.add(new RFscanner_model(days_count_title, days_count, days_count_color));}
-                        if(!days_to_farrow.equals("")){arrayList_rfscan.add(new RFscanner_model("Days to Farrowing Pen:", days_to_farrow, days_to_farrow_color));}
-                        if(!expected_date_to_farrow.equals("")){arrayList_rfscan.add(new RFscanner_model("Expected date to Farrow:", expected_date_to_farrow,farrow_date_color));}
                         arrayList_rfscan.add(new RFscanner_model("Cost:", cost, ""));
-                        if(ave_gest_days.equals("")){}else{arrayList_rfscan.add(new RFscanner_model("Average Gestating Days:",ave_gest_days, ""));}
-                        if(ave_weaning_days.equals("")){}else{arrayList_rfscan.add(new RFscanner_model("Average Weaning Days:",ave_weaning_days, ""));}
-                        if(sow_index.equals("")){}else{arrayList_rfscan.add(new RFscanner_model("Sow Index:", sow_index, ""));}
-                        if(!estimated_weight.equals("")){arrayList_rfscan.add(new RFscanner_model("Estimated Weight:", estimated_weight, ""));}
-                        if(!piglets_count.equals("")){btn_layout.setVisibility(View.VISIBLE); btn_piglets.setText("Piglets "+piglets_count);}else{btn_layout.setVisibility(View.GONE);}
+                        if(!accumulated.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Accumulated expense for piglet cost:", accumulated, ""));}
+                        //if(!days_count.equals("")){arrayList_rfscan.add(new RFscanner_model(days_count_title, days_count, days_count_color));}
+                        if(!ave_weaning_days.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Average Gestating Days:",ave_gest_days, ""));}
+                        if(!ave_weaning_days.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Average Weaning Days:",ave_weaning_days, ""));}
+                        if(!sow_index.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Sow Index:", sow_index, ""));}
+                        if(!estimated_weight.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Estimated Weight:", estimated_weight, ""));}
+                        if(!piglets_count.equals("hide")){btn_layout.setVisibility(View.VISIBLE); btn_piglets.setText("Piglets "+piglets_count);}else{btn_layout.setVisibility(View.GONE);}
+
+                        // Alert switch
+                        if(r.getString("parity_alert").equals("1")){parity_switch.setChecked(true);parity_switch.setText("Alert Parity On");}else{parity_switch.setChecked(false);parity_switch.setText("Alert Parity Off");}
+                        if(r.getString("litter_alert").equals("1")){litter_switch.setChecked(true);litter_switch.setText("Alert Litter Size On");}else{litter_switch.setChecked(false);litter_switch.setText("Alert Litter Size Off");}
+                        if(r.getString("times_rebred_alert").equals("1")){times_rebred_switch.setChecked(true);times_rebred_switch.setText("Alert Times Rebred On");}else{times_rebred_switch.setChecked(false);times_rebred_switch.setText("Alert Times Rebred Off");}
+                        if(r.getString("abort_alert").equals("1")){abort_switch.setChecked(true);abort_switch.setText("Alert Abort On");}else{abort_switch.setChecked(false);abort_switch.setText("Alert Abort Off");}
 
                         adapter = new adapterRFscan(getContext(), arrayList_rfscan);
                         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -758,17 +725,35 @@ public class RFscanner_main extends Fragment {
                             layout_switch.setVisibility(View.GONE);
                             layout_buttons.setVisibility(View.VISIBLE);
                             isAction = true;
+                        } else if (pen_type.equals("Hospital")){
+                            txt_building.setTextColor(getResources().getColor(R.color.text_grey));
+                            bg_title.setBackgroundResource(R.drawable.bg_custom_light_black);
+                            btn_action.setBackgroundResource(R.drawable.btn_ripple_light_black);
+                            btn_history.setBackgroundResource(R.drawable.btn_ripple_black);
+                            btn_action.setTextColor(getResources().getColor(R.color.white));
+                            btn_history.setTextColor(getResources().getColor(R.color.white));
+                            txt_title.setTextColor(getResources().getColor(R.color.white));
+                            txt_details.setTextColor(getResources().getColor(R.color.white));
+                            layout_switch.setVisibility(View.GONE);
+                            layout_buttons.setVisibility(View.VISIBLE);
+                            isAction = true;
                         } else if (pen_type.equals("Deceased") || pen_type.equals("Culled") || pen_type.equals("Sold")){
                             txt_building.setTextColor(getResources().getColor(R.color.text_grey));
                             bg_title.setBackgroundResource(R.drawable.bg_custom_light_black);
+                            txt_title.setTextColor(getResources().getColor(R.color.white));
+                            txt_details.setTextColor(getResources().getColor(R.color.white));
                             layout_switch.setVisibility(View.GONE);
                             layout_buttons.setVisibility(View.GONE);
                             isAction = false;
                         }
 
+                        getAPC(swine_id);
+                        //get_computation(swine_id);
+
                     } else {
                         scanResult("no_eartag");
                     }
+
                 } catch (Exception e){}
             }
         }, new Response.ErrorListener() {
@@ -795,6 +780,387 @@ public class RFscanner_main extends Fragment {
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
+//    public void get_details(final String company_code, final String company_id, final String swine_id){
+//
+//        swine_condition = "";
+//        genetic_breed ="";
+//        genetic_line ="";
+//        swine_birthdate = "";
+//        weight = "";
+//        weaning_date = "";
+//        weaning_wt = "";
+//        age_days = "";
+//        days_weaned= "";
+//        progeny = "";
+//        swine_origin = "";
+//        p_boar = "";
+//        p_sow = "";
+//        swine_parity = "";
+//        parity_color = "";
+//        times_rebreed = "";
+//        rebred_color = "";
+//        abortion = "";
+//        abortion_color = "";
+//        days_count = "";
+//        days_count_title = "";
+//        days_count_color = "";
+//        days_to_farrow = "";
+//        days_to_farrow_color = "";
+//        expected_date_to_farrow = "";
+//        farrow_date_color = "";
+//        cost = "";
+//        ave_gest_days =  "";
+//        ave_weaning_days = "";
+//        sow_index = "";
+//        estimated_weight = "";
+//        piglets_count = "";
+//        accumulated="";
+//
+//        // sidable
+//        isVolleyLoad = true;
+//        scanResult("scan");
+//        showLoading(loadingScan,"Loading data...").show();
+//        String URL = getString(R.string.URL_online)+"scan_eartag/get_swine_details4.php";
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//
+//                try{ // enable
+//                    ((ActivityMain)getActivity()).dialogBox(response);
+//                    showLoading(loadingScan,null).dismiss();
+//                    get_computation(swine_id);
+//                    isVolleyLoad = false;
+//                    isPiglets = false;
+//                    arrayList_rfscan.clear();
+//                    recycler_pigletsWeight.setVisibility(View.GONE);
+//                    showLoading(loadingScan,null).dismiss();
+//
+//                    JSONObject Object = new JSONObject(response);
+//                    JSONArray details = Object.getJSONArray("response");
+//                    JSONObject r = details.getJSONObject(0);
+//                    String status = r.getString("status");
+//
+//                    if(status.equals("okay")){
+//                        scanResult("found");
+//                        swine_scanned_id = r.getString("swine_id");
+//                        gender = r.getString("gender");
+//                        pen_code = r.getString("pen_code");
+//                        swine_type = r.getString("swine_type");
+//                        swine_code = r.getString("swine_code");
+//                        pen_type = r.getString("pen_type");
+//                        pen_name = r.getString("pen_name");
+//                        pregnant_status = r.getString("pregnant_status");
+//                        piglets_count = r.getString("piglets_count");
+//                        schedule_for_culling_status = r.getString("schedule_for_culling_status");
+//                        alert_parameter_status = r.getString("alert_parameter_status");
+//                        latest_breeding_date = r.getString("latest_breeding_date");
+//
+//                        if(!r.getString("pregnant_status").equals("")){txt_pregnant.setText(r.getString("pregnant_status"));txt_pregnant.setVisibility(View.VISIBLE);}else{txt_pregnant.setVisibility(View.GONE);}
+//                        if(r.getString("parity_alert").equals("1")){parity_switch.setChecked(true);parity_switch.setText("Alert Parity On");}else{parity_switch.setChecked(false);parity_switch.setText("Alert Parity Off");}
+//                        if(r.getString("litter_alert").equals("1")){litter_switch.setChecked(true);litter_switch.setText("Alert Litter Size On");}else{litter_switch.setChecked(false);litter_switch.setText("Alert Litter Size Off");}
+//                        if(r.getString("times_rebred_alert").equals("1")){times_rebred_switch.setChecked(true);times_rebred_switch.setText("Alert Times Rebred On");}else{times_rebred_switch.setChecked(false);times_rebred_switch.setText("Alert Times Rebred Off");}
+//                        if(r.getString("abort_alert").equals("1")){abort_switch.setChecked(true);abort_switch.setText("Alert Abort On");}else{abort_switch.setChecked(false);abort_switch.setText("Alert Abort Off");}
+//                        txt_building.setText(isCulled() ? "("+r.getString("pen_type")+")" : isDeacesed() ? "("+r.getString("pen_type")+")" : r.getString("building")+" > "+r.getString("pen_name")+" ("+r.getString("pen_type")+")");
+//
+//
+////                        if(!actual_id.equals("")){
+////                            txt_details.setText("("+actual_id+") "+r.getString("swine_code")+" > "+r.getString("swine_type")+" "+(isGenderMale() ? "(M)" : "(F)"));
+////                        }else{
+////                            txt_details.setText("EAR TAG:"+r.getString("swine_code")+" > "+r.getString("swine_type")+" "+(isGenderMale() ? "(M)" : "(F)"));
+////                        }
+//                        txt_details.setText("Ear Tag: "+r.getString("swine_code")+" > "+r.getString("swine_type")+" "+(isGenderMale() ? "(M)" : "(F)"));
+//
+//
+//                        swine_condition = r.getString("swine_condition");
+//                        genetic_breed = r.getString("genetic_breed");
+//                        genetic_line =r.getString("genetic_line");
+//                        swine_birthdate = r.getString("swine_birthdate");
+//                        weight =  r.getString("weight");
+//                        weaning_date = r.getString("weaning_date");
+//                        weaning_wt = r.getString("weaning_wt");
+//                        age_days = r.getString("age_days");
+//                        days_weaned= r.getString("days_weaned");
+//                        progeny = r.getString("progeny");
+//                        swine_origin = r.getString("swine_origin");
+//                        p_boar = r.getString("p_boar");
+//                        p_sow = r.getString("p_sow");
+//                        swine_parity = r.getString("swine_parity");
+//                        parity_color = r.getString("parity_color");
+//                        times_rebreed = r.getString("times_rebreed");
+//                        rebred_color = r.getString("rebred_color");
+//                        abortion = r.getString("abortion");
+//                        abortion_color =  r.getString("abortion_color");
+//                        days_count =  r.getString("days_count");
+//                        days_count_title =  r.getString("days_count_title");
+//                        days_count_color =  r.getString("days_count_color");
+//                        days_to_farrow =  r.getString("days_to_farrow");
+//                        days_to_farrow_color =  r.getString("days_to_farrow_color");
+//                        expected_date_to_farrow =  r.getString("expected_date_to_farrow");
+//                        farrow_date_color =  r.getString("farrow_date_color");
+//                        ave_gest_days =  r.getString("ave_gest_days");
+//                        ave_weaning_days =  r.getString("ave_weaning_days");
+//                        piglets_count =  r.getString("piglets_count");
+//
+//                        accumulated =  r.getString("accumulated");
+//                        sow_index =  r.getString("sow_index");
+//                        cost =  r.getString("cost");
+//                        estimated_weight =  r.getString("estimated_weight");
+//
+//
+//                        arrayList_rfscan.add(new RFscanner_model("Swine Condition:", swine_condition,""));
+//                        arrayList_rfscan.add(new RFscanner_model("Genetic Breed:", genetic_breed,""));
+//                        arrayList_rfscan.add(new RFscanner_model("Genetic Line:", genetic_line,""));
+//                        arrayList_rfscan.add(new RFscanner_model("Date of Birth:",swine_birthdate,""));
+//                        arrayList_rfscan.add(new RFscanner_model(r.getString("purchase_title"), weight,""));
+//                        if(!weaning_date.equals("")){arrayList_rfscan.add(new RFscanner_model("Weaning Date:",weaning_date,""));}
+//                        if(!weaning_wt.equals("")){arrayList_rfscan.add(new RFscanner_model("Weaning Weight (kg):",weaning_wt,""));}
+//                        if(!age_days.equals("")){arrayList_rfscan.add(new RFscanner_model("Age in Days:", age_days, ""));}
+//                        if(!days_weaned.equals("")){arrayList_rfscan.add(new RFscanner_model("Day/s weaned:", days_weaned, ""));}
+//                        arrayList_rfscan.add(new RFscanner_model("Progeny:",progeny , ""));
+//                        arrayList_rfscan.add(new RFscanner_model("Swine Origin:",swine_origin, ""));
+//                        arrayList_rfscan.add(new RFscanner_model("Parent Boar:", p_boar, ""));
+//                        arrayList_rfscan.add(new RFscanner_model("Parent Sow:", p_sow, ""));
+//                        if(!swine_parity.equals("")){arrayList_rfscan.add(new RFscanner_model("Parity:",swine_parity, parity_color));}
+//                        if(!times_rebreed.equals("")){arrayList_rfscan.add(new RFscanner_model("Times Rebred:", times_rebreed, rebred_color));}
+//                        if(!abortion.equals("")){arrayList_rfscan.add(new RFscanner_model("Abortion:", abortion, abortion_color));}
+//                        if(!accumulated.equals("")){arrayList_rfscan.add(new RFscanner_model("Accumulated expense for piglet cost:", accumulated, ""));}
+//                        if(!days_count.equals("")){arrayList_rfscan.add(new RFscanner_model(days_count_title, days_count, days_count_color));}
+//                        if(!days_to_farrow.equals("")){arrayList_rfscan.add(new RFscanner_model("Days to Farrowing Pen:", days_to_farrow, days_to_farrow_color));}
+//                        if(!expected_date_to_farrow.equals("")){arrayList_rfscan.add(new RFscanner_model("Expected date to Farrow:", expected_date_to_farrow,farrow_date_color));}
+//                        arrayList_rfscan.add(new RFscanner_model("Cost:", cost, ""));
+//                        if(ave_gest_days.equals("")){}else{arrayList_rfscan.add(new RFscanner_model("Average Gestating Days:",ave_gest_days, ""));}
+//                        if(ave_weaning_days.equals("")){}else{arrayList_rfscan.add(new RFscanner_model("Average Weaning Days:",ave_weaning_days, ""));}
+//                        if(sow_index.equals("")){}else{arrayList_rfscan.add(new RFscanner_model("Sow Index:", sow_index, ""));}
+//                        if(!estimated_weight.equals("")){arrayList_rfscan.add(new RFscanner_model("Estimated Weight:", estimated_weight, ""));}
+//                        if(!piglets_count.equals("")){btn_layout.setVisibility(View.VISIBLE); btn_piglets.setText("Piglets "+piglets_count);}else{btn_layout.setVisibility(View.GONE);}
+//
+//                        adapter = new adapterRFscan(getContext(), arrayList_rfscan);
+//                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+//                        recyclerView.setLayoutManager(layoutManager);
+//                        recyclerView.setNestedScrollingEnabled(false);
+//                        recyclerView.setAdapter(adapter);
+//
+//
+//                        //set details to buttons ---------------------------------------------------
+//                        setActionButtonSow(true);
+//                        setDefaultButtonColor();
+//
+//                        // set default underline
+//                        btn_action.setPaintFlags(btn_action.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+//                        btn_history.setPaintFlags(0);
+//
+//                        if (pen_type.equals("Gestating")){
+//                            txt_building.setTextColor(getResources().getColor(R.color.btn_brown_color1));
+//                            bg_title.setBackgroundResource(R.drawable.bg_custom_brown);
+//                            btn_action.setBackgroundResource(R.drawable.btn_ripple_brown);
+//                            btn_history.setBackgroundResource(R.drawable.btn_ripple_light_brown);
+//                            btn_action.setTextColor(getResources().getColor(R.color.white));
+//                            btn_history.setTextColor(getResources().getColor(R.color.white));
+//                            txt_title.setTextColor(getResources().getColor(R.color.white));
+//                            txt_details.setTextColor(getResources().getColor(R.color.white));
+//                            layout_switch.setVisibility(View.VISIBLE);
+//                            layout_buttons.setVisibility(View.VISIBLE);
+//                            isAction = true;
+//                        } else if (pen_type.equals("Farrowing")){
+//                            txt_building.setTextColor(getResources().getColor(R.color.btn_yellow_color1));
+//                            bg_title.setBackgroundResource(R.drawable.bg_custom_yellow);
+//                            btn_action.setBackgroundResource(R.drawable.btn_ripple_yellow);
+//                            btn_history.setBackgroundResource(R.drawable.btn_ripple_light_yellow);
+//                            btn_action.setTextColor(getResources().getColor(R.color.text_grey));
+//                            btn_history.setTextColor(getResources().getColor(R.color.text_grey));
+//                            txt_title.setTextColor(getResources().getColor(R.color.text_grey));
+//                            txt_details.setTextColor(getResources().getColor(R.color.text_grey));
+//                            layout_switch.setVisibility(View.VISIBLE);
+//                            layout_buttons.setVisibility(View.VISIBLE);
+//                            isAction = true;
+//                        } else if (pen_type.equals("Dry")){
+//                            txt_building.setTextColor(getResources().getColor(R.color.btn_light_red_color1));
+//                            bg_title.setBackgroundResource(R.drawable.bg_custom_light_red);
+//                            btn_action.setBackgroundResource(R.drawable.btn_ripple_light_red);
+//                            btn_history.setBackgroundResource(R.drawable.btn_ripple_red);
+//                            btn_action.setTextColor(getResources().getColor(R.color.white));
+//                            btn_history.setTextColor(getResources().getColor(R.color.white));
+//                            txt_title.setTextColor(getResources().getColor(R.color.white));
+//                            txt_details.setTextColor(getResources().getColor(R.color.white));
+//                            layout_switch.setVisibility(View.GONE);
+//                            layout_buttons.setVisibility(View.VISIBLE);
+//                            isAction = true;
+//                        } else if (pen_type.equals("Nursery")){
+//                            txt_building.setTextColor(getResources().getColor(R.color.btn_violet_color1));
+//                            bg_title.setBackgroundResource(R.drawable.bg_custom_violet);
+//                            btn_action.setBackgroundResource(R.drawable.btn_ripple_violet);
+//                            btn_history.setBackgroundResource(R.drawable.btn_ripple_light_violet);
+//                            btn_action.setTextColor(getResources().getColor(R.color.white));
+//                            btn_history.setTextColor(getResources().getColor(R.color.white));
+//                            txt_title.setTextColor(getResources().getColor(R.color.white));
+//                            txt_details.setTextColor(getResources().getColor(R.color.white));
+//                            layout_switch.setVisibility(View.GONE);
+//                            layout_buttons.setVisibility(View.VISIBLE);
+//                            isAction = true;
+//                        } else if (pen_type.equals("Growout")){
+//                            txt_building.setTextColor(getResources().getColor(R.color.btn_color1));
+//                            bg_title.setBackgroundResource(R.drawable.btn_ripple_light);
+//                            btn_action.setBackgroundResource(R.drawable.btn_ripple_light);
+//                            btn_history.setBackgroundResource(R.drawable.btn_ripple_light_green);
+//                            btn_action.setTextColor(getResources().getColor(R.color.white));
+//                            btn_history.setTextColor(getResources().getColor(R.color.white));
+//                            txt_title.setTextColor(getResources().getColor(R.color.white));
+//                            txt_details.setTextColor(getResources().getColor(R.color.white));
+//                            layout_switch.setVisibility(View.GONE);
+//                            layout_buttons.setVisibility(View.VISIBLE);
+//                            isAction = true;
+//                        } else if (pen_type.equals("Deceased") || pen_type.equals("Culled") || pen_type.equals("Sold")){
+//                            txt_building.setTextColor(getResources().getColor(R.color.text_grey));
+//                            bg_title.setBackgroundResource(R.drawable.bg_custom_light_black);
+//                            layout_switch.setVisibility(View.GONE);
+//                            layout_buttons.setVisibility(View.GONE);
+//                            isAction = false;
+//                        }
+//
+//                    } else {
+//                        scanResult("no_eartag");
+//                    }
+//                } catch (Exception e){}
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                try{
+//                    showLoading(loadingScan,null).dismiss();
+//                    scanResult("error");
+//                    isVolleyLoad = false;
+//                } catch (Exception e){}
+//            }
+//        }){
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                HashMap<String,String> hashMap = new HashMap<>();
+//                hashMap.put("company_code", company_code);
+//                hashMap.put("company_id", company_id);
+//                hashMap.put("swine_id", swine_id);
+//                hashMap.put("category_id", category_id);
+//                return hashMap;
+//            }
+//        };
+//        AppController.getInstance().setVolleyDuration(stringRequest);
+//        AppController.getInstance().addToRequestQueue(stringRequest);
+//    }
+
+    public void getAPC(final String swine_id){
+        String URL = getString(R.string.URL_online)+"scan_eartag/getAPC.php";
+        computation_request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    if(actual_scan.equals(swine_id)){
+
+                        accumulated = response;
+
+                        JSONArray jsonArray = new JSONArray(new Gson().toJson(arrayList_rfscan));
+                        for(int i = 0;i<jsonArray.length();i++) {
+                            JSONObject x = jsonArray.getJSONObject(i);
+                            String name = x.getString("name");
+
+                            if(name.equals("Accumulated expense for piglet cost:")){
+                                arrayList_rfscan.set(i,new RFscanner_model(name, accumulated, ""));
+                                adapter.notifyItemChanged(i);
+                            }
+                        }
+                    }
+                } catch (Exception e){}
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                try{
+                    getAPC(swine_id);
+                } catch (Exception e){}
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> hashMap = new HashMap<>();
+                hashMap.put("company_code", company_code);
+                hashMap.put("company_id", company_id);
+                hashMap.put("swine_id", swine_id);
+                hashMap.put("category_id", category_id);
+                return hashMap;
+            }
+        };
+        AppController.getInstance().setVolleyDuration(computation_request);
+        AppController.getInstance().addToRequestQueue(computation_request);
+    }
+
+    public void showCost(final String swine_id, final boolean isPiglet){
+
+        try {
+            JSONArray jsonArray = new JSONArray(new Gson().toJson(arrayList_rfscan));
+            for(int i = 0;i<jsonArray.length();i++) {
+                JSONObject x = jsonArray.getJSONObject(i);
+                String name = x.getString("name");
+                String colorType = x.getString("colorType");
+
+                if(name.equals("Cost:") || name.equals("Cost of Piglets:")){
+                    arrayList_rfscan.set(i,new RFscanner_model(name, "fetching cost...", colorType));
+                    adapter.notifyItemChanged(i);
+                }
+            }
+        } catch (JSONException e){}
+
+        String URL = getString(R.string.URL_online)+"scan_eartag/" + (isPiglet ? "fetchCost_piglet.php" : "fetchCost.php");
+        computation_request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                if(actual_scan.equals(swine_id)) {
+
+                    try {
+                        JSONArray jsonArray = new JSONArray(new Gson().toJson(arrayList_rfscan));
+                        for(int i = 0;i<jsonArray.length();i++) {
+                            JSONObject x = jsonArray.getJSONObject(i);
+                            String name = x.getString("name");
+                            String colorType = x.getString("colorType");
+
+                            if (isPiglet){
+                                if(name.equals("Cost of Piglets:")) {
+                                    arrayList_rfscan.set(i,new RFscanner_model(name, response, colorType));
+                                    adapter.notifyItemChanged(i);
+                                }
+                            } else {
+                                if(name.equals("Cost:")){
+                                    arrayList_rfscan.set(i,new RFscanner_model(name, response, colorType));
+                                    adapter.notifyItemChanged(i);
+                                }
+                            }
+                        }
+                    }
+                    catch (JSONException e){}
+                    catch (Exception e){}
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                try{
+                    showCost(swine_id, isPiglet);
+                } catch (Exception e){}
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> hashMap = new HashMap<>();
+                hashMap.put("company_code", company_code);
+                hashMap.put("company_id", company_id);
+                hashMap.put("swine_id", swine_id);
+                hashMap.put("category_id", category_id);
+                hashMap.put("pen_code", pen_code);
+                return hashMap;
+            }
+        };
+        AppController.getInstance().setVolleyDuration(computation_request);
+        AppController.getInstance().addToRequestQueue(computation_request);
+    }
 
     StringRequest computation_request;
     public void get_computation(final String swine_id){
@@ -808,7 +1174,7 @@ public class RFscanner_main extends Fragment {
                // String old_swine_id = swine_id;
                 
                 try {
-
+                    //dialogBox_msg(response);
                     if(actual_scan.equals(swine_id)){
 
                         JSONObject Object = new JSONObject(response);
@@ -865,6 +1231,7 @@ public class RFscanner_main extends Fragment {
                 hashMap.put("company_code", company_code);
                 hashMap.put("company_id", company_id);
                 hashMap.put("swine_id", swine_id);
+                hashMap.put("category_id", category_id);
                 return hashMap;
             }
         };
@@ -948,19 +1315,32 @@ public class RFscanner_main extends Fragment {
             final String getColorType = data.get(position).getColorType();
 
             holder.name.setText(getName);
-            if(getName.equals("Swine Condition:")){
-                String condition = null;
-                if (getDetails.equals("1")){
-                    condition = "Normal";
-                } else if (getDetails.equals("2")){
-                    condition = "Abnormal";
-                } else if (getDetails.equals("3")){
-                    condition = "Under size";
+            holder.details.setText(getDetails);
+            holder.details.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getName.equals("Cost:")){
+                        showCost(swine_scanned_id, false);
+                    }
+                    else if (getName.equals("Cost of Piglets:")){
+                        showCost(swine_scanned_id, true);
+                    }
+                    else if (getName.equals("Accumulated expense for piglet cost:")){
+                        Bundle bundle = new Bundle();
+                        bundle.putString("company_id", company_id);
+                        bundle.putString("category_id", category_id);
+                        bundle.putString("company_code", company_code);
+                        bundle.putString("swine_id", swine_scanned_id);
+                        DialogFragment dialogFrag = new Apc_dialog_main();
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                        if (prev != null) {ft.remove(prev);}
+                        ft.addToBackStack(null);
+                        dialogFrag.setArguments(bundle);
+                        dialogFrag.show(ft, "dialog");
+                    }
                 }
-                holder.details.setText(condition);
-            } else {
-                holder.details.setText(getDetails);
-            }
+            });
 
             if(getName.equals("Days After Farrowed:")){
                 if (getColorType.equals("red")){
@@ -1006,24 +1386,12 @@ public class RFscanner_main extends Fragment {
                 }
             }
 
-            holder.details.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (getName.equals("Accumulated expense for piglet cost:")){
-                        Bundle bundle = new Bundle();
-                        bundle.putString("company_id", company_id);
-                        bundle.putString("company_code", company_code);
-                        bundle.putString("swine_id", swine_scanned_id);
-                        DialogFragment dialogFrag = new Apc_dialog_main();
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-                        if (prev != null) {ft.remove(prev);}
-                        ft.addToBackStack(null);
-                        dialogFrag.setArguments(bundle);
-                        dialogFrag.show(ft, "dialog");
-                    }
+            // piglets
+            if(getName.equals("Days Stayed:")){
+                if(getColorType.equals("red")){
+                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
                 }
-            });
+            }
         }
 
         @Override
@@ -1151,34 +1519,37 @@ public class RFscanner_main extends Fragment {
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
-    String piglet_genetic_breed="",piglet_genetic_line="",piglet_date_of_birth="",piglet_age="",piglet_progeny="",piglet_cost_of_piglets="";
+    String piglet_genetic_breed="",piglet_genetic_line="",piglet_date_of_birth="",piglet_age="",piglet_progeny="",
+            piglet_cost_of_piglets="",days_stayed="",days_stayed_color="";
 
     private void getPiglets(final String company_code, final String company_id, final String swine_id, final String pen_code) {
-        layout_.setVisibility(View.GONE);
-        showLoading(loadingScan,"Loading data...").show();
         piglet_genetic_breed =  "";
         piglet_genetic_line =  "";
         piglet_date_of_birth =  "";
         piglet_age =  "";
         piglet_progeny =  "";
         piglet_cost_of_piglets =  "";
-
+        days_stayed="";
+        days_stayed_color="";
+        layout_.setVisibility(View.GONE);
+        showLoading(loadingScan,"Loading data...").show();
         String URL = getString(R.string.URL_online)+"scan_eartag/pig_piglets.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try{
+                    //((ActivityMain)getActivity()).dialogBox(response);
                     isPiglets = true;
                     btn_piglets.setEnabled(false);
                     btn_snowcard.setEnabled(true);
                     layout_switch.setVisibility(View.GONE);
                     layout_.setVisibility(View.VISIBLE);
                     recycler_pigletsWeight.setVisibility(View.VISIBLE);
-                    showLoading(loadingScan,null).dismiss();
                     arrayList_rfscan.clear();
                     arrayList_piglets.clear();
                     RFscannerpiglets_add_models.clear();
+                    showLoading(loadingScan,null).dismiss();
 
                     setActionButtonPiglets(true);
                     setButtonColor(true);
@@ -1187,12 +1558,14 @@ public class RFscanner_main extends Fragment {
                     JSONArray details = Object.getJSONArray("response_details");
                     JSONObject r = details.getJSONObject(0);
 
-                    piglet_genetic_breed =  r.getString("genetic_breed");
-                    piglet_genetic_line =  r.getString("genetic_line");
-                    piglet_date_of_birth =  r.getString("date_of_birth");
-                    piglet_age =  r.getString("age");
-                    piglet_progeny =  r.getString("progeny");
-                    piglet_cost_of_piglets =  r.getString("cost_of_piglets");
+                    piglet_genetic_breed = r.getString("genetic_breed");
+                    piglet_genetic_line = r.getString("genetic_line");
+                    piglet_date_of_birth = r.getString("date_of_birth");
+                    piglet_age = r.getString("age");
+                    piglet_progeny = r.getString("progeny");
+                    piglet_cost_of_piglets = r.getString("cost_of_piglets");
+                    days_stayed = r.getString("days_stayed");
+                    days_stayed_color = r.getString("days_stayed_color");
 
                     arrayList_rfscan.add(new RFscanner_model("Genetic Breed:",piglet_genetic_breed, ""));
                     arrayList_rfscan.add(new RFscanner_model("Genetic Line:", piglet_genetic_line, ""));
@@ -1200,6 +1573,7 @@ public class RFscanner_main extends Fragment {
                     arrayList_rfscan.add(new RFscanner_model("Age:", piglet_age, ""));
                     arrayList_rfscan.add(new RFscanner_model("Progeny:", piglet_progeny, ""));
                     arrayList_rfscan.add(new RFscanner_model("Cost of Piglets:", piglet_cost_of_piglets, ""));
+                    arrayList_rfscan.add(new RFscanner_model("Days Stayed:", days_stayed, days_stayed_color));
 
                     adapter = new adapterRFscan(getContext(), arrayList_rfscan);
                     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -1225,7 +1599,8 @@ public class RFscanner_main extends Fragment {
                     recycler_pigletsWeight.setLayoutManager(layoutManager1);
                     recycler_pigletsWeight.setNestedScrollingEnabled(false);
                     recycler_pigletsWeight.setAdapter(adapterPigletsWeight);
-                } catch (Exception e){}
+                }
+                catch (Exception e){}
             }
         }, new Response.ErrorListener() {
             @Override
@@ -1242,6 +1617,7 @@ public class RFscanner_main extends Fragment {
                 hashMap.put("company_code", company_code);
                 hashMap.put("company_id", company_id);
                 hashMap.put("swine_id", swine_id);
+                hashMap.put("category_id", category_id);
                 hashMap.put("p", pen_code);
                 return hashMap;
             }
@@ -1348,6 +1724,8 @@ public class RFscanner_main extends Fragment {
             } else if (pen_type.equals("Nursery")){
                 holder.btn_tap.setBackgroundResource(R.drawable.btn_ripple_light2_violet);
             } else if (pen_type.equals("Deceased") || pen_type.equals("Culled") || pen_type.equals("Sold")){
+                holder.btn_tap.setBackgroundResource(R.drawable.btn_ripple_light_black);
+            } else if (pen_type.equals("Hospital")){
                 holder.btn_tap.setBackgroundResource(R.drawable.btn_ripple_light_black);
             }
 
@@ -1871,6 +2249,7 @@ public class RFscanner_main extends Fragment {
                 hashMap.put("company_code", company_code);
                 hashMap.put("company_id", company_id);
                 hashMap.put("swine_id", swine_scanned_id);
+                hashMap.put("category_id", category_id);
                 hashMap.put("user_id", user_id);
                 return hashMap;
             }

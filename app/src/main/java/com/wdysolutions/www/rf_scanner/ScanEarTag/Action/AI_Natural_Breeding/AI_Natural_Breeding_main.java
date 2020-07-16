@@ -33,6 +33,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Transfer_Pen.Building_model;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Transfer_Pen.Pen_model;
@@ -52,12 +53,12 @@ import java.util.Map;
 public class AI_Natural_Breeding_main extends DialogFragment implements DatePickerSelectionInterfaceCustom {
 
     ProgressBar progressBar, loading_save, loading_pen;
-    Button btn_save;
+    Button btn_save, btn_cancel;
     TextView btn_date;
     Spinner spinner_building, spinner_pen, spinner_boar1, spinner_boar2, spinner_boar3, spinner_technician;
     LinearLayout layout_;
     String selectedBuilding = "", selectedPen = "", selectedDate = "", selectedBoar1 = "", selectedBoar2 = "", currentDate="",
-            selectedBoar3 = "", selectedTech = "", company_code, company_id, swine_scanned_id, pen_id, user_id, pen_name, pen_type;
+            selectedBoar3 = "", selectedTech = "", company_code, company_id, swine_scanned_id, pen_id, user_id, pen_name, pen_type, category_id;
     ArrayList<Building_model> building_models = new ArrayList<>();
     ArrayList<Technician_model> technician_models = new ArrayList<>();
     ArrayList<Boar_model> boar_models = new ArrayList<>();
@@ -100,6 +101,7 @@ public class AI_Natural_Breeding_main extends DialogFragment implements DatePick
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         pen_id = getArguments().getString("pen_code");
         pen_name = getArguments().getString("pen_name");
         pen_type = getArguments().getString("pen_type");
@@ -117,6 +119,7 @@ public class AI_Natural_Breeding_main extends DialogFragment implements DatePick
         btn_save = view.findViewById(R.id.btn_save);
         layout_ = view.findViewById(R.id.layout_);
         progressBar = view.findViewById(R.id.progressBar);
+        btn_cancel = view.findViewById(R.id.btn_cancel);
 
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,6 +145,13 @@ public class AI_Natural_Breeding_main extends DialogFragment implements DatePick
                 } else {
                     saveAI(swine_scanned_id, pen_id);
                 }
+            }
+        });
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
             }
         });
 
@@ -220,7 +230,7 @@ public class AI_Natural_Breeding_main extends DialogFragment implements DatePick
                         JSONObject cusObj_boar = (JSONObject) jsonArray_boar.get(i);
 
                         boar_models.add(new Boar_model(cusObj_boar.getString("boar_id"),
-                                cusObj_boar.getString("disable_info"),
+                                "",
                                 cusObj_boar.getString("boar_name")));
                     }
 
@@ -230,28 +240,30 @@ public class AI_Natural_Breeding_main extends DialogFragment implements DatePick
                         lables_boar.add(boar_models.get(i).getBoar_name());
                     }
 
-                    ArrayAdapter<String> spinnerAdapter_boar = new ArrayAdapter<String>(getActivity(), R.layout.custom_spinner, lables_boar) {
-                        // disabled click
-                        @Override
-                        public boolean isEnabled(int position) {
-                            if (boar_models.get(position).getDisable_info().equals("disabled")) {
-                                return false;
-                            }
-                            return true;
-                        }
-                        // Change color item
-                        @Override
-                        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                            View mView = super.getDropDownView(position, convertView, parent);
-                            TextView mTextView = (TextView) mView;
-                            if (boar_models.get(position).getDisable_info().equals("disabled")) {
-                                mTextView.setTextColor(Color.GRAY);
-                            } else {
-                                mTextView.setTextColor(Color.BLACK);
-                            }
-                            return mView;
-                        }
-                    };
+//                    ArrayAdapter<String> spinnerAdapter_boar = new ArrayAdapter<String>(getActivity(), R.layout.custom_spinner, lables_boar) {
+//                        // disabled click
+//                        @Override
+//                        public boolean isEnabled(int position) {
+//                            if (boar_models.get(position).getDisable_info().equals("disabled")) {
+//                                return false;
+//                            }
+//                            return true;
+//                        }
+//                        // Change color item
+//                        @Override
+//                        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+//                            View mView = super.getDropDownView(position, convertView, parent);
+//                            TextView mTextView = (TextView) mView;
+//                            if (boar_models.get(position).getDisable_info().equals("disabled")) {
+//                                mTextView.setTextColor(Color.GRAY);
+//                            } else {
+//                                mTextView.setTextColor(Color.BLACK);
+//                            }
+//                            return mView;
+//                        }
+//                    };
+
+                    ArrayAdapter<String> spinnerAdapter_boar = new ArrayAdapter<String>(getActivity(), R.layout.custom_spinner, lables_boar);
 
                     spinnerAdapter_boar.setDropDownViewResource(R.layout.custom_spinner);
                     spinner_boar1.setAdapter(spinnerAdapter_boar);
@@ -352,6 +364,7 @@ public class AI_Natural_Breeding_main extends DialogFragment implements DatePick
                 hashMap.put("company_code", company_code);
                 hashMap.put("company_id", company_id);
                 hashMap.put("swine_id", swine_id);
+                hashMap.put("category_id", category_id);
                 return hashMap;
             }
         };
@@ -367,7 +380,6 @@ public class AI_Natural_Breeding_main extends DialogFragment implements DatePick
             public void onResponse(String response) {
 
                 try{
-                    //dialogBox(response);
                     pen_models.clear();
                     penLoading(false);
                     JSONObject Object = new JSONObject(response);
@@ -440,6 +452,7 @@ public class AI_Natural_Breeding_main extends DialogFragment implements DatePick
 
     public void saveAI(final String swine_id, final String pen_id) {
         btn_save.setVisibility(View.GONE);
+        btn_cancel.setVisibility(View.GONE);
         loading_save.setVisibility(View.VISIBLE);
         String URL = getString(R.string.URL_online)+"scan_eartag/action/pig_AI_breeding_add.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -448,7 +461,9 @@ public class AI_Natural_Breeding_main extends DialogFragment implements DatePick
 
                 try {
                     btn_save.setVisibility(View.VISIBLE);
+                    btn_cancel.setVisibility(View.VISIBLE);
                     loading_save.setVisibility(View.GONE);
+
                     if (response.equals("1")){
                         dismiss();
                         FragmentManager fm = getFragmentManager();
@@ -466,6 +481,7 @@ public class AI_Natural_Breeding_main extends DialogFragment implements DatePick
             public void onErrorResponse(VolleyError error) {
                 try{
                     btn_save.setVisibility(View.VISIBLE);
+                    btn_cancel.setVisibility(View.VISIBLE);
                     loading_save.setVisibility(View.GONE);
                     Toast.makeText(getActivity(), "Connection Error, please try again.", Toast.LENGTH_SHORT).show();
                 } catch (Exception e){}
@@ -485,27 +501,11 @@ public class AI_Natural_Breeding_main extends DialogFragment implements DatePick
                 hashMap.put("boar3", selectedBoar3);
                 hashMap.put("from_pen", pen_id);
                 hashMap.put("breeding_technician", selectedTech);
+                hashMap.put("category_id", category_id);
                 return hashMap;
             }
         };
         AppController.getInstance().setVolleyDuration(stringRequest);
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
-
-    void dialogBox(String name){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        final EditText input = new EditText(getActivity());
-        alertDialog.setView(input);
-        input.setText(name);
-        alertDialog.setPositiveButton("Close",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.setCancelable(false);
-        alertDialog.show();
-    }
-
-
 }

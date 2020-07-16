@@ -473,7 +473,24 @@ public class Button_array {
             }
         }
 
-        // Deceased or Culled ----------------------------------------------------------------------------------------------------------------
+        // Hospital --------------------------------------------------------------------------------------------------------------------------
+        else if (pen_type.equals("Hospital")){
+            if (isActions){
+                buttonArraylist.add(new RFscanner_buttonActions_model(0, "Transfer Pen", ""));
+                buttonArraylist.add(new RFscanner_buttonActions_model(1, "Mortality", ""));
+                buttonArraylist.add(new RFscanner_buttonActions_model(2, "Schedule for Culling", "1"));
+                buttonArraylist.add(new RFscanner_buttonActions_model(3, "", ""));
+                buttonArraylist.add(new RFscanner_buttonActions_model(4, "", ""));
+            } else {
+                buttonArraylist.add(new RFscanner_buttonActions_model(0, "Swine History", ""));
+                buttonArraylist.add(new RFscanner_buttonActions_model(1, "Medication", ""));
+                buttonArraylist.add(new RFscanner_buttonActions_model(2, "Vaccination", ""));
+                buttonArraylist.add(new RFscanner_buttonActions_model(3, "Feeding", ""));
+                buttonArraylist.add(new RFscanner_buttonActions_model(4, "Remarks", ""));
+            }
+        }
+
+        // Deceased, Culled or Sold ----------------------------------------------------------------------------------------------------------------
         else if (pen_type.equals("Deceased") || pen_type.equals("Culled") || pen_type.equals("Sold")){
             if (swine_type.equals("Sow")){
                 buttonArraylist.add(new RFscanner_buttonActions_model(0, "Swine History", ""));

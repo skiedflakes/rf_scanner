@@ -1,5 +1,6 @@
 package com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Wean;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -36,6 +37,7 @@ import com.google.gson.Gson;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Transfer_Pen.Building_model;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Transfer_Pen.Locations_model;
@@ -76,7 +78,7 @@ public class Wean_main extends DialogFragment implements DatePickerSelectionInte
     TextView btn_date;
     CheckBox checkbox_piglets, checkbox_sow;
     Spinner spinner_building, spinner_pen_piglets, spinner_building_sow, spinner_pen_sow;
-    String selectedBuilding_piglets = "", selectedPen_piglets = "", selectedPen_sow = "",
+    String selectedBuilding_piglets = "", selectedPen_piglets = "", selectedPen_sow = "", category_id,
             selectedBuilding_sow = "", selectedDate = "", user_id, swine_scanned_id, company_id, company_code, pen_code;
     int checkedCounter = 0, editTextEmptyCounter = 0, isSow = 0, isPiglet = 0;
     boolean isSowShow, isFirstOpen = true;
@@ -131,6 +133,7 @@ public class Wean_main extends DialogFragment implements DatePickerSelectionInte
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         swine_scanned_id = getArguments().getString("swine_scanned_id");
         pen_code = getArguments().getString("pen_code");
 
@@ -853,7 +856,7 @@ public class Wean_main extends DialogFragment implements DatePickerSelectionInte
 
     private void saveWean(final String company_code, final String company_id, final String swine_id, final String weaning_date,
                           final String from_pen, final String pen_for_wean, final String pen_for_sow, final String all_data) {
-        String URL = getString(R.string.URL_online)+"scan_eartag/action/pig_wean_add.php";
+        String URL = getString(R.string.URL_online)+"scan_eartag/action/pig_wean_add2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -861,17 +864,36 @@ public class Wean_main extends DialogFragment implements DatePickerSelectionInte
                 try {
                     btn_save.setVisibility(View.VISIBLE);
                     loading_save.setVisibility(View.GONE);
-                    if (response.equals("1")){
-                        dismiss();
-                        FragmentManager fm = getFragmentManager();
-                        RFscanner_main fragment = (RFscanner_main)fm.findFragmentByTag("Main_menu");
-                        fragment.get_details(company_code, company_id, swine_id);
-                        Toast.makeText(getActivity(), "Successfully wean!", Toast.LENGTH_SHORT).show();
-                    } else if (response.equals("0")){
-                        Toast.makeText(getActivity(), "Failed wean!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
+
+                    // old
+//                    if (response.equals("1")){
+//                        dismiss();
+//                        FragmentManager fm = getFragmentManager();
+//                        RFscanner_main fragment = (RFscanner_main)fm.findFragmentByTag("Main_menu");
+//                        fragment.get_details(company_code, company_id, swine_id);
+//                        Toast.makeText(getActivity(), "Successfully wean!", Toast.LENGTH_SHORT).show();
+//                    } else if (response.equals("0")){
+//                        Toast.makeText(getActivity(), "Failed wean!", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
+//                    }
+
+                    String success="";
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray details = jsonObject.getJSONArray("array_status");
+                    for (int i=0; i<details.length();i++){
+                        JSONObject r = details.getJSONObject(i);
+                        success += r.getString("status")+"\n";
                     }
+
+                    dialogBox(success, swine_id);
+
+                    JSONArray jsonArray = jsonObject.getJSONArray("data_status");
+                    JSONObject jsonObject1 = jsonArray.getJSONObject(0);
+                    if (jsonObject1.getString("status").equals("complete")){
+
+                    }
+
                 } catch (Exception e){}
             }
         }, new Response.ErrorListener() {
@@ -895,6 +917,8 @@ public class Wean_main extends DialogFragment implements DatePickerSelectionInte
                 hashMap.put("pen_code_for_piglets", pen_for_wean);
                 hashMap.put("pen_for_sow", pen_for_sow);
                 hashMap.put("all_data", all_data);
+                hashMap.put("category_id", category_id);
+                hashMap.put("reference_number", "");
                 hashMap.put("weaned_piglets", String.valueOf(checkedCounter));
                 hashMap.put("isSowStay", String.valueOf(isSow));
                 hashMap.put("isPigletStay", String.valueOf(isPiglet));
@@ -907,6 +931,26 @@ public class Wean_main extends DialogFragment implements DatePickerSelectionInte
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
+    void dialogBox(String name, final String swine_id){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setMessage(name);
+        alertDialog.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        reloadSwineCard(swine_id);
+                        Toast.makeText(getActivity(), "Successfully save.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+    }
+
+    private void reloadSwineCard(String swine_id){
+        dismiss();
+        FragmentManager fm = getFragmentManager();
+        RFscanner_main fragment = (RFscanner_main)fm.findFragmentByTag("Main_menu");
+        fragment.get_details(company_code, company_id, swine_id);
+    }
 
 
     /**
@@ -1278,9 +1322,7 @@ public class Wean_main extends DialogFragment implements DatePickerSelectionInte
                     for (int i=0; i<jsonArray.length(); i++){
                         JSONObject r = (JSONObject) jsonArray.get(i);
 
-                        if (r.getString("status").equals("success")){
-                            s.append("Successfully added adoption for ear tag: "+r.getString("ear_tag")+"\n");
-                        }
+                        s.append(r.getString("ear_tag")+"\n");
                     }
                     dialogBox_success(s.toString());
 
@@ -1302,9 +1344,11 @@ public class Wean_main extends DialogFragment implements DatePickerSelectionInte
                 hashMap.put("company_code", company_code);
                 hashMap.put("company_id", company_id);
                 hashMap.put("swine_id", swine_id);
-                hashMap.put("userid", user_id);
+                hashMap.put("user_id", user_id);
                 hashMap.put("pen_id", pen_id);
                 hashMap.put("remarks", remarks);
+                hashMap.put("reference_number", "");
+                hashMap.put("category_id", category_id);
                 hashMap.put("transfer_date", transfer_date);
                 hashMap.put("all_data", new Gson().toJson(wean_array_check_models));
                 hashMap.put("locations_other_branch", selectedLocation);

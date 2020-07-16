@@ -28,6 +28,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.History.Medication.Medication_main;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.History.Vaccination.Add_Vaccine.Diagnosis_model;
@@ -59,7 +60,7 @@ public class addMedication_main extends DialogFragment implements DatePickerSele
     Button btn_save;
     LinearLayout layout_add;
     ProgressBar progressBar, loading_save;
-    String selectView;
+    String selectView, category_id;
 
 
     @Override
@@ -76,6 +77,7 @@ public class addMedication_main extends DialogFragment implements DatePickerSele
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
         final String company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         final String company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         final String swine_scanned_id = getArguments().getString("swine_scanned_id");
         final String array_piglets = getArguments().getString("array_piglets");
         selectView = getArguments().getString("selectView");
@@ -116,7 +118,7 @@ public class addMedication_main extends DialogFragment implements DatePickerSele
 
 
         getMedication(company_id, company_code, swine_scanned_id, "1");
-        getDiagnos(company_id, company_code, "2");
+        getDiagnos(company_id, company_code, swine_scanned_id, "2");
         return view;
     }
 
@@ -140,7 +142,7 @@ public class addMedication_main extends DialogFragment implements DatePickerSele
         }
     }
 
-    public void getDiagnos(final String company_id, final String company_code, final String get_type){
+    public void getDiagnos(final String company_id, final String company_code, final String swine_id, final String get_type){
         String URL = getString(R.string.URL_online)+"scan_eartag/history/medication_get.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -198,6 +200,7 @@ public class addMedication_main extends DialogFragment implements DatePickerSele
                 HashMap<String,String> hashMap = new HashMap<>();
                 hashMap.put("company_id", company_id);
                 hashMap.put("get_type", get_type);
+                hashMap.put("swine_id", swine_id);
                 hashMap.put("company_code", company_code);
                 return hashMap;
             }
@@ -359,6 +362,7 @@ public class addMedication_main extends DialogFragment implements DatePickerSele
                 hashMap.put("medication", selectedMedicine);
                 hashMap.put("date_added", selectedDate);
                 hashMap.put("check_counter", checkedCounter);
+                hashMap.put("category_id", category_id);
                 hashMap.put("user_id", user_id);
                 hashMap.put("dosage", input_dosage.getText().toString());
                 return hashMap;

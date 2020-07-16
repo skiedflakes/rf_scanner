@@ -42,7 +42,7 @@ public class swineHistory_main extends Fragment {
     ProgressBar loading_;
     ArrayList<swineHistory_model> arrayList = new ArrayList<>();
     swineHistory_adapter adapter;
-    String company_code, company_id, swine_scanned_id;
+    String company_code, company_id, swine_scanned_id, category_id;
 
 
     private void initMenu(View view){
@@ -63,6 +63,7 @@ public class swineHistory_main extends Fragment {
         SessionPreferences sessionPreferences = new SessionPreferences(getActivity());
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         swine_scanned_id = getArguments().getString("swine_scanned_id");
 
         recyclerView = view.findViewById(R.id.recyclerView);
@@ -91,6 +92,7 @@ public class swineHistory_main extends Fragment {
             public void onResponse(String response) {
 
                 try{
+                    //((ActivityMain)getActivity()).dialogBox(response);
                     if (!response.equals("{\"data\":[]}")){
                         arrayList.clear();
                         null_result.setVisibility(View.GONE);
@@ -138,6 +140,7 @@ public class swineHistory_main extends Fragment {
                 HashMap<String,String> hashMap = new HashMap<>();
                 hashMap.put("company_code", company_code);
                 hashMap.put("company_id", company_id);
+                hashMap.put("category_id", category_id);
                 hashMap.put("sow_id", sow_id);
                 return hashMap;
             }

@@ -287,7 +287,9 @@ public class Change_temp_name_dialog_main extends DialogFragment {
 
                                     Toast.makeText(context, "invalid tag", Toast.LENGTH_SHORT).show();
                                 }
-                            }catch (Exception e){}
+                            }catch (Exception e){
+                                Toast.makeText(context, "invalid tag", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     } else {
                         Toast.makeText(context, "No eartag seen", Toast.LENGTH_SHORT).show();

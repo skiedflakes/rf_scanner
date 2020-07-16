@@ -28,7 +28,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
+import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Mortality.Disease_model;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Transfer_Pen.Building_model;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Transfer_Pen.Pen_model;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.RFscanner_main;
@@ -46,14 +48,15 @@ import java.util.Map;
 
 public class Breeding_Failed_main extends DialogFragment implements DatePickerSelectionInterfaceCustom {
 
-    Button btn_save;
-    Spinner spinner_building, spinner_pen;
+    Button btn_save, btn_cancel;
+    Spinner spinner_building, spinner_pen, spinner_disease;
     ProgressBar loading_save, progressBar, loading_pen;
     TextView btn_date;
     LinearLayout layout_add;
+    ArrayList<Disease_model> disease_models = new ArrayList<>();
     ArrayList<Building_model> building_models = new ArrayList<>();
     ArrayList<Pen_model> pen_models = new ArrayList<>();
-    String selectedBuilding = "", selectedPen = "", selectedDate = "", currentDate="";
+    String selectedBuilding = "", selectedPen = "", selectedDate = "", currentDate="", selectedDisease="", category_id;
 
 
     @Override
@@ -70,6 +73,7 @@ public class Breeding_Failed_main extends DialogFragment implements DatePickerSe
         final String company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         final String company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         final String user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         final String swine_scanned_id = getArguments().getString("swine_scanned_id");
         final String pen_code = getArguments().getString("pen_code");
         final String swine_type = getArguments().getString("swine_type");
@@ -82,6 +86,8 @@ public class Breeding_Failed_main extends DialogFragment implements DatePickerSe
         loading_save = view.findViewById(R.id.loading_save);
         btn_save = view.findViewById(R.id.btn_save);
         progressBar = view.findViewById(R.id.progressBar);
+        btn_cancel = view.findViewById(R.id.btn_cancel);
+        spinner_disease = view.findViewById(R.id.spinner_disease);
 
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,9 +105,18 @@ public class Breeding_Failed_main extends DialogFragment implements DatePickerSe
                     Toast.makeText(getActivity(), "Please select building.", Toast.LENGTH_SHORT).show();
                 } else if (selectedPen.equals("")){
                     Toast.makeText(getActivity(), "Please select pen.", Toast.LENGTH_SHORT).show();
+                } else if (selectedDisease.equals("")){
+                    Toast.makeText(getActivity(), "Please select cause.", Toast.LENGTH_SHORT).show();
                 } else {
                     saveBreedingFailed(company_code, company_id, swine_scanned_id, swine_type, pen_code, user_id);
                 }
+            }
+        });
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
             }
         });
 
@@ -176,6 +191,39 @@ public class Breeding_Failed_main extends DialogFragment implements DatePickerSe
                             @Override
                             public void onNothingSelected(AdapterView<?> adapterView) {}
                         });
+
+
+                        final JSONArray disease = Object.getJSONArray("response_disease");
+                        disease_models.add(new Disease_model("0","Please Select"));
+                        for (int i=0; i < disease.length(); i++){
+                            JSONObject jsonObject = disease.getJSONObject(i);
+
+                            disease_models.add(new Disease_model(jsonObject.getString("disease_id"),
+                                    jsonObject.getString("cause")));
+                        }
+
+                        // Populate Spinner
+                        List<String> lables_disease = new ArrayList<>();
+                        for (int i = 0; i < disease_models.size(); i++) {
+                            lables_disease.add(disease_models.get(i).getCause());
+                        }
+                        ArrayAdapter<String> spinnerAdapter_ = new ArrayAdapter<>(getActivity(), R.layout.custom_spinner, lables_disease);
+                        spinnerAdapter_.setDropDownViewResource(R.layout.custom_spinner);
+                        spinner_disease.setAdapter(spinnerAdapter_);
+                        spinner_disease.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                                Disease_model click = disease_models.get(position);
+                                if (!click.getCause().equals("Please Select")){
+                                    selectedDisease = String.valueOf(click.getDisease_id());
+                                } else {
+                                    selectedDisease = "";
+                                }
+                            }
+                            @Override
+                            public void onNothingSelected(AdapterView<?> adapterView) {}
+                        });
+
                     }
 
                     // Spinner pen
@@ -248,6 +296,7 @@ public class Breeding_Failed_main extends DialogFragment implements DatePickerSe
 
     public void saveBreedingFailed(final String company_code, final String company_id, final String swine_id, final String swine_type, final String pen_id, final String user_id) {
         btn_save.setVisibility(View.GONE);
+        btn_cancel.setVisibility(View.GONE);
         loading_save.setVisibility(View.VISIBLE);
         String URL = getString(R.string.URL_online)+"scan_eartag/action/pig_breeding_failed_add.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -256,6 +305,7 @@ public class Breeding_Failed_main extends DialogFragment implements DatePickerSe
 
                 try{
                     btn_save.setVisibility(View.VISIBLE);
+                    btn_cancel.setVisibility(View.VISIBLE);
                     loading_save.setVisibility(View.GONE);
                     if (response.equals("1")){
                         FragmentManager fm = getFragmentManager();
@@ -273,6 +323,7 @@ public class Breeding_Failed_main extends DialogFragment implements DatePickerSe
             public void onErrorResponse(VolleyError error) {
                 try{
                     btn_save.setVisibility(View.VISIBLE);
+                    btn_cancel.setVisibility(View.VISIBLE);
                     loading_save.setVisibility(View.GONE);
                     Toast.makeText(getActivity(), "Connection Error, please try again.", Toast.LENGTH_SHORT).show();
                 } catch (Exception e){}
@@ -289,6 +340,9 @@ public class Breeding_Failed_main extends DialogFragment implements DatePickerSe
                 hashMap.put("swine_type", swine_type);
                 hashMap.put("breeding_failed_date", selectedDate);
                 hashMap.put("user_id", user_id);
+                hashMap.put("category_id", category_id);
+                hashMap.put("cause", selectedDisease);
+                hashMap.put("reference_number", "");
                 return hashMap;
             }
         };

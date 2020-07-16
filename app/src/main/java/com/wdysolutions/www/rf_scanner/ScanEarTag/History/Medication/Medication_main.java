@@ -19,6 +19,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -51,6 +52,7 @@ public class Medication_main extends Fragment {
     Button btn_add;
     ArrayList<Medication_model> arrayList = new ArrayList<>();
     Medication_adapter adapter;
+    LinearLayout layout_button;
     String company_code, company_id, swine_scanned_id, selectView, pen_code, array_piglets, checkedCounter, pen_type;
 
 
@@ -79,13 +81,14 @@ public class Medication_main extends Fragment {
         pen_type = getArguments().getString("pen_type");
         checkedCounter = getArguments().getString("checkedCounter");
 
+        layout_button = view.findViewById(R.id.layout_button);
         recyclerView = view.findViewById(R.id.recyclerView);
         error_result = view.findViewById(R.id.error_result);
         null_result = view.findViewById(R.id.null_result);
         loading_ = view.findViewById(R.id.loading_);
         btn_add = view.findViewById(R.id.btn_add);
+        Button btn_sched = view.findViewById(R.id.btn_sched);
 
-        if (pen_type.equals("Deceased") || pen_type.equals("Culled")){btn_add.setVisibility(View.GONE);}
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,27 +119,29 @@ public class Medication_main extends Fragment {
             }
         });
 
+        if (pen_type.equals("Deceased") || pen_type.equals("Culled")){
+            layout_button.setVisibility(View.GONE);
+        } else {
+            if (!isPiglets()){
 
-        if (!isPiglets()){
-            Button btn_sched = view.findViewById(R.id.btn_sched);
-            btn_sched.setVisibility(View.VISIBLE);
-            btn_sched.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("swine_scanned_id", swine_scanned_id);
-                    bundle.putString("value", "M");
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-                    if (prev != null) { ft.remove(prev); }
-                    ft.addToBackStack(null);
-                    Med_Vac_schedule_main dialogFragment = new Med_Vac_schedule_main();
-                    dialogFragment.setArguments(bundle);
-                    dialogFragment.show(ft, "dialog");
-                }
-            });
+                btn_sched.setVisibility(View.VISIBLE);
+                btn_sched.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("swine_scanned_id", swine_scanned_id);
+                        bundle.putString("value", "M");
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                        if (prev != null) { ft.remove(prev); }
+                        ft.addToBackStack(null);
+                        Med_Vac_schedule_main dialogFragment = new Med_Vac_schedule_main();
+                        dialogFragment.setArguments(bundle);
+                        dialogFragment.show(ft, "dialog");
+                    }
+                });
+            }
         }
-
 
         error_result.setOnClickListener(new View.OnClickListener() {
             @Override

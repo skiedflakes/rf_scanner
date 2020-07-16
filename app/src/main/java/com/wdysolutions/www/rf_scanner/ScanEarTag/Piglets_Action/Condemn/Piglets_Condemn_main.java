@@ -51,7 +51,7 @@ import java.util.Map;
 
 public class Piglets_Condemn_main  extends DialogFragment implements DatePickerSelectionInterfaceCustom {
 
-    Button btn_save;
+    Button btn_save, btn_cancel;
     ProgressBar loading_save, progressBar;
     EditText edittext_remarks;
     TextView btn_date;
@@ -102,6 +102,7 @@ public class Piglets_Condemn_main  extends DialogFragment implements DatePickerS
         edittext_remarks = view.findViewById(R.id.edittext_remarks);
         loading_save = view.findViewById(R.id.loading_save);
         btn_save = view.findViewById(R.id.btn_save);
+        btn_cancel = view.findViewById(R.id.btn_cancel);
 
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,6 +121,13 @@ public class Piglets_Condemn_main  extends DialogFragment implements DatePickerS
                 } else {
                     saveCondemn();
                 }
+            }
+        });
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
             }
         });
 
@@ -218,6 +226,7 @@ public class Piglets_Condemn_main  extends DialogFragment implements DatePickerS
     public void saveCondemn(){
         loading_save.setVisibility(View.VISIBLE);
         btn_save.setVisibility(View.GONE);
+        btn_cancel.setVisibility(View.GONE);
         String URL = getString(R.string.URL_online)+"scan_eartag/pig_piglets_condemn.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -226,6 +235,7 @@ public class Piglets_Condemn_main  extends DialogFragment implements DatePickerS
                 try {
                     loading_save.setVisibility(View.GONE);
                     btn_save.setVisibility(View.VISIBLE);
+                    btn_cancel.setVisibility(View.VISIBLE);
 
                     String success="";
                     JSONObject jsonObject = new JSONObject(response);
@@ -242,9 +252,9 @@ public class Piglets_Condemn_main  extends DialogFragment implements DatePickerS
                     if (jsonObject1.getString("status").equals("complete")){
 
                     }
-
-                } catch (Exception e){}
-
+                }
+                catch (JSONException e){}
+                catch (Exception e){}
             }
         }, new Response.ErrorListener() {
             @Override
@@ -252,6 +262,7 @@ public class Piglets_Condemn_main  extends DialogFragment implements DatePickerS
                 try{
                     loading_save.setVisibility(View.GONE);
                     btn_save.setVisibility(View.VISIBLE);
+                    btn_cancel.setVisibility(View.VISIBLE);
                     Toast.makeText(getActivity(), "Connection Error, please try again.", Toast.LENGTH_SHORT).show();
                 } catch (Exception e){}
             }

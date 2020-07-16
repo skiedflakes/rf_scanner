@@ -28,6 +28,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.History.Vaccination.Vaccination_main;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.RFscanner_main;
@@ -51,7 +52,7 @@ public class addVaccine_main extends DialogFragment implements DatePickerSelecti
     Spinner spinner_vaccine, spinner_diagnosis;
     SessionPreferences sessionPreferences;
     String company_code, company_id, selectedDiagnosis = "", selectedVaccine = "", selectedDate = "",
-            selectView, checkedCounter, user_id, currentDate="";
+            selectView, checkedCounter, user_id, currentDate="", category_id;
     ArrayList<Vaccine_model> Vaccine_models = new ArrayList<>();
     ArrayList<Diagnosis_model> diagnosis_models = new ArrayList<>();
     TextView btn_date;
@@ -75,6 +76,7 @@ public class addVaccine_main extends DialogFragment implements DatePickerSelecti
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         final String swine_scanned_id = getArguments().getString("swine_scanned_id");
         final String array_piglets = getArguments().getString("array_piglets");
         selectView = getArguments().getString("selectView");
@@ -355,6 +357,7 @@ public class addVaccine_main extends DialogFragment implements DatePickerSelecti
                 hashMap.put("vaccine", selectedVaccine);
                 hashMap.put("v_date", selectedDate);
                 hashMap.put("check_counter", checkedCounter);
+                hashMap.put("category_id", category_id);
                 hashMap.put("user_id", user_id);
                 hashMap.put("v_dosage", input_dosage.getText().toString());
                 return hashMap;

@@ -31,6 +31,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Transfer_Pen.Building_model;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Transfer_Pen.Locations_model;
@@ -60,7 +61,7 @@ public class Transfer_Farrowing_main extends DialogFragment implements DatePicke
     ArrayList<Building_model> building_models = new ArrayList<>();
     ArrayList<Pen_model> pen_models = new ArrayList<>();
     String selectedBuilding = "", selectedPen = "", selectedDate = "", selectedLocation = "", swine_scanned_id,
-            company_code, company_id, currentLocation, user_id, currentDate;
+            company_code, company_id, currentLocation, user_id, currentDate, category_id;
     boolean isTransferWithin = true, isFirstOpen = true;
     StringRequest stringRequest_location, stringRequest_building, stringRequest_pen;
 
@@ -79,6 +80,7 @@ public class Transfer_Farrowing_main extends DialogFragment implements DatePicke
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         swine_scanned_id = getArguments().getString("swine_scanned_id");
 
         loading_location = view.findViewById(R.id.loading_location);
@@ -202,8 +204,7 @@ public class Transfer_Farrowing_main extends DialogFragment implements DatePicke
         spinner_locations.setAdapter(null);
         spinner_building.setAdapter(null);
         spinner_pen.setAdapter(null);
-        selectedDate = "";
-        btn_date.setText("Please select date");
+        btn_date.setText(selectedDate);
         btn_within.setEnabled(true);
         btn_other.setEnabled(false);
     }
@@ -309,12 +310,13 @@ public class Transfer_Farrowing_main extends DialogFragment implements DatePicke
                         currentLocation = cusObj.getString("current_location");
                         currentDate = cusObj.getString("current_date");
                     }
-                    String[] maxDate = currentDate.split(" ");
-                    selectedDate = maxDate[0];
-                    btn_date.setText(selectedDate);
 
                     if(isWithin){
                         btn_within.setText("Transfer within location ("+currentLocation+")");
+
+                        String[] maxDate = currentDate.split(" ");
+                        selectedDate = maxDate[0];
+                        btn_date.setText(selectedDate);
                     }
 
                     // Populate Spinner
@@ -514,6 +516,8 @@ public class Transfer_Farrowing_main extends DialogFragment implements DatePicke
                 hashMap.put("userid", user_id);
                 hashMap.put("pen_id", pen_id);
                 hashMap.put("remarks", remarks);
+                hashMap.put("category_id", category_id);
+                hashMap.put("reference_number", "");
                 hashMap.put("transfer_date", transfer_date);
                 hashMap.put("locations_other_branch", selectedLocation);
                 return hashMap;

@@ -42,7 +42,7 @@ public class Remarks_add extends DialogFragment implements DatePickerSelectionIn
     TextView btn_date;
     Button btn_save;
     ProgressBar loading_save;
-    String company_code, company_id, user_id, swine_scanned_id, selectedDate = "", currentDate ="";
+    String company_code, company_id, user_id, swine_scanned_id, selectedDate = "", currentDate ="", category_id;
 
 
     public void openDatePicker(boolean isMinusDays21) {
@@ -81,6 +81,7 @@ public class Remarks_add extends DialogFragment implements DatePickerSelectionIn
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         swine_scanned_id = getArguments().getString("swine_scanned_id");
         currentDate = getArguments().getString("currentDate");
 
@@ -153,6 +154,7 @@ public class Remarks_add extends DialogFragment implements DatePickerSelectionIn
                 hashMap.put("user_id", user_id);
                 hashMap.put("swine_id", swine_scanned_id);
                 hashMap.put("date_added", selectedDate);
+                hashMap.put("category_id", category_id);
                 hashMap.put("remarks", edittext_remarks.getText().toString());
                 return hashMap;
             }
@@ -160,20 +162,4 @@ public class Remarks_add extends DialogFragment implements DatePickerSelectionIn
         AppController.getInstance().setVolleyDuration(stringRequest);
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
-
-    void dialogBox(String name){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        final EditText input = new EditText(getActivity());
-        alertDialog.setView(input);
-        input.setText(name);
-        alertDialog.setPositiveButton("Close",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.setCancelable(false);
-        alertDialog.show();
-    }
-
 }

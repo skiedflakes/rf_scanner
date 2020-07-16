@@ -103,6 +103,7 @@ public class Feeding_main extends Fragment {
             public void onResponse(String response) {
 
                 try{
+                    //((ActivityMain)getActivity()).dialogBox(response);
                     if (!response.equals("{\"data\":[]}")){
                         arrayList.clear();
                         null_result.setVisibility(View.GONE);

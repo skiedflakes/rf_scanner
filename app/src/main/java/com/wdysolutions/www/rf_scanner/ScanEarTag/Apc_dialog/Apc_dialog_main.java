@@ -53,7 +53,7 @@ public class Apc_dialog_main extends DialogFragment {
     ProgressBar loading_save, progressBar;
     Button btn_close;
     LinearLayout layout_;
-    String company_id, swine_id, company_code;
+    String company_id, swine_id, company_code, category_id;
     ArrayList<apc_model> apc_models = new ArrayList<>();
 
 
@@ -69,6 +69,7 @@ public class Apc_dialog_main extends DialogFragment {
         View view = inflater.inflate(R.layout.apc_dialog_main, container, false);
 
         swine_id = getArguments().getString("swine_id");
+        category_id = getArguments().getString("category_id");
         company_id = getArguments().getString("company_id");
         company_code = getArguments().getString("company_code");
 
@@ -90,13 +91,12 @@ public class Apc_dialog_main extends DialogFragment {
     }
 
     public void getAPC(final String company_code, final String company_id, final String swine_id) {
-        String URL = getString(R.string.URL_online)+"scan_eartag/get_swine_apc.php";
+        String URL = getString(R.string.URL_online)+"scan_eartag/get_swine_apc2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try{
-                    //dialogBox(response);
                     progressBar.setVisibility(View.GONE);
                     layout_.setVisibility(View.VISIBLE);
 
@@ -107,9 +107,15 @@ public class Apc_dialog_main extends DialogFragment {
                     for (int i=0; i<details.length(); i++) {
                         JSONObject r = details.getJSONObject(i);
 
-                        apc_models.add(new apc_model(r.getString("product"),
-                                r.getString("amount"),
-                                r.getString("date")));
+                        if (r.getString("product").equals("Sow Cost") && r.getString("amount").equals("0.00")){
+
+                        } else if (r.getString("product").equals("Adoption Cost") && r.getString("amount").equals("0.00")){
+
+                        } else {
+                            apc_models.add(new apc_model(r.getString("product"),
+                                    r.getString("amount"),
+                                    r.getString("date")));
+                        }
                     }
 
                     apc_adapter adapter = new apc_adapter(getContext(), apc_models);
@@ -135,6 +141,7 @@ public class Apc_dialog_main extends DialogFragment {
                 HashMap<String,String> hashMap = new HashMap<>();
                 hashMap.put("company_code", company_code);
                 hashMap.put("company_id", company_id);
+                hashMap.put("category_id", category_id);
                 hashMap.put("swine_id", swine_id);
                 return hashMap;
             }
@@ -205,21 +212,4 @@ public class Apc_dialog_main extends DialogFragment {
             }
         }
     }
-
-    void dialogBox(String name){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        EditText text = new EditText(getActivity());
-        text.setText(name);
-        alertDialog.setView(text);
-        alertDialog.setPositiveButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.setCancelable(false);
-        alertDialog.show();
-    }
-
-
 }

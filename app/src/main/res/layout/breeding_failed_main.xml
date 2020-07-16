@@ -84,7 +84,6 @@
                 android:layout_weight="1" />
         </LinearLayout>
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -116,6 +115,28 @@
                 android:layout_weight="1" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/bg_border"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/dialogFragment_layout_spinner">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Disease/Cause:"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinner_disease"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -139,6 +160,19 @@
                 android:drawableLeft="@drawable/ic_check_circle_white_24dp"
                 android:padding="5dp"
                 android:text="Save Entry"
+                android:textAllCaps="false"
+                android:textColor="@android:color/background_light"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/btn_ripple_red"
+                android:drawableLeft="@drawable/ic_close_white_24dp"
+                android:padding="5dp"
+                android:text="Cancel"
                 android:textAllCaps="false"
                 android:textColor="@android:color/background_light"
                 android:textSize="12sp" />

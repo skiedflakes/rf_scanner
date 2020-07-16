@@ -44,7 +44,7 @@
     <color name="btn_lightgreen_color1">#83e67e</color>
     <color name="btn_lightgreen_color2">#54c450</color>
 
-    <color name="color_text_light_black">#535353</color>
+    <color name="color_text_light_black">#949494</color>
 
     <color name="text_grey">#FF6A6A6A</color>
 
@@ -59,6 +59,7 @@
     <color name="light_grey">#dcdcdc</color>
     <color name="white">#ffffff</color>
     <color name="default_">#fafafa</color>
+    <color name="yellow_light">#F0E9AD</color>
 
     <color name="btn_color11">#4EAC4A</color>
     <color name="btn_color22">#6BCC67</color>

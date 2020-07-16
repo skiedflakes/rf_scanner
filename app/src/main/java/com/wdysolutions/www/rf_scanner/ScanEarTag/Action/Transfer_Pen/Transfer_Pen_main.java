@@ -29,6 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.RFscanner_main;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
@@ -50,12 +51,12 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
     Spinner spinner_locations, spinner_building, spinner_pen;
     EditText editext_remarks;
     ProgressBar loading_save, progressBar, loading_location, loading_building, loading_pen;
-    Button btn_save;
+    Button btn_save, btn_cancel;
     ArrayList<Locations_model> locations_models = new ArrayList<>();
     ArrayList<Building_model> building_models = new ArrayList<>();
     ArrayList<Pen_model> pen_models = new ArrayList<>();
     String selectedBuilding = "", selectedPen = "", selectedDate = "", selectedLocation = "", swine_scanned_id,
-            company_code, company_id, currentLocation, user_id, currentDate="";
+            company_code, company_id, currentLocation, user_id, currentDate="", pen_code, category_id;
     boolean isTransferWithin = true, isFirstOpen = true;
     StringRequest stringRequest_location, stringRequest_building, stringRequest_pen;
 
@@ -74,7 +75,9 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         swine_scanned_id = getArguments().getString("swine_scanned_id");
+        pen_code = getArguments().getString("pen_code");
 
         loading_location = view.findViewById(R.id.loading_location);
         loading_building = view.findViewById(R.id.loading_building);
@@ -92,6 +95,7 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
         editext_remarks = view.findViewById(R.id.editext_remarks);
         loading_save = view.findViewById(R.id.loading_save);
         btn_save = view.findViewById(R.id.btn_save);
+        btn_cancel = view.findViewById(R.id.btn_cancel);
 
         btn_within.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,6 +130,13 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
                 } else {
                     saveTransfer(swine_scanned_id, selectedPen, editext_remarks.getText().toString(), selectedDate, selectedLocation);
                 }
+            }
+        });
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
             }
         });
 
@@ -197,8 +208,7 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
         spinner_locations.setAdapter(null);
         spinner_building.setAdapter(null);
         spinner_pen.setAdapter(null);
-        selectedDate = "";
-        btn_date.setText("Please select date");
+        btn_date.setText(selectedDate);
         btn_within.setEnabled(true);
         btn_other.setEnabled(false);
     }
@@ -271,6 +281,7 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
                 hashMap.put("company_code", company_code);
                 hashMap.put("company_id", company_id);
                 hashMap.put("swine_id", swine_id);
+                hashMap.put("pen_id", pen_code);
                 hashMap.put("get_type", get_type);
                 return hashMap;
             }
@@ -306,12 +317,13 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
                         currentLocation = cusObj.getString("current_location");
                         currentDate = cusObj.getString("current_date");
                     }
-                    String[] maxDate = currentDate.split(" ");
-                    selectedDate = maxDate[0];
-                    btn_date.setText(selectedDate);
 
                     if(isWithin){
                         btn_within.setText("Transfer within location ("+currentLocation+")");
+
+                        String[] maxDate = currentDate.split(" ");
+                        selectedDate = maxDate[0];
+                        btn_date.setText(selectedDate);
                     }
 
                     // Populate Spinner
@@ -363,6 +375,7 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
                 hashMap.put("company_id", company_id);
                 hashMap.put("swine_id", swine_id);
                 hashMap.put("get_type", get_type);
+                hashMap.put("pen_id", pen_code);
                 hashMap.put("locations_other_branch_id", locations_other_branch_id);
                 return hashMap;
             }
@@ -380,7 +393,6 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
 
                 try{
                     penLoading(false);
-
                     pen_models.clear();
                     pen_models.add(new Pen_model("0","Please Select", ""));
                     JSONObject Object = new JSONObject(response);
@@ -416,9 +428,9 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
                         public void onNothingSelected(AdapterView<?> adapterView) {}
                     });
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (Exception e){}
+                }
+                catch (JSONException e){}
+                catch (Exception e){}
             }
         }, new Response.ErrorListener() {
             @Override
@@ -435,6 +447,7 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
                 hashMap.put("company_code", company_code);
                 hashMap.put("company_id", company_id);
                 hashMap.put("swine_id", swine_id);
+                hashMap.put("pen_id", pen_code);
                 hashMap.put("get_type", get_type);
                 hashMap.put("building_id", building_id);
                 hashMap.put("locations_other_branch_id", selectedLocation);
@@ -469,6 +482,7 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
 
     public void saveTransfer(final String swine_id, final String pen_id, final String remarks, final String transfer_date, final String selectedLocation) {
         btn_save.setVisibility(View.GONE);
+        btn_cancel.setVisibility(View.GONE);
         loading_save.setVisibility(View.VISIBLE);
         String URL = getString(R.string.URL_online)+"scan_eartag/action/"+ (isTransferWithin ? "pig_transfer_pen_add.php" : "pig_transfer_pen_add_other_location.php");
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -477,6 +491,7 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
 
                 try {
                     btn_save.setVisibility(View.VISIBLE);
+                    btn_cancel.setVisibility(View.VISIBLE);
                     loading_save.setVisibility(View.GONE);
                     if (response.equals("1")){
                         dismiss();
@@ -496,6 +511,7 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
             public void onErrorResponse(VolleyError error) {
                 try{
                     btn_save.setVisibility(View.VISIBLE);
+                    btn_cancel.setVisibility(View.VISIBLE);
                     loading_save.setVisibility(View.GONE);
                     Toast.makeText(getActivity(), "Connection Error, please try again.", Toast.LENGTH_SHORT).show();
                 } catch (Exception e){}
@@ -510,6 +526,8 @@ public class Transfer_Pen_main extends DialogFragment implements DatePickerSelec
                 hashMap.put("userid", user_id);
                 hashMap.put("pen_id", pen_id);
                 hashMap.put("remarks", remarks);
+                hashMap.put("reference_number", "");
+                hashMap.put("category_id", category_id);
                 hashMap.put("transfer_date", transfer_date);
                 hashMap.put("locations_other_branch", selectedLocation);
                 return hashMap;

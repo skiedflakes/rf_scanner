@@ -148,6 +148,19 @@
                 android:textColor="@android:color/background_light"
                 android:textSize="12sp" />
 
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/btn_ripple_red"
+                android:drawableLeft="@drawable/ic_close_white_24dp"
+                android:padding="5dp"
+                android:text="Cancel"
+                android:textAllCaps="false"
+                android:textColor="@android:color/background_light"
+                android:textSize="12sp" />
+
         </LinearLayout>
 
     </LinearLayout>

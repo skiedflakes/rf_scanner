@@ -51,7 +51,7 @@ public class Remarks_main extends Fragment {
     ProgressBar loading_;
     ArrayList<Remarks_model> arrayList = new ArrayList<>();
     Remarks_adapter adapter;
-    String company_code, company_id, swine_scanned_id, user_id, currentDate="";
+    String company_code, company_id, swine_scanned_id, user_id, currentDate="", category_id;
     Button btn_add;
 
 
@@ -74,6 +74,7 @@ public class Remarks_main extends Fragment {
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         swine_scanned_id = getArguments().getString("swine_scanned_id");
 
         btn_add = view.findViewById(R.id.btn_add);
@@ -128,7 +129,7 @@ public class Remarks_main extends Fragment {
                     JSONObject Object = new JSONObject(response);
                     JSONArray details = Object.getJSONArray("data");
 
-                    if (String.valueOf(details).equals("[]")){
+                    if (details.length() == 0){
                         null_result.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.GONE);
                         error_result.setVisibility(View.GONE);
@@ -294,6 +295,7 @@ public class Remarks_main extends Fragment {
                     hashMap.put("swine_id", swine_scanned_id);
                     hashMap.put("remarks_id", remarks_id);
                     hashMap.put("user_id", user_id);
+                    hashMap.put("category_id", category_id);
                     return hashMap;
                 }
             };
@@ -320,22 +322,4 @@ public class Remarks_main extends Fragment {
             alertDialog.show();
         }
     }
-
-    void dialogBox(String name){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        final EditText input = new EditText(getActivity());
-        alertDialog.setView(input);
-        input.setText(name);
-        alertDialog.setPositiveButton("Close",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.setCancelable(false);
-        alertDialog.show();
-    }
-
-
-
 }

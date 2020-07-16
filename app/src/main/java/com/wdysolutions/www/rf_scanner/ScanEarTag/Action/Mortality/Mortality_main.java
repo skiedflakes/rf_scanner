@@ -49,7 +49,7 @@ public class Mortality_main extends DialogFragment implements DatePickerSelectio
     ProgressBar progressBar, loading_save;
     Spinner spinner_cause, spinner_caretaker;
     EditText editText_remarks;
-    Button btn_save;
+    Button btn_save, btn_cancel;
     LinearLayout layout_add;
     ArrayList<Disease_model> disease_models = new ArrayList<>();
     ArrayList<Disease_model> caretaker_models = new ArrayList<>();
@@ -82,6 +82,7 @@ public class Mortality_main extends DialogFragment implements DatePickerSelectio
         loading_save = view.findViewById(R.id.loading_save);
         btn_save = view.findViewById(R.id.btn_save);
         progressBar = view.findViewById(R.id.progressBar);
+        btn_cancel = view.findViewById(R.id.btn_cancel);
 
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +103,13 @@ public class Mortality_main extends DialogFragment implements DatePickerSelectio
                 } else {
                     saveMortality(company_code, company_id, swine_scanned_id);
                 }
+            }
+        });
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
             }
         });
 
@@ -217,6 +225,7 @@ public class Mortality_main extends DialogFragment implements DatePickerSelectio
 
     public void saveMortality(final String company_code, final String company_id, final String swine_id) {
         btn_save.setVisibility(View.GONE);
+        btn_cancel.setVisibility(View.GONE);
         loading_save.setVisibility(View.VISIBLE);
         String URL = getString(R.string.URL_online)+"scan_eartag/action/pig_mortality_add.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -225,6 +234,7 @@ public class Mortality_main extends DialogFragment implements DatePickerSelectio
 
                 try {
                     btn_save.setVisibility(View.VISIBLE);
+                    btn_cancel.setVisibility(View.VISIBLE);
                     loading_save.setVisibility(View.GONE);
                     if (response.equals("1")){
                         dismiss();
@@ -244,6 +254,7 @@ public class Mortality_main extends DialogFragment implements DatePickerSelectio
             public void onErrorResponse(VolleyError error) {
                 try{
                     btn_save.setVisibility(View.VISIBLE);
+                    btn_cancel.setVisibility(View.VISIBLE);
                     loading_save.setVisibility(View.GONE);
                     Toast.makeText(getActivity(), "Connection Error, please try again.", Toast.LENGTH_SHORT).show();
                 } catch (Exception e){}
@@ -259,6 +270,7 @@ public class Mortality_main extends DialogFragment implements DatePickerSelectio
                 hashMap.put("swine_id", swine_id);
                 hashMap.put("caretaker_id", selectedCaretaker);
                 hashMap.put("cause", selectedDisease);
+                hashMap.put("reference_number", "");
                 hashMap.put("remarks", editText_remarks.getText().toString());
                 hashMap.put("mortality_date", selectedDate);
                 return hashMap;
