@@ -25,6 +25,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.History.Farrowing_Stats.Farrowing_main;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
@@ -51,7 +52,7 @@ public class Farrowing_add_main extends DialogFragment implements DatePickerSele
     ProgressBar loading_save, progressBar;
     String dateBreeding, dateFarrowed, dateWeaned, selected;
     String company_code, company_id, swine_scanned_id;
-    String latest_breeding_date, latest_weaning_date, latest_farrowing_date, selectedMaxDate;
+    String latest_breeding_date, latest_weaning_date, latest_farrowing_date, selectedMaxDate="";
     SessionPreferences sessionPreferences;
     LinearLayout layout_add;
 
@@ -284,13 +285,12 @@ public class Farrowing_add_main extends DialogFragment implements DatePickerSele
                              final String post_wean_mort, final String ave_weaning_wt, final String condemned) {
         loading_save.setVisibility(View.VISIBLE);
         btn_save.setVisibility(View.GONE);
-        String URL = getString(R.string.URL_online)+"scan_eartag/history/pig_farrowing_add.php";
+        String URL = getString(R.string.URL_online)+"scan_eartag/history/pig_farrowing_add2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try{
-                    //dialogBox(response);
                     loading_save.setVisibility(View.GONE);
                     btn_save.setVisibility(View.VISIBLE);
                     if (response.equals("okay")){
@@ -340,20 +340,4 @@ public class Farrowing_add_main extends DialogFragment implements DatePickerSele
         AppController.getInstance().setVolleyDuration(stringRequest);
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
-
-    void dialogBox(String name){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        EditText text = new EditText(getActivity());
-        text.setText(name);
-        alertDialog.setView(text);
-        alertDialog.setPositiveButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.setCancelable(false);
-        alertDialog.show();
-    }
-
 }

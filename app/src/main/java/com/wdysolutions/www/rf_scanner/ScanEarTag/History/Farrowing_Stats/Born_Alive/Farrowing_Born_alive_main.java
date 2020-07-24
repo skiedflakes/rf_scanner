@@ -29,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.wdysolutions.www.rf_scanner.AppController;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
 
@@ -51,6 +52,7 @@ public class Farrowing_Born_alive_main extends DialogFragment {
     ArrayList<Farrowing_Born_Alive_addArray_model> arrayList_add = new ArrayList<>();
     bornAlive_adapter adapter;
     int counter = 0;
+    String swine_scanned_id, user_id, category_id;
 
 
     @Override
@@ -66,8 +68,10 @@ public class Farrowing_Born_alive_main extends DialogFragment {
         final SessionPreferences sessionPreferences = new SessionPreferences(getActivity());
         final String company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         final String company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
+        user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id  = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         final String farr_id = getArguments().getString("farr_id");
-        final String swine_scanned_id = getArguments().getString("swine_scanned_id");
+        swine_scanned_id = getArguments().getString("swine_scanned_id");
 
         layout_add = view.findViewById(R.id.layout_add);
         recyclerView = view.findViewById(R.id.recyclerView);
@@ -89,7 +93,7 @@ public class Farrowing_Born_alive_main extends DialogFragment {
     public void saveChanges(final String company_code, final String company_id) {
         btn_save.setVisibility(View.GONE);
         loading_save.setVisibility(View.VISIBLE);
-        String URL = getString(R.string.URL_online)+"scan_eartag/history/pig_updateSwineCode.php";
+        String URL = getString(R.string.URL_online)+"scan_eartag/history/pig_updateSwineCode2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -126,6 +130,9 @@ public class Farrowing_Born_alive_main extends DialogFragment {
                 HashMap<String,String> hashMap = new HashMap<>();
                 hashMap.put("company_code", company_code);
                 hashMap.put("company_id", company_id);
+                hashMap.put("user_id", user_id);
+                hashMap.put("category_id", category_id);
+                hashMap.put("swine_id", swine_scanned_id);
                 hashMap.put("born_alive_list", new Gson().toJson(arrayList_add));
                 hashMap.put("counter", String.valueOf(counter));
                 return hashMap;

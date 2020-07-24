@@ -1,6 +1,7 @@
 package com.wdysolutions.www.rf_scanner.ScanEarTag.History.Med_Vac_Schedule;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -54,6 +56,13 @@ public class Med_Vac_schedule_main extends DialogFragment implements DatePickerS
     LinearLayout layout_main;
     ProgressBar loading_main, loading_save;
 
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -211,6 +220,7 @@ public class Med_Vac_schedule_main extends DialogFragment implements DatePickerS
             }
         };
         AppController.getInstance().addToRequestQueue(stringRequest);
+        AppController.getInstance().setVolleyDuration(stringRequest);
     }
 
     Med_Vac_schedule_adapter adapter;

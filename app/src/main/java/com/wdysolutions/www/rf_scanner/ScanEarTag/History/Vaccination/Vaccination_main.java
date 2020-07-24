@@ -55,7 +55,8 @@ public class Vaccination_main extends Fragment {
     LinearLayout layout_, layout_button;
     TextView null_result, error_result;
     ProgressBar loading_vaccine;
-    String company_code, company_id, swine_scanned_id, array_piglets, selectView, pen_code, checkedCounter, pen_type, user_id;
+    String company_code, company_id, swine_scanned_id, array_piglets, selectView, pen_code, checkedCounter, pen_type, user_id,
+    category_id;
 
     private void initMenu(View view){
         Toolbar toolbar = view.findViewById(R.id.toolbar);
@@ -76,6 +77,7 @@ public class Vaccination_main extends Fragment {
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         swine_scanned_id = getArguments().getString("swine_scanned_id");
         array_piglets = getArguments().getString("array_piglets");
         selectView = getArguments().getString("selectView");
@@ -383,6 +385,7 @@ public class Vaccination_main extends Fragment {
                     hashMap.put("company_code", company_code);
                     hashMap.put("company_id", company_id);
                     hashMap.put("swine_id", swine_scanned_id);
+                    hashMap.put("category_id", category_id);
                     hashMap.put("user_id", user_id);
                     hashMap.put("id", id);
                     return hashMap;
@@ -416,21 +419,4 @@ public class Vaccination_main extends Fragment {
             alertDialog2.show();
         }
     }
-
-    void dialogBox(String name){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        final EditText input = new EditText(getActivity());
-        alertDialog.setView(input);
-        input.setText(name);
-        alertDialog.setPositiveButton("Close",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.setCancelable(false);
-        alertDialog.show();
-    }
-
-
 }

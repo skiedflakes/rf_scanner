@@ -52,7 +52,7 @@ public class addVaccine_main extends DialogFragment implements DatePickerSelecti
     Spinner spinner_vaccine, spinner_diagnosis;
     SessionPreferences sessionPreferences;
     String company_code, company_id, selectedDiagnosis = "", selectedVaccine = "", selectedDate = "",
-            selectView, checkedCounter, user_id, currentDate="", category_id;
+            selectView, checkedCounter, user_id, currentDate="", category_id, pen_code;
     ArrayList<Vaccine_model> Vaccine_models = new ArrayList<>();
     ArrayList<Diagnosis_model> diagnosis_models = new ArrayList<>();
     TextView btn_date;
@@ -80,6 +80,7 @@ public class addVaccine_main extends DialogFragment implements DatePickerSelecti
         final String swine_scanned_id = getArguments().getString("swine_scanned_id");
         final String array_piglets = getArguments().getString("array_piglets");
         selectView = getArguments().getString("selectView");
+        pen_code = getArguments().getString("selectView");
         checkedCounter = getArguments().getString("checkedCounter");
 
         loading_save = view.findViewById(R.id.loading_save);
@@ -199,6 +200,7 @@ public class addVaccine_main extends DialogFragment implements DatePickerSelecti
                 hashMap.put("company_id", company_id);
                 hashMap.put("get_type", get_type);
                 hashMap.put("company_code", company_code);
+                hashMap.put("pen_code", pen_code);
                 hashMap.put("swine_id", swine_id);
                 return hashMap;
             }
@@ -265,6 +267,7 @@ public class addVaccine_main extends DialogFragment implements DatePickerSelecti
                 hashMap.put("company_id", company_id);
                 hashMap.put("get_type", get_type);
                 hashMap.put("company_code", company_code);
+                hashMap.put("pen_code", pen_code);
                 hashMap.put("swine_id", swine_id);
                 return hashMap;
             }
@@ -358,6 +361,7 @@ public class addVaccine_main extends DialogFragment implements DatePickerSelecti
                 hashMap.put("v_date", selectedDate);
                 hashMap.put("check_counter", checkedCounter);
                 hashMap.put("category_id", category_id);
+                hashMap.put("reference_number", "");
                 hashMap.put("user_id", user_id);
                 hashMap.put("v_dosage", input_dosage.getText().toString());
                 return hashMap;

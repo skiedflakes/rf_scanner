@@ -28,6 +28,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.History.Farrowing_Stats.Farrowing_main;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
@@ -161,6 +162,7 @@ public class Farrowing_addBreedingFailed_main extends DialogFragment implements 
             public void onResponse(String response) {
 
                 try {
+                    ((ActivityMain)getActivity()).dialogBox(response);
                     progressBar.setVisibility(View.GONE);
                     layout_add.setVisibility(View.VISIBLE);
                     Farrowing_addBreedFailed_models.add(new Farrowing_addBreedFailed_model(0,"Please Select"));

@@ -52,7 +52,7 @@ import java.util.Map;
 public class addMedication_main extends DialogFragment implements DatePickerSelectionInterfaceCustom {
 
     Spinner spinner_medicine, spinner_diagnosis;
-    String selectedDiagnosis = "", selectedMedicine = "", selectedDate = "", currentDate="", checkedCounter, user_id;
+    String selectedDiagnosis = "", selectedMedicine = "", selectedDate = "", currentDate="", checkedCounter, user_id,pen_code;
     ArrayList<Vaccine_model> Vaccine_models = new ArrayList<>();
     ArrayList<Diagnosis_model> diagnosis_models = new ArrayList<>();
     TextView btn_date;
@@ -80,6 +80,7 @@ public class addMedication_main extends DialogFragment implements DatePickerSele
         category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         final String swine_scanned_id = getArguments().getString("swine_scanned_id");
         final String array_piglets = getArguments().getString("array_piglets");
+        pen_code = getArguments().getString("pen_code");
         selectView = getArguments().getString("selectView");
         checkedCounter = getArguments().getString("checkedCounter");
 
@@ -143,7 +144,7 @@ public class addMedication_main extends DialogFragment implements DatePickerSele
     }
 
     public void getDiagnos(final String company_id, final String company_code, final String swine_id, final String get_type){
-        String URL = getString(R.string.URL_online)+"scan_eartag/history/medication_get.php";
+        String URL = getString(R.string.URL_online)+"scan_eartag/history/"+(isPiglets() ? "pig_piglets_medication.php" : "medication_get.php");
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -201,6 +202,7 @@ public class addMedication_main extends DialogFragment implements DatePickerSele
                 hashMap.put("company_id", company_id);
                 hashMap.put("get_type", get_type);
                 hashMap.put("swine_id", swine_id);
+                hashMap.put("pen_code", pen_code);
                 hashMap.put("company_code", company_code);
                 return hashMap;
             }
@@ -269,6 +271,7 @@ public class addMedication_main extends DialogFragment implements DatePickerSele
                 hashMap.put("company_id", company_id);
                 hashMap.put("swine_id", swine_id);
                 hashMap.put("get_type", get_type);
+                hashMap.put("pen_code", pen_code);
                 hashMap.put("company_code", company_code);
                 return hashMap;
             }
@@ -358,12 +361,14 @@ public class addMedication_main extends DialogFragment implements DatePickerSele
                 hashMap.put("company_id", company_id);
                 hashMap.put("company_code", company_code);
                 hashMap.put("diagnosis", selectedDiagnosis);
-                hashMap.put("swine_id", isPiglets() ? array_piglets : swine_id);
+                hashMap.put("receiver_data", isPiglets() ? array_piglets : ""); // for piglets
+                hashMap.put("swine_id", swine_id);
                 hashMap.put("medication", selectedMedicine);
                 hashMap.put("date_added", selectedDate);
                 hashMap.put("check_counter", checkedCounter);
                 hashMap.put("category_id", category_id);
                 hashMap.put("user_id", user_id);
+                hashMap.put("reference_number", "");
                 hashMap.put("dosage", input_dosage.getText().toString());
                 return hashMap;
             }

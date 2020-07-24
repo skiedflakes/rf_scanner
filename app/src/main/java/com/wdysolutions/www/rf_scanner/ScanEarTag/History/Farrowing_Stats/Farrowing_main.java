@@ -45,9 +45,9 @@ public class Farrowing_main extends Fragment {
     ImageView img_showaverage;
     ProgressBar loading_;
     ArrayList<Farrowing_model> arrayList = new ArrayList<>();
-    ArrayList<Farrowing_average_model> arrayList2 = new ArrayList<>();
+    ArrayList<Farrowing_average_model> arrayList_average = new ArrayList<>();
     Farrowing_adapter adapter;
-    showAverage_adapter adapter2;
+    showAverage_adapter adapter_average;
     String company_code, company_id, swine_scanned_id;
     LinearLayout btn_showaverage, btn_addfarrowing;
 
@@ -115,7 +115,8 @@ public class Farrowing_main extends Fragment {
                     isButtonClicked = false;
                     img_showaverage.setImageResource(R.drawable.ic_flip_to_front_black_24dp);
                     text_showaverage.setText("Back to stats");
-                    showAverageDetails(company_code, company_id, swine_scanned_id);
+                    //showAverageDetails(company_code, company_id, swine_scanned_id);
+                    showAverage();
                 } else {
                     isButtonClicked = true;
                     img_showaverage.setImageResource(R.drawable.ic_flip_to_back_black_24dp);
@@ -130,11 +131,18 @@ public class Farrowing_main extends Fragment {
         return view;
     }
 
+    private void showAverage(){
+        adapter_average = new showAverage_adapter(getContext(), arrayList_average);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter_average);
+    }
+
     public void getFarrowingDetails(final String company_code, final String company_id, final String swine_id) {
         loading_.setVisibility(View.VISIBLE);
         error_result.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
-        String URL = getString(R.string.URL_online)+"scan_eartag/history/pig_farrowing.php";
+        String URL = getString(R.string.URL_online)+"scan_eartag/history/pig_farrowing2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -142,10 +150,12 @@ public class Farrowing_main extends Fragment {
                 try{
                     if (!response.equals("{\"data\":[]}")){
                         arrayList.clear();
+                        arrayList_average.clear();
                         null_result.setVisibility(View.GONE);
                         error_result.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.VISIBLE);
                         loading_.setVisibility(View.GONE);
+
                         JSONObject Object = new JSONObject(response);
                         JSONArray details = Object.getJSONArray("data");
                         for(int i = 0; i < details.length(); i++){
@@ -187,12 +197,44 @@ public class Farrowing_main extends Fragment {
                                     r.getString("litter_size_color"),
                                     r.getString("born_alive_color"),
                                     r.getString("num_heads_wean_color"),
-                                    r.getString("breeding_date_minus_21")));
+                                    "")); //r.getString("breeding_date_minus_21")
                         }
                         adapter = new Farrowing_adapter(getContext(), arrayList);
                         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
                         recyclerView.setLayoutManager(layoutManager);
                         recyclerView.setAdapter(adapter);
+
+
+                        // average
+                        JSONArray details_average = Object.getJSONArray("data_ave");
+                        for(int i = 0; i < details_average.length(); i++){
+                            JSONObject r = details_average.getJSONObject(i);
+                            arrayList_average.add(new Farrowing_average_model(r.getString("sum_born_alive"),
+                                    r.getString("sum_sw_stillbirth"),
+                                    r.getString("sum_sw_mumified"),
+                                    r.getString("sum_sw_abnormal"),
+                                    r.getString("sum_sw_undersize"),
+                                    r.getString("sum_litter_size"),
+                                    r.getString("sum_condemned"),
+                                    r.getString("sum_num_heads_wean"),
+                                    r.getString("sum_num_rebreed"),
+                                    r.getString("sum_ave_birth_wt"),
+                                    r.getString("sum_pre_wean_mort"),
+                                    r.getString("sum_post_wean_mort"),
+                                    r.getString("sum_dry_days"),
+                                    r.getString("sum_breeding_failed_days"),
+                                    r.getString("sum_gestation_days"),
+                                    r.getString("sum_days_weaned"),
+                                    r.getString("sum_farrowing_interval"),
+                                    r.getString("sum_ave_weaning_wt"),
+                                    r.getString("sum_wean_a"),
+                                    r.getString("sum_wean_b"),
+                                    r.getString("sum_wean_c"),
+                                    r.getString("sum_ave_weight_at_70"),
+                                    r.getString("sum_fcr"),
+                                    r.getString("sum_adg")));
+                        }
+
                     } else {
                         btn_showaverage.setEnabled(false);
                         null_result.setVisibility(View.VISIBLE);
@@ -436,14 +478,14 @@ public class Farrowing_main extends Fragment {
         loading_.setVisibility(View.VISIBLE);
         error_result.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
-        String URL = getString(R.string.URL_online)+"scan_eartag/history/pig_farrowing_average.php";
+        String URL = getString(R.string.URL_online)+"scan_eartag/history/pig_farrowing_average2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try{
                     if (!response.equals("{\"data\":[]}")){
-                        arrayList2.clear();
+                        arrayList_average.clear();
                         null_result.setVisibility(View.GONE);
                         error_result.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.VISIBLE);
@@ -452,7 +494,7 @@ public class Farrowing_main extends Fragment {
                         JSONArray details = Object.getJSONArray("data");
                         for(int i = 0; i < details.length(); i++){
                             JSONObject r = details.getJSONObject(i);
-                            arrayList2.add(new Farrowing_average_model(r.getString("sum_born_alive"),
+                            arrayList_average.add(new Farrowing_average_model(r.getString("sum_born_alive"),
                                     r.getString("sum_count_stillbirth"),
                                     r.getString("sum_count_mummified"),
                                     r.getString("sum_ab"),
@@ -477,10 +519,10 @@ public class Farrowing_main extends Fragment {
                                     r.getString("sum_fcr_count"),
                                     r.getString("sum_adg_count")));
                         }
-                        adapter2 = new showAverage_adapter(getContext(), arrayList2);
+                        adapter_average = new showAverage_adapter(getContext(), arrayList_average);
                         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
                         recyclerView.setLayoutManager(layoutManager);
-                        recyclerView.setAdapter(adapter2);
+                        recyclerView.setAdapter(adapter_average);
                     } else {
                         null_result.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.GONE);

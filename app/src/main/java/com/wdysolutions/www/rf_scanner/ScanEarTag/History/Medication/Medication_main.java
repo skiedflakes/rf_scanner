@@ -53,7 +53,8 @@ public class Medication_main extends Fragment {
     ArrayList<Medication_model> arrayList = new ArrayList<>();
     Medication_adapter adapter;
     LinearLayout layout_button;
-    String company_code, company_id, swine_scanned_id, selectView, pen_code, array_piglets, checkedCounter, pen_type;
+    String company_code, company_id, swine_scanned_id, selectView, pen_code, array_piglets, checkedCounter, pen_type, user_id,
+            category_id;
 
 
     private void initMenu(View view){
@@ -74,6 +75,8 @@ public class Medication_main extends Fragment {
         SessionPreferences sessionPreferences = new SessionPreferences(getActivity());
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
+        user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         swine_scanned_id = getArguments().getString("swine_scanned_id");
         array_piglets = getArguments().getString("array_piglets");
         selectView = getArguments().getString("selectView");
@@ -95,6 +98,7 @@ public class Medication_main extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("checkedCounter", checkedCounter);
                 bundle.putString("selectView", selectView);
+                bundle.putString("pen_code", pen_code);
                 bundle.putString("array_piglets", array_piglets);
                 bundle.putString("swine_scanned_id", swine_scanned_id);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -385,6 +389,8 @@ public class Medication_main extends Fragment {
                     hashMap.put("company_id", company_id);
                     hashMap.put("swine_id", swine_scanned_id);
                     hashMap.put("id", id);
+                    hashMap.put("category_id", category_id);
+                    hashMap.put("user_id", user_id);
                     return hashMap;
                 }
             };
@@ -416,20 +422,4 @@ public class Medication_main extends Fragment {
             alertDialog2.show();
         }
     }
-
-    void dialogBox(String name){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        final EditText input = new EditText(getActivity());
-        alertDialog.setView(input);
-        input.setText(name);
-        alertDialog.setPositiveButton("Close",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.setCancelable(false);
-        alertDialog.show();
-    }
-
 }

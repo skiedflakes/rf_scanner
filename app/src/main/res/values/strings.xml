@@ -25,7 +25,7 @@
     <string name="disconnect_reader_menu_item_text">Disconnect Reader</string>
     <string name="reset_reader_menu_item_text">Reset Reader</string>
 
-    <string name="schedule_cull_msg">You are about to Schedule this sow. Please confirm.</string>
+    <string name="schedule_cull_msg">You are about to Schedule this sow/boar. Please confirm.</string>
     <string name="confirm_pregnancy_msg">You are about to confirm sow pregnancy.</string>
 
     <string name="null_resut">No data found.</string>
