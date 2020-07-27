@@ -32,6 +32,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Mortality.Disease_model;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Transfer_Pen.Building_model;
@@ -60,7 +61,7 @@ public class Abort_main extends DialogFragment implements DatePickerSelectionInt
     ArrayList<Disease_model> disease_models = new ArrayList<>();
     ProgressBar loading_save, progressBar, loading_pen;
     String company_code, company_id, swine_id, selectedBuilding = "", selectedPen = "", selectedCause = "",
-    pen_id, swine_type, selectedDate = "", user_id, currentDate="";
+    pen_id, swine_type, selectedDate = "", user_id, currentDate="", category_id;
 
 
     public void openDatePicker(boolean isMinusDays21) {
@@ -99,6 +100,7 @@ public class Abort_main extends DialogFragment implements DatePickerSelectionInt
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         swine_id = getArguments().getString("swine_scanned_id");
         swine_type = getArguments().getString("swine_type");
         pen_id = getArguments().getString("pen_code");
@@ -360,6 +362,7 @@ public class Abort_main extends DialogFragment implements DatePickerSelectionInt
                 hashMap.put("cause", selectedCause);
                 hashMap.put("abort_date", selectedDate);
                 hashMap.put("from_pen", pen_id);
+                hashMap.put("category_id", category_id);
                 hashMap.put("remarks", input_remarks.getText().toString());
                 return hashMap;
             }

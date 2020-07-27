@@ -53,7 +53,8 @@ public class Farrowing_addBreedingFailed_main extends DialogFragment implements 
     ProgressBar loading_save, progressBar;
     ArrayList<Farrowing_addBreedFailed_model> Farrowing_addBreedFailed_models = new ArrayList<>();
     ArrayList<Farrowing_addTechnician_model> Farrowing_addTechnician_models = new ArrayList<>();
-    String selectedBoar1, selectedBoar2, selectedBoar3, selectedTech, dateBreeding = "", dateBreedingFailed = "", selectedDate;
+    String selectedBoar1, selectedBoar2, selectedBoar3, selectedTech, dateBreeding = "", dateBreedingFailed = "", selectedDate,
+            category_id;
     LinearLayout layout_add;
 
 
@@ -71,6 +72,7 @@ public class Farrowing_addBreedingFailed_main extends DialogFragment implements 
         final String user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
         final String company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         final String company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         final String swine_scanned_id = getArguments().getString("swine_scanned_id");
         getBreeding_date = getArguments().getString("getBreeding_date");
         getBreeding_id = getArguments().getString("getBreeding_id");
@@ -162,7 +164,6 @@ public class Farrowing_addBreedingFailed_main extends DialogFragment implements 
             public void onResponse(String response) {
 
                 try {
-                    ((ActivityMain)getActivity()).dialogBox(response);
                     progressBar.setVisibility(View.GONE);
                     layout_add.setVisibility(View.VISIBLE);
                     Farrowing_addBreedFailed_models.add(new Farrowing_addBreedFailed_model(0,"Please Select"));
@@ -289,7 +290,7 @@ public class Farrowing_addBreedingFailed_main extends DialogFragment implements 
     public void saveBreedingFailed(final String company_id, final String company_code, final String swine_id, final String user_id){
         progressBar.setVisibility(View.VISIBLE);
         layout_add.setVisibility(View.GONE);
-        String URL = getString(R.string.URL_online)+"scan_eartag/history/pig_farrowing_add_breding_failed_add.php";
+        String URL = getString(R.string.URL_online)+"scan_eartag/history/pig_farrowing_add_breding_failed_add2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -333,26 +334,11 @@ public class Farrowing_addBreedingFailed_main extends DialogFragment implements 
                 hashMap.put("breeding_technician", selectedTech);
                 hashMap.put("success_breeding_id", getBreeding_id);
                 hashMap.put("farr_status", getStatus);
+                hashMap.put("category_id", category_id);
                 return hashMap;
             }
         };
         AppController.getInstance().setVolleyDuration(stringRequest);
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
-
-    void dialogBox(String name){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        final EditText input = new EditText(getActivity());
-        alertDialog.setView(input);
-        input.setText(name);
-        alertDialog.setPositiveButton("Close",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.setCancelable(false);
-        alertDialog.show();
-    }
-
 }

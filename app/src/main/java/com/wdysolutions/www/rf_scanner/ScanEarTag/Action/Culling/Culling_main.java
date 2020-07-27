@@ -354,7 +354,7 @@ public class Culling_main extends DialogFragment implements DatePickerSelectionI
                             final String delivery_number, final String dr_date, final String invoice_number) {
         loading_save.setVisibility(View.VISIBLE);
         btn_save.setVisibility(View.GONE);
-        String URL = getString(R.string.URL_online)+"scan_eartag/action/pig_culling_add.php";
+        String URL = getString(R.string.URL_online)+"scan_eartag/action/pig_culling_add2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -401,6 +401,7 @@ public class Culling_main extends DialogFragment implements DatePickerSelectionI
                 hashMap.put("delivery_number", delivery_number);
                 hashMap.put("dr_date", dr_date);
                 hashMap.put("pay_type", pay_type);
+                hashMap.put("reference_number", "");
                 hashMap.put("invoice_number", invoice_number);
                 return hashMap;
             }

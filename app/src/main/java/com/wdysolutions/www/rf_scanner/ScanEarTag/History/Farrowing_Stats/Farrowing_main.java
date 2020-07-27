@@ -197,7 +197,7 @@ public class Farrowing_main extends Fragment {
                                     r.getString("litter_size_color"),
                                     r.getString("born_alive_color"),
                                     r.getString("num_heads_wean_color"),
-                                    "")); //r.getString("breeding_date_minus_21")
+                                    r.getString("breeding_date_minus_21")));
                         }
                         adapter = new Farrowing_adapter(getContext(), arrayList);
                         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);

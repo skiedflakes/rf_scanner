@@ -30,6 +30,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Transfer_Pen.Building_model;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Action.Transfer_Pen.Pen_model;
@@ -57,7 +58,7 @@ public class Not_in_Pig_main extends DialogFragment implements DatePickerSelecti
     ArrayList<Building_model> building_models = new ArrayList<>();
     ArrayList<Pen_model> pen_models = new ArrayList<>();
     String selectedBuilding = "", selectedPen = "", company_code, company_id, swine_scanned_id,
-            swine_type, pen_id, selectedDate ="", user_id, currentDate="";
+            swine_type, pen_id, selectedDate ="", user_id, currentDate="", category_id;
 
 
     public void openDatePicker(boolean isMinusDays21) {
@@ -96,6 +97,7 @@ public class Not_in_Pig_main extends DialogFragment implements DatePickerSelecti
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         swine_scanned_id = getArguments().getString("swine_scanned_id");
         swine_type = getArguments().getString("swine_type");
         pen_id = getArguments().getString("pen_code");
@@ -211,6 +213,7 @@ public class Not_in_Pig_main extends DialogFragment implements DatePickerSelecti
                         pen_models.clear();
 
                         // set default in spinner
+                        pen_models.add(new Pen_model("-0", "Please select", ""));
                         for (int i = 0; i < diag.length(); i++) {
                             JSONObject cusObj = (JSONObject) diag.get(i);
 
@@ -239,7 +242,11 @@ public class Not_in_Pig_main extends DialogFragment implements DatePickerSelecti
                             @Override
                             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                                 Pen_model click = pen_models.get(position);
-                                selectedPen = String.valueOf(click.getPen_assignment_id());
+                                if (click.getPen_name().equals("Please select")){
+                                    selectedPen = "";
+                                } else {
+                                    selectedPen = String.valueOf(click.getPen_assignment_id());
+                                }
                             }
                             @Override
                             public void onNothingSelected(AdapterView<?> adapterView) {}
@@ -323,6 +330,7 @@ public class Not_in_Pig_main extends DialogFragment implements DatePickerSelecti
                 hashMap.put("user_id", user_id);
                 hashMap.put("nip_date", selectedDate);
                 hashMap.put("from_pen", pen_id);
+                hashMap.put("category_id", category_id);
                 hashMap.put("remarks", edittext_remarks.getText().toString());
                 return hashMap;
             }
