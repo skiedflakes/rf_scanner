@@ -36,6 +36,7 @@ import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCu
 import com.wdysolutions.www.rf_scanner.Feeding.Add.DialogMultiSelectSpinner.Feeding_module_multiselect;
 import com.wdysolutions.www.rf_scanner.Feeding.Feeding_model_branch;
 import com.wdysolutions.www.rf_scanner.Feeding.resultListener;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
 
@@ -62,7 +63,7 @@ public class Feeding_module_add_main extends DialogFragment implements DatePicke
     ArrayList<Feeding_model_eartag> feeding_model_eartags = new ArrayList<>();
     ArrayList<Feeding_model_product> feeding_model_products = new ArrayList<>();
     ArrayList<Feeding_model_selected> feeding_model_selecteds = new ArrayList<>();
-    String selectedDate = "", pen_type="", selectedProduct="", isPiglet="0", current_date="";
+    String selectedDate = "", pen_type="", selectedProduct="", isPiglet="0", current_date="", category_id;
     EditText editText_amount;
     RadioButton forSow, forPiglets;
     RelativeLayout btn_save;
@@ -105,6 +106,7 @@ public class Feeding_module_add_main extends DialogFragment implements DatePicke
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         pass = (resultListener)getTargetFragment();
 
         loadingScan = new ProgressDialog(getActivity(), R.style.MyAlertDialogStyle);
@@ -443,7 +445,6 @@ public class Feeding_module_add_main extends DialogFragment implements DatePicke
             public void onResponse(String response) {
 
                 try {
-                    //dialogBox(response);
                     penLoading(false);
                     JSONObject Object = new JSONObject(response);
                     feeding_model_pens.clear();
@@ -632,6 +633,8 @@ public class Feeding_module_add_main extends DialogFragment implements DatePicke
                 hashMap.put("building_id", selectedBuilding);
                 hashMap.put("date_of_feeding", selectedDate);
                 hashMap.put("isPiglet", isPiglet);
+                hashMap.put("user_id", user_id);
+                hashMap.put("category_id", category_id);
                 hashMap.put("ms_swine_id", new Gson().toJson(feeding_model_selecteds));
                 hashMap.put("ms_swine_id_count", String.valueOf(feeding_model_selecteds.size()));
                 hashMap.put("amount", editText_amount.getText().toString());

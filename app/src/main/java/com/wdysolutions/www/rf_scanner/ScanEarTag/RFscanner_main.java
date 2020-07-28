@@ -376,7 +376,7 @@ public class RFscanner_main extends Fragment {
             // set default power level
             Constant.power_level = "Medium";
             tx_range.setText(Constant.power_level);
-            //((ActivityMain)getActivity()).setPower("med");
+            ((ActivityMain)getActivity()).setPower("med");
         }
 
         test_eartag(view);

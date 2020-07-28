@@ -640,6 +640,7 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
                 HashMap<String,String> hashMap = new HashMap<>();
                 hashMap.put("company_id", company_id);
                 hashMap.put("get_type",get_type);
+                hashMap.put("user_id",user_id);
                 hashMap.put("company_code", company_code);
                 return hashMap;
             }

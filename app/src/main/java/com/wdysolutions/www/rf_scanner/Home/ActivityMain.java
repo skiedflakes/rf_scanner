@@ -83,8 +83,6 @@ public class ActivityMain extends AppCompatActivity {
             }
         });
 
-        Toast.makeText(this, sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE), Toast.LENGTH_SHORT).show();
-
         //initBluetooth();
     }
 

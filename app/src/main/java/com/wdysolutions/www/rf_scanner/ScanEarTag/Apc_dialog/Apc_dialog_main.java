@@ -191,7 +191,9 @@ public class Apc_dialog_main extends DialogFragment {
                 holder.txt_amount.setBackgroundColor(getResources().getColor(R.color.light_grey));
             }
             if (getProduct.equals("TOTAL")){
-                holder.bg_.setBackgroundColor(getResources().getColor(R.color.light_grey));
+                holder.txt_module.setBackgroundColor(getResources().getColor(R.color.light_grey));
+                holder.txt_amount.setBackgroundColor(getResources().getColor(R.color.light_grey));
+                holder.txt_date.setBackgroundColor(getResources().getColor(R.color.light_grey));
             }
         }
 
