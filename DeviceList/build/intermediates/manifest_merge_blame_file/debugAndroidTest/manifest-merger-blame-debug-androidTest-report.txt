@@ -1,0 +1,57 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.uk.tsl.rfid.devicelist.test" >
+4
+5    <uses-sdk
+5-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:5:5-74
+6        android:minSdkVersion="14"
+6-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:5:15-41
+7        android:targetSdkVersion="28" />
+7-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:5:42-71
+8
+9    <instrumentation
+9-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:11:5-15:81
+10        android:name="android.test.InstrumentationTestRunner"
+10-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:11:22-75
+11        android:functionalTest="false"
+11-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:14:22-52
+12        android:handleProfiling="false"
+12-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:13:22-53
+13        android:label="Tests for com.uk.tsl.rfid.devicelist.test"
+13-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:15:22-79
+14        android:targetPackage="com.uk.tsl.rfid.devicelist.test" />
+14-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:12:22-77
+15
+16    <uses-permission android:name="android.permission.BLUETOOTH" />
+16-->[:Rfid.AsciiProtocol-Library] /Users/aronandrada/Documents/GitHub/rf_scanner/Rfid.AsciiProtocol-Library/build/.transforms/7ccdd19aff6228acb51447048556e3a1/Rfid.AsciiProtocol-2.0.1-release/AndroidManifest.xml:11:5-68
+16-->[:Rfid.AsciiProtocol-Library] /Users/aronandrada/Documents/GitHub/rf_scanner/Rfid.AsciiProtocol-Library/build/.transforms/7ccdd19aff6228acb51447048556e3a1/Rfid.AsciiProtocol-2.0.1-release/AndroidManifest.xml:11:22-65
+17    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+17-->[:Rfid.AsciiProtocol-Library] /Users/aronandrada/Documents/GitHub/rf_scanner/Rfid.AsciiProtocol-Library/build/.transforms/7ccdd19aff6228acb51447048556e3a1/Rfid.AsciiProtocol-2.0.1-release/AndroidManifest.xml:12:5-74
+17-->[:Rfid.AsciiProtocol-Library] /Users/aronandrada/Documents/GitHub/rf_scanner/Rfid.AsciiProtocol-Library/build/.transforms/7ccdd19aff6228acb51447048556e3a1/Rfid.AsciiProtocol-2.0.1-release/AndroidManifest.xml:12:22-71
+18
+19    <application
+19-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:7:5-9:19
+20        android:allowBackup="true"
+20-->[__tested_artifact__::DeviceList] /Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/library_manifest/debug/AndroidManifest.xml:9:18-44
+21        android:appComponentFactory="android.support.v4.app.CoreComponentFactory"
+21-->[com.android.support:support-compat:28.0.0] /Users/aronandrada/.gradle/caches/transforms-2/files-2.1/0833bbc46ac62a4b6cfd0f192a360434/support-compat-28.0.0/AndroidManifest.xml:22:18-91
+22        android:debuggable="true" >
+22-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:7:18-43
+23        <uses-library android:name="android.test.runner" />
+23-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:8:9-60
+23-->/Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/tmp/manifest/androidTest/debug/manifestMerger9212369636600018815.xml:8:23-57
+24
+25        <activity
+25-->[__tested_artifact__::DeviceList] /Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/library_manifest/debug/AndroidManifest.xml:10:9-15:20
+26            android:name="com.uk.tsl.rfid.DeviceListActivity"
+26-->[__tested_artifact__::DeviceList] /Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:13-62
+27            android:configChanges="keyboardHidden|orientation"
+27-->[__tested_artifact__::DeviceList] /Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:13-63
+28            android:label="@string/select_reader"
+28-->[__tested_artifact__::DeviceList] /Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:13-50
+29            android:theme="@android:style/Theme.DeviceDefault.Light" >
+29-->[__tested_artifact__::DeviceList] /Users/aronandrada/Documents/GitHub/rf_scanner/DeviceList/build/intermediates/library_manifest/debug/AndroidManifest.xml:14:13-69
+30        </activity>
+31    </application>
+32
+33</manifest>

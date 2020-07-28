@@ -94,7 +94,7 @@ public class matedHistory_main extends Fragment {
     }
 
     public void getMedicationDetails(final String company_code, final String company_id, final String swine_id) {
-        String URL = getString(R.string.URL_online)+"scan_eartag/history/mated_history.php";
+        String URL = getString(R.string.URL_online)+"scan_eartag/history/mated_history2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -121,7 +121,10 @@ public class matedHistory_main extends Fragment {
                                     r.getString("boar_1"),
                                     r.getString("boar_2"),
                                     r.getString("boar_3"),
-                                    r.getString("status")));
+                                    r.getString("status"),
+                                    r.getString("remarks"),
+                                    r.getString("allow_delete"),
+                                    r.getString("breeding_status")));
                         }
                         adapter = new matedHistory_adapter(getContext(), arrayList);
                         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -219,19 +222,31 @@ public class matedHistory_main extends Fragment {
             final String getDry_days = data.get(position).getDry_days();
             final String getCount = data.get(position).getCount();
             final String getStatus = data.get(position).getStatus();
+            final String getRemarks = data.get(position).getRemarks();
             num = position;
             num++;
 
             holder.text_count.setText(String.valueOf(num));
             holder.text_date.setText(getBreeding_date);
-            holder.text_boar1.setText(getBoar_1);
-            holder.text_boar2.setText(getBoar_2);
-            holder.text_boar3.setText(getBoar_3);
+            holder.text_status.setText(getStatus);
+            holder.text_remarks.setText(getRemarks);
 
-            if (getStatus.equals("0")){
-                holder.text_status.setText("Failed");
-            } else if (getStatus.equals("1")){
-                holder.text_status.setText("Success");
+            if (getBoar_1.equals("null")){
+                holder.text_boar1.setText("");
+            } else {
+                holder.text_boar1.setText(getBoar_1);
+            }
+
+            if (getBoar_2.equals("null")){
+                holder.text_boar2.setText("");
+            } else {
+                holder.text_boar2.setText(getBoar_2);
+            }
+
+            if (getBoar_3.equals("null")){
+                holder.text_boar3.setText("");
+            } else {
+                holder.text_boar3.setText(getBoar_3);
             }
 
             //setAnimation(holder.layout, position);
@@ -243,7 +258,7 @@ public class matedHistory_main extends Fragment {
         }
 
         public class MyHolder extends RecyclerView.ViewHolder{
-            TextView text_date, text_boar1, text_boar2, text_boar3, text_status, text_count;
+            TextView text_date, text_boar1, text_boar2, text_boar3, text_status, text_count, text_remarks;
             CardView layout;
             public MyHolder(View itemView) {
                 super(itemView);
@@ -254,6 +269,7 @@ public class matedHistory_main extends Fragment {
                 text_boar2 = itemView.findViewById(R.id.text_boar2);
                 text_boar3 = itemView.findViewById(R.id.text_boar3);
                 text_status = itemView.findViewById(R.id.text_status);
+                text_remarks = itemView.findViewById(R.id.text_remarks);
             }
         }
 

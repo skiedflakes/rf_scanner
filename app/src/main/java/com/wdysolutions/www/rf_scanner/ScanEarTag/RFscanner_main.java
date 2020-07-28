@@ -527,13 +527,13 @@ public class RFscanner_main extends Fragment {
 
     //swine details
     String weaning_date="",weaning_wt="",age_days="",days_weaned="",
-           swine_condition="",genetic_breed="",genetic_line="",
-            swine_birthdate="",weight="",progeny="",swine_origin="",
-            p_boar="",p_sow="",swine_parity="",times_rebreed="",
-            abortion="",accumulated="",days_count="",days_to_farrow="",
-            expected_date_to_farrow="",cost="",ave_gest_days="",
-            ave_weaning_days="",sow_index="",estimated_weight="",
-            parity_color="",rebred_color="",abortion_color="", building, weight_title,
+           swine_condition="",genetic_breed="",genetic_line="", days_text,
+            swine_birthdate="",weight="",progeny="",swine_origin="", days_text_data,
+            p_boar="",p_sow="",parity="",times_rebred="", days_text_data_color,
+            abortion="",accumulated="",days_count="",days_to_farrow="", days_farrowing_pen,
+            expected_date_to_farrow="",cost="",ave_gest_days="", days_farrowing_pen_color,
+            ave_weaning_days="",sow_index="",estimated_weight="", expected_date_to_farrow_color,
+            parity_color="",rebred_color="",abortion_color="", building, weight_title, times_rebred_color,
             days_count_title="",days_count_color="",days_to_farrow_color="",farrow_date_color="";
 
     public void get_details(final String company_code, final String company_id, final String swine_id){
@@ -557,6 +557,19 @@ public class RFscanner_main extends Fragment {
         estimated_weight = "";
         piglets_count = "";
         accumulated="";
+        days_text="";
+        days_text_data="";
+        days_text_data_color="";
+        days_farrowing_pen="";
+        days_farrowing_pen_color="";
+        expected_date_to_farrow="";
+        expected_date_to_farrow_color="";
+        parity="";
+        parity_color="";
+        times_rebred="";
+        times_rebred_color="";
+        abortion="";
+        abortion_color="";
 
         // sidable
         isVolleyLoad = true;
@@ -568,7 +581,7 @@ public class RFscanner_main extends Fragment {
             public void onResponse(String response) {
 
                 try{
-                    //((ActivityMain)getActivity()).dialogBox(response);
+                    ((ActivityMain)getActivity()).dialogBox(response);
                     isVolleyLoad = false;
                     isPiglets = false;
                     arrayList_rfscan.clear();
@@ -616,6 +629,21 @@ public class RFscanner_main extends Fragment {
                         building = r.getString("building");
                         ave_gest_days = r.getString("ave_gest_days");
 
+                        days_text = r.getString("days_text");
+                        days_text_data = r.getString("days_text_data");
+                        days_text_data_color = r.getString("days_text_data_color");
+                        days_farrowing_pen = r.getString("days_farrowing_pen");
+                        days_farrowing_pen_color = r.getString("days_farrowing_pen_color");
+                        expected_date_to_farrow = r.getString("expected_date_to_farrow");
+                        expected_date_to_farrow_color = r.getString("expected_date_to_farrow_color");
+
+                        parity = r.getString("parity");
+                        parity_color = r.getString("parity_color");
+                        times_rebred = r.getString("times_rebred");
+                        times_rebred_color = r.getString("times_rebred_color");
+                        abortion = r.getString("abortion");
+                        abortion_color = r.getString("abortion_color");
+
                         // Swine card head
                         txt_building.setText(isCulled() ? "("+pen_type+")" : isDeacesed() ? "("+pen_type+")" : building+" > "+pen_name+" ("+pen_type+")");
                         txt_details.setText("Ear Tag: "+swine_code+" > "+swine_type+" "+(isGenderMale() ? "(M)" : "(F)"));
@@ -636,9 +664,14 @@ public class RFscanner_main extends Fragment {
                         arrayList_rfscan.add(new RFscanner_model("Parent Boar:", p_boar, ""));
                         arrayList_rfscan.add(new RFscanner_model("Parent Sow:", p_sow, ""));
                         arrayList_rfscan.add(new RFscanner_model("Cost:", cost, ""));
+                        if(!parity.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Parity:", parity, parity_color));}
+                        if(!times_rebred.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Times Rebred:", times_rebred, times_rebred_color));}
+                        if(!abortion.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Abortion:", abortion, abortion_color));}
                         if(!accumulated.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Accumulated expense for piglet cost:", accumulated, ""));}
-                        //if(!days_count.equals("")){arrayList_rfscan.add(new RFscanner_model(days_count_title, days_count, days_count_color));}
-                        if(!ave_weaning_days.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Average Gestating Days:",ave_gest_days, ""));}
+                        if(!days_text.equals("hide")){arrayList_rfscan.add(new RFscanner_model(days_text, days_text_data, days_text_data_color));}
+                        if(!days_farrowing_pen.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Days To Farrowing Pen:", days_farrowing_pen, days_farrowing_pen_color));}
+                        if(!expected_date_to_farrow.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Expected date to Farrow:", expected_date_to_farrow, expected_date_to_farrow_color));}
+                        if(!ave_gest_days.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Average Gestating Days:",ave_gest_days, ""));}
                         if(!ave_weaning_days.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Average Weaning Days:",ave_weaning_days, ""));}
                         if(!sow_index.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Sow Index:", sow_index, ""));}
                         if(!estimated_weight.equals("hide")){arrayList_rfscan.add(new RFscanner_model("Estimated Weight:", estimated_weight, ""));}
@@ -747,7 +780,6 @@ public class RFscanner_main extends Fragment {
                             isAction = false;
                         }
 
-                        getAPC(swine_id);
                         //get_computation(swine_id);
 
                     } else {
@@ -1047,6 +1079,21 @@ public class RFscanner_main extends Fragment {
 //    }
 
     public void getAPC(final String swine_id){
+
+        try {
+            JSONArray jsonArray = new JSONArray(new Gson().toJson(arrayList_rfscan));
+            for(int i = 0;i<jsonArray.length();i++) {
+                JSONObject x = jsonArray.getJSONObject(i);
+                String name = x.getString("name");
+                String colorType = x.getString("colorType");
+
+                if(name.equals("Accumulated expense for piglet cost:")){
+                    arrayList_rfscan.set(i,new RFscanner_model(name, "fetching apc...", colorType));
+                    adapter.notifyItemChanged(i);
+                }
+            }
+        } catch (JSONException e){}
+
         String URL = getString(R.string.URL_online)+"scan_eartag/getAPC.php";
         computation_request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -1326,72 +1373,99 @@ public class RFscanner_main extends Fragment {
                         showCost(swine_scanned_id, true);
                     }
                     else if (getName.equals("Accumulated expense for piglet cost:")){
-                        Bundle bundle = new Bundle();
-                        bundle.putString("company_id", company_id);
-                        bundle.putString("category_id", category_id);
-                        bundle.putString("company_code", company_code);
-                        bundle.putString("swine_id", swine_scanned_id);
-                        DialogFragment dialogFrag = new Apc_dialog_main();
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-                        if (prev != null) {ft.remove(prev);}
-                        ft.addToBackStack(null);
-                        dialogFrag.setArguments(bundle);
-                        dialogFrag.show(ft, "dialog");
+
+                        if (getDetails.equals("Show APC")){
+                            getAPC(swine_scanned_id);
+                        } else if (getDetails.equals("fetching apc...")){
+                            // do nothing
+                        } else {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("company_id", company_id);
+                            bundle.putString("category_id", category_id);
+                            bundle.putString("company_code", company_code);
+                            bundle.putString("swine_id", swine_scanned_id);
+                            DialogFragment dialogFrag = new Apc_dialog_main();
+                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                            Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                            if (prev != null) {ft.remove(prev);}
+                            ft.addToBackStack(null);
+                            dialogFrag.setArguments(bundle);
+                            dialogFrag.show(ft, "dialog");
+                        }
                     }
                 }
             });
 
-            if(getName.equals("Days After Farrowed:")){
-                if (getColorType.equals("red")){
-                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
-                }
+            if (getColorType.equals("red")){
+                holder.details.setBackgroundResource(R.drawable.bg_custom_red);
+            } else if (getColorType.equals("green")){
+                holder.details.setBackgroundResource(R.drawable.bg_custom_green);
+            } else {
+                holder.details.setBackgroundResource(R.drawable.bg_custom_grey);
             }
 
-            if(getName.equals("Days Pregnant:")){
-                if (getColorType.equals("red")){
-                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
-                } else if (getColorType.equals("green")){
-                    holder.details.setBackgroundResource(R.drawable.bg_custom_green);
-                }
-            }
-
-            if (getName.equals("Parity:")){
-                if (getColorType.equals("red")){
-                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
-                }
-            }
-
-            if (getName.equals("Times Rebred:")){
-                if (getColorType.equals("red")){
-                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
-                }
-            }
-
-            if (getName.equals("Abortion:")){
-                if (getColorType.equals("red")){
-                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
-                }
-            }
-
-            if(getName.equals("Days to Farrowing Pen:")){
-                if(getColorType.equals("red")){
-                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
-                }
-            }
-
-            if(getName.equals("Expected date to Farrow:")){
-                if(getColorType.equals("red")){
-                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
-                }
-            }
-
-            // piglets
-            if(getName.equals("Days Stayed:")){
-                if(getColorType.equals("red")){
-                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
-                }
-            }
+//            if(getName.equals("Days After Farrowed:")){
+//                if (getColorType.equals("red")){
+//                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
+//                }
+//            }
+//
+//            if(getName.equals("Days Pregnant:")){
+//                if (getColorType.equals("red")){
+//                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
+//                } else if (getColorType.equals("green")){
+//                    holder.details.setBackgroundResource(R.drawable.bg_custom_green);
+//                }
+//            }
+//
+//            if (getName.equals("Parity:")){
+//                if (getColorType.equals("red")){
+//                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
+//                }
+//            }
+//
+//            if (getName.equals("Times Rebred:")){
+//                if (getColorType.equals("red")){
+//                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
+//                }
+//            }
+//
+//            if (getName.equals("Abortion:")){
+//                if (getColorType.equals("red")){
+//                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
+//                }
+//            }
+//
+//            if(getName.equals("Days to Farrowing Pen:")){
+//                if(getColorType.equals("red")){
+//                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
+//                }
+//            }
+//
+//            if(getName.equals("Expected date to Farrow:")){
+//                if(getColorType.equals("red")){
+//                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
+//                }
+//            }
+//
+//            if(getName.equals("Days After Farrowed:")){
+//                if(getColorType.equals("red")){
+//                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
+//                }
+//            }
+//
+//            if(getName.equals("Dry Days:")){
+//                if(getColorType.equals("red")){
+//                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
+//                }
+//            }
+//
+//            // piglets
+//            if(getName.equals("Days Stayed:")){
+//                if(getColorType.equals("red")){
+//                    holder.details.setBackgroundResource(R.drawable.bg_custom_red);
+//                }
+//            }
         }
 
         @Override
