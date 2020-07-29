@@ -29,6 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.RFscanner_main;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
@@ -176,7 +177,7 @@ public class Transfer_dialog extends DialogFragment implements DatePickerSelecti
 
     public void getLocations(final String get_type) {
         locationLoading(true);
-        String URL = getString(R.string.URL_online)+"transfer_pen/dialog_transfer_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/dialog_transfer_details2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -260,7 +261,7 @@ public class Transfer_dialog extends DialogFragment implements DatePickerSelecti
 
     public void getBuilding(final String get_type, final String locations_other_branch_id) {
         buildingLoading(true);
-        String URL = getString(R.string.URL_online)+"transfer_pen/dialog_transfer_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/dialog_transfer_details2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -335,7 +336,7 @@ public class Transfer_dialog extends DialogFragment implements DatePickerSelecti
 
     public void get_pen(final String locations_other_branch_id,final String building_id) {
         penLoading(true);
-        String URL = getString(R.string.URL_online)+"transfer_pen/dialog_transfer_details.php";
+        String URL = getString(R.string.URL_online)+"transfer_pen/dialog_transfer_details2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -480,20 +481,4 @@ public class Transfer_dialog extends DialogFragment implements DatePickerSelecti
         AppController.getInstance().setVolleyDuration(stringRequest);
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
-
-    void dialogBox(String name){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        EditText text = new EditText(getActivity());
-        text.setText(name);
-        alertDialog.setView(text);
-        alertDialog.setPositiveButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.setCancelable(false);
-        alertDialog.show();
-    }
-
 }

@@ -1092,7 +1092,6 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
             public void onResponse(String response) {
 
                 try {
-                    //((ActivityMain)getActivity()).dialogBox(response);
                     String str="";
                     showLoading(loadingScan, null).dismiss();
                     JSONObject jsonObject = new JSONObject(response);

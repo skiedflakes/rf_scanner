@@ -1,5 +1,6 @@
 package com.wdysolutions.www.rf_scanner.ScanEarTag;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -581,7 +582,7 @@ public class RFscanner_main extends Fragment {
             public void onResponse(String response) {
 
                 try{
-                    ((ActivityMain)getActivity()).dialogBox(response);
+                    //((ActivityMain)getActivity()).dialogBox(response);
                     isVolleyLoad = false;
                     isPiglets = false;
                     arrayList_rfscan.clear();
@@ -746,6 +747,7 @@ public class RFscanner_main extends Fragment {
                             layout_switch.setVisibility(View.GONE);
                             layout_buttons.setVisibility(View.VISIBLE);
                             isAction = true;
+                            computeEstimatedWeight(swine_id);
                         } else if (pen_type.equals("Growout")){
                             txt_building.setTextColor(getResources().getColor(R.color.btn_color1));
                             bg_title.setBackgroundResource(R.drawable.btn_ripple_light);
@@ -758,6 +760,7 @@ public class RFscanner_main extends Fragment {
                             layout_switch.setVisibility(View.GONE);
                             layout_buttons.setVisibility(View.VISIBLE);
                             isAction = true;
+                            computeEstimatedWeight(swine_id);
                         } else if (pen_type.equals("Hospital")){
                             txt_building.setTextColor(getResources().getColor(R.color.text_grey));
                             bg_title.setBackgroundResource(R.drawable.bg_custom_light_black);
@@ -779,8 +782,6 @@ public class RFscanner_main extends Fragment {
                             layout_buttons.setVisibility(View.GONE);
                             isAction = false;
                         }
-
-                        //get_computation(swine_id);
 
                     } else {
                         scanResult("no_eartag");
@@ -1210,58 +1211,33 @@ public class RFscanner_main extends Fragment {
     }
 
     StringRequest computation_request;
-    public void get_computation(final String swine_id){
-//        AppController.getInstance().cancelPendingRequests(computation_request);
-
-        String URL = getString(R.string.URL_online)+"scan_eartag/get_swine_computation.php";
+    public void computeEstimatedWeight(final String swine_id){
+        String URL = getString(R.string.URL_online)+"scan_eartag/get_swine_computation_estimated_weight.php";
         computation_request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                
-               // String old_swine_id = swine_id;
-                
+
                 try {
-                    //dialogBox_msg(response);
                     if(actual_scan.equals(swine_id)){
 
                         JSONObject Object = new JSONObject(response);
                         JSONArray details = Object.getJSONArray("response");
                         JSONObject r = details.getJSONObject(0);
-                        String status = r.getString("status");
 
-                        if(status.equals("okay")){
+                        estimated_weight = r.getString("estimated_weight");
 
-                            accumulated = r.getString("accumulated");
-                            sow_index = r.getString("sow_index");
-                            cost = r.getString("cost");
-                            estimated_weight = r.getString("estimated_weight");
+                        JSONArray jsonArray = new JSONArray(new Gson().toJson(arrayList_rfscan));
+                        for(int i = 0;i<jsonArray.length();i++) {
+                            JSONObject x = jsonArray.getJSONObject(i);
+                            String name = x.getString("name");
 
-                            JSONArray jsonArray = new JSONArray(new Gson().toJson(arrayList_rfscan));
-                            for(int i = 0;i<jsonArray.length();i++) {
-                                JSONObject x = jsonArray.getJSONObject(i);
-                                String name = x.getString("name");
-                                if(name.equals("Accumulated expense for piglet cost:")){
-                                    arrayList_rfscan.set(i,new RFscanner_model("Accumulated expense for piglet cost:", accumulated, ""));
-                                    adapter.notifyItemChanged(i);
-                                }
-                                if(name.equals("Sow Index:")){
-                                    arrayList_rfscan.set(i,new RFscanner_model("Sow Index:", sow_index, ""));
-                                    adapter.notifyItemChanged(i);
-                                }
-                                if(name.equals("Cost:")){
-                                    arrayList_rfscan.set(i,new RFscanner_model("Cost:", cost, ""));
-                                    adapter.notifyItemChanged(i);
-                                }
-                                if(name.equals("Estimated Weight:")){
-                                    arrayList_rfscan.set(i,new RFscanner_model("Estimated Weight:", estimated_weight, ""));
-                                    adapter.notifyItemChanged(i);
-                                }
+                            if(name.equals("Estimated Weight:")){
+                                arrayList_rfscan.set(i,new RFscanner_model("Estimated Weight:", estimated_weight, ""));
+                                adapter.notifyItemChanged(i);
                             }
                         }
-                    }else{
-                        // get_computation(swine_id);
                     }
-                    
+
                 } catch (Exception e){}
             }
         }, new Response.ErrorListener() {
@@ -1285,6 +1261,83 @@ public class RFscanner_main extends Fragment {
         AppController.getInstance().setVolleyDuration(computation_request);
         AppController.getInstance().addToRequestQueue(computation_request);
     }
+
+
+//    public void get_computation(final String swine_id){
+////        AppController.getInstance().cancelPendingRequests(computation_request);
+//
+//        String URL = getString(R.string.URL_online)+"scan_eartag/get_swine_computation.php";
+//        computation_request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//
+//               // String old_swine_id = swine_id;
+//
+//                try {
+//                    //dialogBox_msg(response);
+//                    if(actual_scan.equals(swine_id)){
+//
+//                        JSONObject Object = new JSONObject(response);
+//                        JSONArray details = Object.getJSONArray("response");
+//                        JSONObject r = details.getJSONObject(0);
+//                        String status = r.getString("status");
+//
+//                        if(status.equals("okay")){
+//
+//                            accumulated = r.getString("accumulated");
+//                            sow_index = r.getString("sow_index");
+//                            cost = r.getString("cost");
+//                            estimated_weight = r.getString("estimated_weight");
+//
+//                            JSONArray jsonArray = new JSONArray(new Gson().toJson(arrayList_rfscan));
+//                            for(int i = 0;i<jsonArray.length();i++) {
+//                                JSONObject x = jsonArray.getJSONObject(i);
+//                                String name = x.getString("name");
+//                                if(name.equals("Accumulated expense for piglet cost:")){
+//                                    arrayList_rfscan.set(i,new RFscanner_model("Accumulated expense for piglet cost:", accumulated, ""));
+//                                    adapter.notifyItemChanged(i);
+//                                }
+//                                if(name.equals("Sow Index:")){
+//                                    arrayList_rfscan.set(i,new RFscanner_model("Sow Index:", sow_index, ""));
+//                                    adapter.notifyItemChanged(i);
+//                                }
+//                                if(name.equals("Cost:")){
+//                                    arrayList_rfscan.set(i,new RFscanner_model("Cost:", cost, ""));
+//                                    adapter.notifyItemChanged(i);
+//                                }
+//                                if(name.equals("Estimated Weight:")){
+//                                    arrayList_rfscan.set(i,new RFscanner_model("Estimated Weight:", estimated_weight, ""));
+//                                    adapter.notifyItemChanged(i);
+//                                }
+//                            }
+//                        }
+//                    }else{
+//                        // get_computation(swine_id);
+//                    }
+//
+//                } catch (Exception e){}
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                try{
+//                    Toast.makeText(getActivity(), "Connection Error, please try again.", Toast.LENGTH_SHORT).show();
+//                } catch (Exception e){}
+//            }
+//        }){
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                HashMap<String,String> hashMap = new HashMap<>();
+//                hashMap.put("company_code", company_code);
+//                hashMap.put("company_id", company_id);
+//                hashMap.put("swine_id", swine_id);
+//                hashMap.put("category_id", category_id);
+//                return hashMap;
+//            }
+//        };
+//        AppController.getInstance().setVolleyDuration(computation_request);
+//        AppController.getInstance().addToRequestQueue(computation_request);
+//    }
 
     private void scanResult(String result){
         if (result.equals("scan")){
@@ -2374,12 +2427,13 @@ public class RFscanner_main extends Fragment {
 
     public void convert_to_swine(){
         showLoading(loadingScan, "Saving...").show();
-        String URL = getString(R.string.URL_online)+"scan_eartag/action/pig_convert_to_swine.php";
+        String URL = getString(R.string.URL_online)+"scan_eartag/action/pig_convert_to_swine2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try{
+                    ((ActivityMain)getActivity()).dialogBox(response);
                     showLoading(loadingScan, null).dismiss();
                     if(response.equals("1")){
                         get_details(company_code, company_id, swine_scanned_id);
@@ -2408,6 +2462,8 @@ public class RFscanner_main extends Fragment {
                 hashMap.put("swine_id", swine_scanned_id);
                 hashMap.put("user_id", user_id);
                 hashMap.put("pen_id", pen_code);
+                hashMap.put("category_id", category_id);
+                hashMap.put("reference_number", "");
                 hashMap.put("swine_code", swine_code);
                 return hashMap;
             }

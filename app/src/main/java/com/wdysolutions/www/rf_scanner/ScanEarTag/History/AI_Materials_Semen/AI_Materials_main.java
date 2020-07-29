@@ -50,7 +50,7 @@ public class AI_Materials_main extends Fragment {
     ProgressBar loading_;
     ArrayList<AI_Materials_model> arrayList = new ArrayList<>();
     aiMaterials_adapter adapter;
-    String company_code, company_id, swine_scanned_id, pen_type;
+    String company_code, company_id, swine_scanned_id, pen_type, user_id, category_id;
     Button btn_add;
 
 
@@ -72,6 +72,8 @@ public class AI_Materials_main extends Fragment {
         SessionPreferences sessionPreferences = new SessionPreferences(getActivity());
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
+        user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
         swine_scanned_id = getArguments().getString("swine_scanned_id");
         pen_type = getArguments().getString("pen_type");
 
@@ -290,6 +292,8 @@ public class AI_Materials_main extends Fragment {
                     hashMap.put("company_id", company_id);
                     hashMap.put("swine_id", swine_scanned_id);
                     hashMap.put("id", ai_id);
+                    hashMap.put("user_id", user_id);
+                    hashMap.put("category_id", category_id);
                     return hashMap;
                 }
             };
@@ -323,21 +327,6 @@ public class AI_Materials_main extends Fragment {
                 lastPosition = position;
             }
         }
-    }
-
-    void dialogBox(String name){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        final EditText input = new EditText(getActivity());
-        alertDialog.setView(input);
-        input.setText(name);
-        alertDialog.setPositiveButton("Close",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.setCancelable(false);
-        alertDialog.show();
     }
 
 }
