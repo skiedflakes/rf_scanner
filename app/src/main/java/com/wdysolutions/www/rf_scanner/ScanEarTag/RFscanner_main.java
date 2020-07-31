@@ -1244,7 +1244,7 @@ public class RFscanner_main extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try{
-                    Toast.makeText(getActivity(), "Connection Error, please try again.", Toast.LENGTH_SHORT).show();
+                    computeEstimatedWeight(swine_id);
                 } catch (Exception e){}
             }
         }){
