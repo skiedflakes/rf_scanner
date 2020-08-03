@@ -382,34 +382,36 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@drawable/bg_border"
                     android:orientation="vertical">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginBottom="15dp"
-                        android:gravity="right">
+                        android:gravity="right"
+                        android:orientation="horizontal">
 
                         <Button
+                            android:id="@+id/btn_delivery"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="View Saved Delivery"
-                            android:padding="10dp"
-                            android:textColor="#ffff"
+                            android:layout_marginTop="10dp"
                             android:background="#4CAF50"
                             android:drawableStart="@drawable/check_white"
                             android:drawablePadding="10dp"
-                            android:id="@+id/btn_delivery"
-                            />
+                            android:padding="10dp"
+                            android:text="View Saved Delivery"
+                            android:textColor="#ffff" />
                     </LinearLayout>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:layout_margin="5dp">
+                        android:layout_margin="5dp"
+                        android:gravity="right">
 
                         <Button
                             android:id="@+id/btn_finish"

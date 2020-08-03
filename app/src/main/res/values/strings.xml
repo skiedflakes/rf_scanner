@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">RF Scanner</string>
 
+    <!--for Swine Sales Finish (finishDeliver2.php)-->
+    <string name="orig_db_main">notes_main</string>
+    <string name="db_prefix">notes_</string>
+
     <string name="URL_online">https://mobile.wdysolutions.com/rf_scanner/main/</string>
     <!--    <string name="URL_online">https://notes.wdysolutions.com/v6/rf_scanner_v2/</string>-->
     <!--<string name="URL_online">http://192.168.0.110/rf_scanner_v2/</string>-->

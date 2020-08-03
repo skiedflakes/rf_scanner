@@ -41,6 +41,7 @@ import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_model_branch;
 import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_model_building;
 import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_model_pen;
 import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_model_pig;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.Modal_fragment;
 import com.wdysolutions.www.rf_scanner.MultiAction.Dialog.Dialog_transferpen;
 import com.wdysolutions.www.rf_scanner.MultiAction.TransferPen_main;
@@ -661,7 +662,6 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
             public void onResponse(String response) {
 
                 try {
-                    //dialogBox(response);
                     loading_table.setVisibility(View.GONE);
                     layout_table.setVisibility(View.VISIBLE);
 
@@ -728,15 +728,13 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
     public void request_data_swine(final String swine_id,final String request_type){
         loading_table.setVisibility(View.VISIBLE);
         layout_table.setVisibility(View.GONE);
-
         String URL = getString(R.string.URL_online) + "swine_sales/request_swine_data.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                isModalOff=true;
-
                 try {
+                    isModalOff=true;
                     loading_table.setVisibility(View.GONE);
                     layout_table.setVisibility(View.VISIBLE);
                     if(response.equals("{\"get_swine\":[]}")){
@@ -809,15 +807,10 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
                                     //sqlite add single array
                                     swine_sales_list_pig_temp.add(new SwineSales_scan_model(Integer.valueOf(swine_id), swine_code, age, "", weight, price, subtotal, dr_num));
                                     sqlite.ss_add_pigs_sqlite(swine_sales_list_pig_temp);
-
                                 }
                             }
-
                         }
-
                     }
-
-
                 } catch (Exception e) {}
             }
         }, new Response.ErrorListener() {
@@ -837,10 +830,8 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
                 hashMap.put("company_id", company_id);
                 hashMap.put("branch_id", branch_id);
                 hashMap.put("company_code", company_code);
-
                 hashMap.put("swine_id", swine_id);
                 hashMap.put("request_type", request_type);
-
                 return hashMap;
             }
         };
@@ -1067,7 +1058,6 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
             public void onResponse(String response) {
 
                 try {
-
                     if(response.equals("1")){
                         if(swine_sales_list_pig.size()>0){
                             scanned_total = String.valueOf(swine_sales_list_pig.size());
@@ -1225,7 +1215,6 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
 
     //new update
     public void get_branch(final String company_id, final String company_code, final String get_type){
-
         tv_scaned_total.setText("");
         loading_.setVisibility(View.VISIBLE);
         layout_.setVisibility(View.GONE);

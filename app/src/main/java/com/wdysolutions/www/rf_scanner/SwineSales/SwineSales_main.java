@@ -92,7 +92,7 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
     //checkbox
     CheckBox cb_all;
     TextView btn_date;
-    String selectedMonth = "";
+    String selectedMonth = "", category_id;
 
     SQLiteHelper sqlite;
 
@@ -153,6 +153,7 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
+        category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
 
         layout_month = view.findViewById(R.id.layout_month);
         layout_error = view.findViewById(R.id.layout_error);
@@ -186,7 +187,7 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
         btn_remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                remove_selected_swinesales();
+                dialogBox_cofirmation();
             }
         });
 
@@ -663,7 +664,7 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
         //    delete_swinesales(checked_ids.get(0).toString();
             for(int i =0; i<checked_ids.size();i++){
                 counter_delete++;
-             delete_swinesales(checked_ids.get(i),i);
+                delete_swinesales(checked_ids.get(i),i);
             }
 
         }else{
@@ -673,14 +674,16 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
         }
     }
 
-int counter_delete = 0, success_delete=0;
+    int counter_delete = 0, success_delete=0;
     public void delete_swinesales(final String id, final int position){
         String URL = getString(R.string.URL_online)+"swine_sales/delete_bulk_dr.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+
                 if (response.equals("1")){
-                        String dr_id;
+
+                    String dr_id;
                     try {
                         JSONArray jsonArray = new JSONArray(new Gson().toJson(swineSales_models));
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -700,9 +703,7 @@ int counter_delete = 0, success_delete=0;
                             showLoading(loadingScan, null).dismiss();
                             Toast.makeText(getActivity(), "delete success", Toast.LENGTH_SHORT).show();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (JSONException e) {}
 
 //                    Toast.makeText(getActivity(), "Successfully deleted", Toast.LENGTH_SHORT).show();
                 } else {
@@ -727,6 +728,7 @@ int counter_delete = 0, success_delete=0;
                 hashMap.put("company_code", company_code);
                 hashMap.put("user_id", user_id);
                 hashMap.put("branch_id", selectedBranch);
+                hashMap.put("category_id", category_id);
                 hashMap.put("company_id", company_id);
                 hashMap.put("id", id);
                 return hashMap;
@@ -761,5 +763,24 @@ int counter_delete = 0, success_delete=0;
         loading.setMessage(msg);
         loading.setCancelable(false);
         return loading;
+    }
+
+    void dialogBox_cofirmation(){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setMessage("Are you sure you want to delete selected items");
+        alertDialog.setPositiveButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialog.setNegativeButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        remove_selected_swinesales();
+                    }
+                });
+        alertDialog.setCancelable(false);
+        alertDialog.show();
     }
 }

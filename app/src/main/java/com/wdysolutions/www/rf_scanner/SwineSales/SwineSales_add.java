@@ -36,6 +36,7 @@ import com.google.gson.Gson;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.Modal_fragment;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
@@ -190,11 +191,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 {
                     // perform logic
                     open_authentication();
-
-                }else{
-
                 }
-
             }
         });
 
@@ -358,7 +355,6 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
             btn_save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     dialogBox_cofirmation(true);
                 }
             });
@@ -854,7 +850,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         }else{
 
             if(tr_status.equals("No")){
-                String URL = getString(R.string.URL_online)+"swine_sales/add_dr.php";
+                String URL = getString(R.string.URL_online)+"swine_sales/add_dr2.php";
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -874,13 +870,15 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                                 btn_save.setEnabled(true);
 
                                 set_modal("System Message","Swine delivery added","green");
-                            }else{
+                            } else if (status.equals("2")){
+                                set_modal("System Message","Invoice Number already used, Please Refresh. ","red");
+                            } else{
                                 btn_save.setEnabled(true);
                                 set_modal("System Message","Swine delivery insert failed","red");
                             }
-
-                        }catch (Exception e){}
-
+                        }
+                        catch (JSONException e){}
+                        catch (Exception e){}
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -898,8 +896,8 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                         hashMap.put("company_id", company_id);
                         hashMap.put("company_code", company_code);
                         hashMap.put("branch_id", branch_id);
+                        hashMap.put("category_id",category_id);
                         hashMap.put("user_id", user_id);
-
                         hashMap.put("delivery_number", delivery_number);
                         hashMap.put("dr_date", dateSelected);
                         hashMap.put("customer_id", customerSelected);
@@ -911,6 +909,16 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                         hashMap.put("trucking_accountExpense",trucking_expenseSelected);
                         hashMap.put("tr_status",tr_status);
                         hashMap.put("a_discount",discount);
+
+                        //not used
+                        hashMap.put("warehouse_id","");
+                        hashMap.put("withholding","");
+                        hashMap.put("supplier_name","");
+                        hashMap.put("withholding_amount","");
+                        hashMap.put("vat","");
+                        hashMap.put("checkbox_val","");
+                        hashMap.put("tr_undeclared","");
+                        hashMap.put("output_vat","");
                         return hashMap;
                     }
                 };
@@ -922,7 +930,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 if(truckersSelected.equals("")||trucking_amount.equals("")||trucking_expenseSelected.equals("")){
                     Toast.makeText(getActivity(), "Please fill up required fields", Toast.LENGTH_SHORT).show();
                 }else{
-                    String URL = getString(R.string.URL_online)+"swine_sales/add_dr.php";
+                    String URL = getString(R.string.URL_online)+"swine_sales/add_dr2.php";
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -945,9 +953,9 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                                     btn_save.setEnabled(true);
                                     set_modal("System Message","Swine delivery insert failed","red");
                                 }
-                            }catch (Exception e){
-
                             }
+                            catch (JSONException e){}
+                            catch (Exception e){}
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -966,8 +974,8 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                             hashMap.put("company_id", company_id);
                             hashMap.put("company_code", company_code);
                             hashMap.put("branch_id", branch_id);
+                            hashMap.put("category_id",category_id);
                             hashMap.put("user_id", user_id);
-
                             hashMap.put("delivery_number", delivery_number);
                             hashMap.put("dr_date", dateSelected);
                             hashMap.put("customer_id", customerSelected);
@@ -979,6 +987,16 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                             hashMap.put("trucking_accountExpense",trucking_expenseSelected);
                             hashMap.put("tr_status",tr_status);
                             hashMap.put("a_discount",discount);
+
+                            //not used
+                            hashMap.put("warehouse_id","");
+                            hashMap.put("withholding","");
+                            hashMap.put("supplier_name","");
+                            hashMap.put("withholding_amount","");
+                            hashMap.put("vat","");
+                            hashMap.put("checkbox_val","");
+                            hashMap.put("tr_undeclared","");
+                            hashMap.put("output_vat","");
                             return hashMap;
                         }
                     };
@@ -1028,14 +1046,13 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 hashMap.put("company_code", company_code);
                 hashMap.put("branch_id", branch_id);
                 hashMap.put("user_id", user_id);
-
+                hashMap.put("category_id", category_id);
                 hashMap.put("pay_type", paymentSelected);
                 hashMap.put("dr_date", dateSelected);
                 hashMap.put("a_discount",discount);
                 hashMap.put("remarks", remarks);
                 hashMap.put("invoice_number", invoice_number);
                 hashMap.put("dr_header_id", dr_header_id);
-
                 return hashMap;
             }
         };
@@ -1116,10 +1133,11 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
     public void finish_dr(){
         showLoading(loadingScan, "Please wait, saving make some time.").show();
         btn_finish.setEnabled(false);
-        String URL = getString(R.string.URL_online)+"swine_sales/finishDelivery.php";
+        String URL = getString(R.string.URL_online)+"swine_sales/finishDelivery2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+
                 try {
                     //dialogBox(response);
                     btn_finish.setEnabled(true);
@@ -1160,6 +1178,8 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 hashMap.put("dr_date", dateSelected);
                 hashMap.put("user_id", user_id);
                 hashMap.put("category_id", category_id);
+                hashMap.put("orig_db_main_android", getString(R.string.orig_db_main));
+                hashMap.put("db_prefix_android", getString(R.string.db_prefix));
                 return hashMap;
             }
         };
