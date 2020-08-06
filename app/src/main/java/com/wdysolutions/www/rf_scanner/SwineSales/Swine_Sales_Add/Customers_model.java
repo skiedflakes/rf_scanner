@@ -1,6 +1,7 @@
-package com.wdysolutions.www.rf_scanner.SwineSales;
+package com.wdysolutions.www.rf_scanner.SwineSales.Swine_Sales_Add;
 
 public class Customers_model {
+
     String customer_id;
     String customer;
 

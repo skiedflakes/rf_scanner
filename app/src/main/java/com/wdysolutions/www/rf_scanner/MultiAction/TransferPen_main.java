@@ -447,7 +447,6 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
             public void onResponse(String response) {
 
                 try {
-
                     if(response.equals("{\"get_swine\":[]}")){
                         set_modal("System Message","Invalid ear tag","red");
                     }else{

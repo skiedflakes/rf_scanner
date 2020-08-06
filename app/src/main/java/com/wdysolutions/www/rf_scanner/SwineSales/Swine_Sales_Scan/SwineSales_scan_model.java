@@ -1,4 +1,4 @@
-package com.wdysolutions.www.rf_scanner.SwineSales;
+package com.wdysolutions.www.rf_scanner.SwineSales.Swine_Sales_Scan;
 
 public class SwineSales_scan_model {
     private int swine_id;

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".SwineSales.Dialog_Authenticate"
+    tools:context=".SwineSales.Swine_Sales_Add.Dialog_Authenticate"
 
     android:minWidth="100dp">
 

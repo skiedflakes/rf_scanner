@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Local RF Scanner</string>
 
-    <string name="URL_online">http://192.168.2.106/rf_scanner/</string>
+    <string name="URL_online">http://192.168.2.111/rf_scanner/</string>
 
     <!--for Swine Sales Finish (finishDeliver2.php)-->
     <string name="orig_db_main">notes_main</string>

@@ -6,9 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_model_pig;
 import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_model_pig;
-import com.wdysolutions.www.rf_scanner.SwineSales.SwineSales_scan_model;
+import com.wdysolutions.www.rf_scanner.SwineSales.Swine_Sales_Scan.SwineSales_scan_model;
 
 import java.util.ArrayList;
 

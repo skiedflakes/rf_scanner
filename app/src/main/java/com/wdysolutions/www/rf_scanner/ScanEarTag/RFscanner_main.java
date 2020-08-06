@@ -1,6 +1,5 @@
 package com.wdysolutions.www.rf_scanner.ScanEarTag;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -67,7 +66,7 @@ import com.wdysolutions.www.rf_scanner.ScanEarTag.History.Vaccination.Vaccinatio
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Piglets_Action.Condemn.Piglets_Condemn_main;
 import com.wdysolutions.www.rf_scanner.ScanEarTag.Piglets_Action.Mortality.Piglets_Mortality_main;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
-import com.wdysolutions.www.rf_scanner.SwineSales.SwineSales_add;
+import com.wdysolutions.www.rf_scanner.SwineSales.Swine_Sales_Add.SwineSales_add;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,7 +75,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -2433,7 +2431,7 @@ public class RFscanner_main extends Fragment {
             public void onResponse(String response) {
 
                 try{
-                    ((ActivityMain)getActivity()).dialogBox(response);
+                    //((ActivityMain)getActivity()).dialogBox(response);
                     showLoading(loadingScan, null).dismiss();
                     if(response.equals("1")){
                         get_details(company_code, company_id, swine_scanned_id);

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SwineSales.SwineSales_add"
+    tools:context=".SwineSales.Swine_Sales_Add.SwineSales_add"
     android:minWidth="500dp"
     android:background="#ffff"
   >
@@ -14,18 +14,18 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:drawableLeft="@drawable/ic_assignment_blue_24dp"
-        android:text="Add New Swine Sales"
-        android:textColor="@color/btn_blue_color1"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        android:padding="10dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:drawableLeft="@drawable/ic_assignment_blue_24dp"
+            android:padding="10dp"
+            android:text="Add New Swine Sales"
+            android:textColor="@color/btn_blue_color1"
+            android:textSize="17sp"
+            android:textStyle="bold" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -40,7 +40,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="5dp"
                     android:background="@drawable/bg_border"
                     android:gravity="center"
                     android:minWidth="1000dp"
@@ -49,10 +49,10 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="10dp"
                         android:orientation="horizontal"
                         android:weightSum="3">
 
@@ -73,12 +73,29 @@
                             android:padding="10dp" />
                     </LinearLayout>
 
+                    <CheckBox
+                        android:id="@+id/undeclared_chckbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:text="Undeclared"
+                        android:visibility="gone" />
+
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:visibility="visible" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:weightSum="5">
@@ -101,9 +118,9 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:weightSum="4">
@@ -134,9 +151,9 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:weightSum="4">
@@ -165,10 +182,44 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        android:weightSum="4">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:background="@drawable/bg_border"
+                            android:padding="10dp"
+                            android:text="Sub Range:*" />
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_border">
+
+                            <Spinner
+                                android:id="@+id/subrange_spinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="2dp"
+                                android:textAlignment="center" />
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -197,12 +248,20 @@
                             android:text="w/Reciept" />
                     </LinearLayout>
 
+                    <View
+                        style="@style/Divider"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:visibility="visible" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -219,7 +278,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="@drawable/bg_border_shade"
-                            android:padding="8dp" />
+                            android:padding="8dp"
+                            android:textSize="14sp" />
 
                         <CheckBox
                             android:id="@+id/cb_discount"
@@ -233,9 +293,9 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -254,7 +314,8 @@
                             android:background="@drawable/bg_border_shade"
                             android:hint="Amount"
                             android:inputType="number|text"
-                            android:padding="8dp" />
+                            android:padding="8dp"
+                            android:textSize="14sp" />
 
                         <CheckBox
                             android:id="@+id/cb_trucking"
@@ -268,9 +329,9 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:weightSum="4">
@@ -300,9 +361,9 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
                         android:layout_marginBottom="5dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:weightSum="4">
@@ -333,8 +394,10 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
 
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -351,16 +414,17 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="@drawable/bg_border"
-                            android:padding="10dp" />
+                            android:padding="10dp"
+                            android:textSize="14sp" />
                     </LinearLayout>
 
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
                         android:gravity="right"
                         android:orientation="horizontal">
 
@@ -369,8 +433,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="#2180CC"
-                            android:drawablePadding="10dp"
                             android:drawableStart="@drawable/ic_add_circle_white_24dp"
+                            android:drawablePadding="5dp"
                             android:padding="10dp"
                             android:text="Add Swine Sales"
                             android:textColor="#ffff" />
@@ -379,33 +443,26 @@
 
                 </LinearLayout>
 
+                <Button
+                    android:id="@+id/btn_delivery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="#CEBA2D"
+                    android:drawableEnd="@drawable/ic_keyboard_arrow_right_white_24dp"
+                    android:drawablePadding="5dp"
+                    android:padding="10dp"
+                    android:text="View Saved Delivery"
+                    android:textColor="#ffff" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
                     android:background="@drawable/bg_border"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginBottom="15dp"
-                        android:gravity="right"
-                        android:orientation="horizontal">
-
-                        <Button
-                            android:id="@+id/btn_delivery"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:background="#4CAF50"
-                            android:drawableStart="@drawable/check_white"
-                            android:drawablePadding="10dp"
-                            android:padding="10dp"
-                            android:text="View Saved Delivery"
-                            android:textColor="#ffff" />
-                    </LinearLayout>
+                    android:orientation="vertical"
+                    android:padding="5dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -417,9 +474,10 @@
                             android:id="@+id/btn_finish"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
                             android:background="#4CAF50"
                             android:drawableStart="@drawable/check_white"
-                            android:drawablePadding="10dp"
+                            android:drawablePadding="5dp"
                             android:padding="10dp"
                             android:text="finish Delivery"
                             android:textColor="#ffff" />

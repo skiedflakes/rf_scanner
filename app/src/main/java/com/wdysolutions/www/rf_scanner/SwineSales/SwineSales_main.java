@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -36,9 +35,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_model_branch;
-import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_model_pig;
 import com.wdysolutions.www.rf_scanner.Constant;
-import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.Modal_fragment;
 import com.wdysolutions.www.rf_scanner.MonthPicker.monthPicker;
@@ -46,8 +43,8 @@ import com.wdysolutions.www.rf_scanner.MonthPicker.monthPickerInterface;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.SQLiteHelper;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
+import com.wdysolutions.www.rf_scanner.SwineSales.Swine_Sales_Add.SwineSales_add;
 import com.wdysolutions.www.rf_scanner.SwineSales.dialog_viewDetails.swineSales_viewDetails_main;
-import com.wdysolutions.www.rf_scanner.SwineSales.dialog_viewDetails.viewDetails_model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -95,8 +92,6 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
     String selectedMonth = "", category_id;
 
     SQLiteHelper sqlite;
-
-
 
     MenuItem max, min,low;
 
@@ -170,8 +165,12 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btn_add.setEnabled(false);
-                open_add_swinesales();
+                if (selectedBranch.equals("")){
+                    Toast.makeText(getActivity(), "Please select branch", Toast.LENGTH_SHORT).show();
+                } else {
+                    btn_add.setEnabled(false);
+                    open_add_swinesales();
+                }
             }
         });
 
@@ -766,21 +765,25 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
     }
 
     void dialogBox_cofirmation(){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        alertDialog.setMessage("Are you sure you want to delete selected items");
-        alertDialog.setPositiveButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.setNegativeButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        remove_selected_swinesales();
-                    }
-                });
-        alertDialog.setCancelable(false);
-        alertDialog.show();
+        if(checked_ids.size()>0) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            alertDialog.setMessage("Are you sure you want to delete selected items");
+            alertDialog.setPositiveButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,int which) {
+                            dialog.cancel();
+                        }
+                    });
+            alertDialog.setNegativeButton("Yes",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,int which) {
+                            remove_selected_swinesales();
+                        }
+                    });
+            alertDialog.setCancelable(false);
+            alertDialog.show();
+        } else {
+            Toast.makeText(getActivity(), "Please select swine sales to delete", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.wdysolutions.www.rf_scanner.SwineSales;
+package com.wdysolutions.www.rf_scanner.SwineSales.Swine_Sales_Scan;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -40,17 +40,10 @@ import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_model_branch;
 import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_model_building;
 import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_model_pen;
-import com.wdysolutions.www.rf_scanner.AuditPen.AuditPen_model_pig;
-import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.Modal_fragment;
-import com.wdysolutions.www.rf_scanner.MultiAction.Dialog.Dialog_transferpen;
-import com.wdysolutions.www.rf_scanner.MultiAction.TransferPen_main;
-import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_adapter;
-import com.wdysolutions.www.rf_scanner.MultiAction.Transfer_model_pig;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.SQLiteHelper;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
-import com.wdysolutions.www.rf_scanner.SwineSales.dialog_viewDetails.viewDetails_model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -341,71 +334,63 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
                 @Override
                 public void onReceive(Context context, Intent intent) {
 
-                        if(isModalOff){
-                            String tag = intent.getExtras().get("epc").toString();
-                            if (!tag.equals("No transponders seen")){
+                    if(isModalOff){
+                        String tag = intent.getExtras().get("epc").toString();
+                        if (!tag.equals("No transponders seen")){
+
+                            if (isLoading){
+                                Toast.makeText(context, "Please wait loading data...", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
 
                                 try {
+                                    String eart_tag =  hexToASCII(tag);
+                                    String[] separated = eart_tag.split("-");
+                                    //getDetails(company_code, company_id,separated[1]);
 
-                                    if (isLoading){
-                                        Toast.makeText(context, "Please wait loading data...", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else {
+                                    String str_characters = separated[0].replaceAll("[^A-Za-z]+", "");
+                                    String str_digits = separated[0].replaceAll("\\D+","");
 
-                                        //
-                                        String eart_tag =  hexToASCII(tag);
-                                        String[] separated = eart_tag.split("-");
-                                        //                            getDetails(company_code, company_id,separated[1]);
+                                    if(str_characters.substring(0,3).equals("wdy")){
 
-                                        String str_characters = separated[0].replaceAll("[^A-Za-z]+", "");
-                                        String str_digits = separated[0].replaceAll("\\D+","");
-                                        if(str_characters.equals("wdy")){
+                                        if (sqlite.ss_get_pigs_sqlite(dr_num).size() != 0) {
 
+                                            String check_swine = sqlite.checkSwine(separated[1]);
 
-                                            if (sqlite.ss_get_pigs_sqlite(dr_num).size() != 0) {
-
-                                                String check_swine = sqlite.checkSwine(separated[1]);
-
-                                                if (check_swine.equals("")) {
-                                                    check_swine_list( separated[1]);
-                                                    //add_eartag(company_id, company_code, separated[1]);
-                                                } else {
-                                                    Toast.makeText(getActivity(), "Some scanned ear tag is already saved", Toast.LENGTH_SHORT).show();
-                                                }
-
+                                            if (check_swine.equals("")) {
+                                                check_swine_list(separated[1]);
+                                                //add_eartag(company_id, company_code, separated[1]);
                                             } else {
-
-                                                String check_swine = sqlite.checkSwine(separated[1]);
-
-                                                if (check_swine.equals("")) {
-                                                    check_swine_list( separated[1]);
-                                                    // add_eartag(company_id, company_code, separated[1]);
-                                                } else {
-                                                    Toast.makeText(getActivity(), "Some scanned ear tag is already saved", Toast.LENGTH_SHORT).show();
-                                                }
+                                                Toast.makeText(getActivity(), "Some scanned ear tag is already saved", Toast.LENGTH_SHORT).show();
                                             }
 
-                                        }else{
-                                            Toast.makeText(context, "ear tag invalid", Toast.LENGTH_SHORT).show();
+                                        } else {
+
+                                            String check_swine = sqlite.checkSwine(separated[1]);
+
+                                            if (check_swine.equals("")) {
+                                                check_swine_list(separated[1]);
+                                                // add_eartag(company_id, company_code, separated[1]);
+                                            } else {
+                                                Toast.makeText(getActivity(), "Some scanned ear tag is already saved", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
+                                    }else{
+                                        Toast.makeText(context, "Scanned ear tag invalid", Toast.LENGTH_SHORT).show();
                                     }
-                                }catch (Exception e){}
-
-
-                            } else {
-                                Toast.makeText(context, "No eartag found", Toast.LENGTH_SHORT).show();
+                                } catch (Exception e){
+                                    Toast.makeText(context, "Scanned ear tag is invalid", Toast.LENGTH_SHORT).show();
+                                }
                             }
-
-
-                        }else{
-
-                            Toast.makeText(context, "Unable to scan ear tag please complete action.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "No eartag found", Toast.LENGTH_SHORT).show();
                         }
-
+                    }else{
+                        Toast.makeText(context, "Unable to scan ear tag please complete action.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             };
         }
-
         getActivity().registerReceiver(epcReceiver, new IntentFilter("epc_receive"));
 
         return view;
@@ -600,30 +585,24 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
                             adapter_pig.notifyDataSetChanged();
                             total_scanned++;
 
-
                             scanned_total = String.valueOf(swine_sales_list_pig.size());
                             tv_scaned_total.setText("Total Scanned: "+scanned_total);
 
                             //sqlite add single array
                             swine_sales_list_pig_temp.add(new SwineSales_scan_model(swine_id, swine_code, age, "", weight, price, subtotal, dr_num));
                             sqlite.ss_add_pigs_sqlite(swine_sales_list_pig_temp);
-
                         }
                     }
-
                 }
             }
 
             if(!isInsideList){
                 yes_no_alert_dialog(ear_tag,"Scanned ear tag is in WRONG PEN or invalid. Do you wish to proceed?");
-
             }
 
         }else{
             Toast.makeText(getActivity(), "Pen is empty", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
 
