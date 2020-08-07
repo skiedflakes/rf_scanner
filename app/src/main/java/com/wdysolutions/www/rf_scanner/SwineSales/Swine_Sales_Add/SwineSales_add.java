@@ -19,6 +19,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,6 +34,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerCustom;
 import com.wdysolutions.www.rf_scanner.DatePicker.DatePickerSelectionInterfaceCustom;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.Modal_fragment;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
@@ -123,11 +126,15 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
     String add_status="";
     Button btn_finish;
     ProgressDialog loadingScan;
+    ProgressBar loading_undeclared;
 
     SwineSales_add_adapter swineSales_add_adapter;
     CheckBox undeclared_chckbox;
 
     String checkbox_val="0";
+    ArrayList<Sub_Range_model> sub_range_charge = new ArrayList<>();
+    ArrayList<Sub_Range_model> sub_range_cash = new ArrayList<>();
+    LinearLayout layout_sub_range;
 
     private ProgressDialog showLoading(ProgressDialog loading, String msg){
         loading.setMessage(msg);
@@ -145,11 +152,13 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         category_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_CATEGORY_ID);
 
         loadingScan = new ProgressDialog(getActivity(), R.style.MyAlertDialogStyle);
+        loading_undeclared = view.findViewById(R.id.loading_undeclared);
         tv_dr_num = view.findViewById(R.id.tv_dr_num);
         recyclerView = view.findViewById(R.id.recyclerView);
         tv_total = view.findViewById(R.id.tv_total);
         subrange_spinner = view.findViewById(R.id.subrange_spinner);
         undeclared_chckbox = view.findViewById(R.id.undeclared_chckbox);
+        layout_sub_range = view.findViewById(R.id.layout_sub_range);
 
         //date
         tv_date = view.findViewById(R.id.tv_date);
@@ -258,11 +267,12 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 trucking_amount = bundle.getString("tr_swine_a");
                 trucking_expenseSelected_name = bundle.getString("tr_swine_e");
                 dr_header_id = bundle.getString("id");
+                checkbox_val = bundle.getString("declared_status");
 
                 if(payment_type.equals("CASH")){
                     paymentSelected = "C";
                 }else if(payment_type.equals("CHARGE")){
-                    paymentSelected = "C";
+                    paymentSelected = "H";
                 }
 
                 init_add_edit(add_edit);
@@ -284,6 +294,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         return view;
     }
 
+    boolean isCheckBoxClick = false;
     private void undeclaredChckbox(){
         if (undeclared_chckbox.isChecked()){
             checkbox_val = "1";
@@ -303,6 +314,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
             }
         }
 
+        isCheckBoxClick = true;
         generate_invoice(company_id,company_code,"inv_num");
     }
 
@@ -324,7 +336,6 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
             public void onResponse(String response) {
 
                 try {
-                    //setLoading(true);
                     viewDetails_models.clear();
                     JSONObject object = new JSONObject(response);
                     JSONArray jsonArray = object.getJSONArray("data");
@@ -387,11 +398,17 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
             btn_save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    dialogBox_cofirmation(true);
+
+                    if (delivery_number.equals("") || dateSelected.equals("") || customerSelected.equals("") ||
+                            paymentSelected.equals("") || invoice_number.equals("")) {
+                        Toast.makeText(getActivity(), "Please fill up required fields", Toast.LENGTH_SHORT).show();
+                    } else {
+                        dialogBox_cofirmation(true);
+                    }
                 }
             });
 
-        }else{
+        } else { // Edit
             btn_delivery.setVisibility(View.VISIBLE);
             btn_delivery.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -437,6 +454,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 }
             });
 
+            layout_sub_range.setVisibility(View.GONE);
             undeclared_chckbox.setClickable(false);
             payment_spinner.setEnabled(false);
             customer_spinner.setEnabled(false);
@@ -452,6 +470,12 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
             et_trucking.setText(trucking_amount);
             et_discount.setText(discount);
             et_remarks.setText(remarks);
+
+            if (checkbox_val.equals("1")){
+                undeclared_chckbox.setChecked(true);
+            } else {
+                undeclared_chckbox.setChecked(false);
+            }
 
             // Populate customer Spinner
             List<String> customer_lables = new ArrayList<>();
@@ -548,45 +572,78 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
 
     //for add button
     public void generate_invoice(final String company_id, final String company_code,final String get_type){
-        btn_save.setEnabled(false);
-        String URL = getString(R.string.URL_online)+"swine_sales/generate_invoice_number2.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
+        if (!paymentSelected.equals("")) {
+            undeclared_chckbox.setClickable(false);
+            subrange_spinner.setEnabled(false);
+            payment_spinner.setEnabled(false);
+            loading_undeclared.setVisibility(View.VISIBLE);
+            btn_save.setEnabled(false);
+            Toast.makeText(getActivity(), "Generating invoice...", Toast.LENGTH_SHORT).show();
+            String URL = getString(R.string.URL_online)+"swine_sales/generate_invoice_number2.php";
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
 
-                if (response.equals("0")){
-                    generate_NRD(company_id, company_code);
-                    cb_reciept.setChecked(false);
-                } else {
-                    invoice_number = response;
-                    tv_invoice.setText(invoice_number);
-                    btn_save.setEnabled(true);
+                    try {
+                        if (response.equals("0")){
+                            generate_NRD(company_id, company_code);
+                            //cb_reciept.setChecked(false); // old updates
+                        } else {
+                            invoice_number = response;
+                            tv_invoice.setText(invoice_number);
+                            btn_save.setEnabled(true);
+
+                            undeclared_chckbox.setClickable(true);
+                            subrange_spinner.setEnabled(true);
+                            payment_spinner.setEnabled(true);
+                            loading_undeclared.setVisibility(View.GONE);
+                        }
+
+                    } catch (Exception e){}
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                try{
-                    Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
-                    btn_save.setEnabled(true);
-                } catch (Exception e){}
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> hashMap = new HashMap<>();
-                hashMap.put("company_id", company_id);
-                hashMap.put("company_code", company_code);
-                hashMap.put("branch_id", branch_id);
-                hashMap.put("get_type", get_type);
-                hashMap.put("pay_type", paymentSelected);
-                return hashMap;
-            }
-        };
-        AppController.getInstance().setVolleyDuration(stringRequest);
-        AppController.getInstance().addToRequestQueue(stringRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    try{
+                        Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
+                        undeclared_chckbox.setClickable(true);
+                        subrange_spinner.setEnabled(true);
+                        payment_spinner.setEnabled(true);
+                        loading_undeclared.setVisibility(View.GONE);
+                        btn_save.setEnabled(true);
+
+                        if (isCheckBoxClick){
+                            isCheckBoxClick = false;
+                            if (undeclared_chckbox.isChecked()){
+                                undeclared_chckbox.setChecked(false);
+                            } else {
+                                undeclared_chckbox.setChecked(true);
+                            }
+                        }
+
+                    } catch (Exception e){}
+                }
+            }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    HashMap<String,String> hashMap = new HashMap<>();
+                    hashMap.put("company_id", company_id);
+                    hashMap.put("company_code", company_code);
+                    hashMap.put("branch_id", branch_id);
+                    hashMap.put("get_type", get_type);
+                    hashMap.put("pay_type", paymentSelected);
+                    hashMap.put("user_id", user_id);
+                    hashMap.put("sub_range", selectedSubRange);
+                    hashMap.put("declared_status", checkbox_val);
+                    return hashMap;
+                }
+            };
+            AppController.getInstance().setVolleyDuration(stringRequest);
+            AppController.getInstance().addToRequestQueue(stringRequest);
+        }
     }
 
+    int counter = 0;
     public void generate_NRD(final String company_id, final String company_code){
         if (!paymentSelected.equals("")){
             btn_save.setEnabled(false);
@@ -596,13 +653,18 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 public void onResponse(String response) {
 
                     try {
+                        undeclared_chckbox.setClickable(true);
+                        subrange_spinner.setEnabled(true);
+                        payment_spinner.setEnabled(true);
+                        loading_undeclared.setVisibility(View.GONE);
+
                         invoice_number = response;
                         tv_invoice.setText(invoice_number);
                         btn_save.setEnabled(true);
                         Toast.makeText(getActivity(), "No available receipt", Toast.LENGTH_SHORT).show();
 
                         //new local update
-                        //updateRefNum();
+                        updateRefNum();
 
                     } catch (Exception e){}
                 }
@@ -610,9 +672,22 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     try{
-                        generate_NRD(company_id, company_code);
                         Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
+                        undeclared_chckbox.setClickable(true);
+                        subrange_spinner.setEnabled(true);
+                        payment_spinner.setEnabled(true);
+                        loading_undeclared.setVisibility(View.GONE);
                         btn_save.setEnabled(true);
+
+                        if (isCheckBoxClick){
+                            isCheckBoxClick = false;
+                            if (undeclared_chckbox.isChecked()){
+                                undeclared_chckbox.setChecked(false);
+                            } else {
+                                undeclared_chckbox.setChecked(true);
+                            }
+                        }
+
                     } catch (Exception e){}
                 }
             }){
@@ -682,8 +757,6 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                             if (!click.getCustomer().equals("Please Select")){
                                 customerSelected = String.valueOf(click.getCustomer_id());
                                 customerSelected_name = String.valueOf(click.getCustomer());
-                            } else {
-
                             }
                         }
                         @Override
@@ -704,32 +777,33 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
 
-                            if ( !payment_array.get(position).equals("Please Select")){
+                            if (!payment_array.get(position).equals("Please Select")){
                                 if(payment_array.get(position).equals("Cash")){
                                     paymentSelected = "C";
-                                    generate_invoice(company_id,company_code,"inv_num");
-
                                 }else{
                                     paymentSelected = "H";
-                                    generate_invoice(company_id,company_code,"inv_num");
                                 }
 
+                                // invoice check box w/receipt
                                 cb_reciept.setClickable(true);
                                 cb_reciept.setChecked(true);
-
-                                cb_reciept.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-                                {
+                                cb_reciept.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                     @Override
-                                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                                    {
-                                        if ( isChecked )
-                                        {
+                                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                        if (isChecked) {
+                                            isCheckBoxClick = false;
                                             generate_invoice(company_id,company_code,"inv_num");
                                         }else{
                                             generate_NRD(company_id, company_code);
                                         }
                                     }
                                 });
+
+                                isCheckBoxClick = false;
+                                generate_invoice(company_id,company_code,"inv_num");
+
+                                // refresh sub range
+                                getSubRange();
 
                             } else {
                                 cb_reciept.setOnCheckedChangeListener(null);
@@ -771,15 +845,11 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                             if (!click.getTrucker().equals("Please Select")){
                                 truckersSelected = String.valueOf(click.getTrucker_id());
                                 truckersSelected_name  = String.valueOf(click.getTrucker());
-                            } else {
-
                             }
-
                         }
                         @Override
                         public void onNothingSelected(AdapterView<?> adapterView) {}
                     });
-
 
                     //json trucking expense
                     String trucking_expense,trucking_expense_id;
@@ -796,10 +866,8 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                         }else{
                             trucking_expense_list_spinner.add(new Trucking_expense_model(trucking_expense,trucking_expense_id,"0"));
                         }
-
-
-
                     }
+
                     //populate trucking expense
                     List<String> trucking_expense_labels = new ArrayList<>();
                     for (int i = 0; i < trucking_expense_list_spinner.size(); i++) {
@@ -815,8 +883,6 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                             }
                             return true;
                         }
-
-
                     };
 
                     spinnerAdapter.setDropDownViewResource(R.layout.custom_spinner);
@@ -824,36 +890,46 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                     trucking_expense_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-
-
-
                             Trucking_expense_model click = trucking_expense_list_spinner.get(position);
                             if (!click.getTrucking_expense().equals("Please Select")){
-
-                                //   Toast.makeText(getActivity(), click.getTrucking_expense(), Toast.LENGTH_SHORT).show();
                                 trucking_expenseSelected =  String.valueOf(click.getTrucking_expense_id());
                                 trucking_expenseSelected_name =  String.valueOf(click.getTrucking_expense());
-                            } else {
-
                             }
-
                         }
                         @Override
                         public void onNothingSelected(AdapterView<?> adapterView) {}
                     });
 
+                    // new
+                    sub_range_charge.clear();
+                    JSONArray sub_charge = Object.getJSONArray("sub_range_charge");
+                    for (int i=0; i<sub_charge.length(); i++){
+                        JSONObject jsonObject = (JSONObject) sub_charge.get(i);
+                        sub_range_charge.add(new Sub_Range_model(jsonObject.getString("invoice_id"),
+                                jsonObject.getString("sub_range")));
+                    }
+
+                    sub_range_cash.clear();
+                    JSONArray sub_cash = Object.getJSONArray("sub_range_charge");
+                    for (int i=0; i<sub_cash.length(); i++){
+                        JSONObject jsonObject = (JSONObject) sub_cash.get(i);
+                        sub_range_cash.add(new Sub_Range_model(jsonObject.getString("invoice_id"),
+                                jsonObject.getString("sub_range")));
+                    }
+
+                    // refresh sub range
+                    getSubRange();
+
                 }
                 catch (JSONException e) {}
                 catch (Exception e){}
-
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try{
+                    get_details(company_id,company_code,"dr_num");
                     Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
-
-
                 } catch (Exception e){}
             }
         }){
@@ -871,6 +947,77 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
+    String selectedSubRange = "";
+    private void getSubRange(){
+        List<String> lables = new ArrayList<>();
+        
+        if (paymentSelected.equals("H")){
+            if (sub_range_charge.size() > 0){
+                lables.add("Select sub range");
+                for (int i = 0; i < sub_range_charge.size(); i++) {
+                    lables.add(sub_range_charge.get(i).getSub_range());
+                }
+            } else {
+                lables.add("No available sub range");
+            }
+
+        } else if (paymentSelected.equals("C")){
+            if (sub_range_cash.size() > 0){
+                lables.add("Select sub range");
+                for (int i = 0; i < sub_range_cash.size(); i++) {
+                    lables.add(sub_range_cash.get(i).getSub_range());
+                }
+            } else {
+                lables.add("No available sub range");
+            }
+
+        } else {
+            lables.add("No available sub range");
+        }
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.custom_spinner, lables);
+        spinnerAdapter.setDropDownViewResource(R.layout.custom_spinner);
+        subrange_spinner.setAdapter(spinnerAdapter);
+
+        subrange_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+
+                if (sub_range_charge.size() > 0 || sub_range_cash.size() > 0){
+                    if (paymentSelected.equals("H")){ // charge
+                        Sub_Range_model click = sub_range_charge.get(position);
+                        if (!click.getSub_range().equals("Select sub range")){
+                            selectedSubRange = String.valueOf(click.getInvoice_id());
+                        } else {
+                            selectedSubRange = "";
+                        }
+
+                        isCheckBoxClick = false;
+                        generate_invoice(company_id,company_code,"inv_num");
+
+                    } else if (paymentSelected.equals("C")){ // cash
+                        Sub_Range_model click = sub_range_cash.get(position);
+                        if (!click.getSub_range().equals("Select sub range")){
+                            selectedSubRange = String.valueOf(click.getInvoice_id());
+                        } else {
+                            selectedSubRange = "";
+                        }
+
+                        isCheckBoxClick = false;
+                        generate_invoice(company_id,company_code,"inv_num");
+
+                    } else {
+                        selectedSubRange = "";
+                    }
+                } else {
+                    selectedSubRange = "";
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+    }
+
     @Override
     public void senddata_auth(String data) {
         if(data.equals("okay")){
@@ -884,27 +1031,99 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
     public void save_dr(){
         showLoading(loadingScan, "Saving...").show();
         btn_save.setEnabled(false);
-        //get text
+
         remarks = et_remarks.getText().toString();
         trucking_amount = et_trucking.getText().toString();
         discount = et_discount.getText().toString();
 
-        if (delivery_number.equals("") || dateSelected.equals("") || customerSelected.equals("") ||
-                paymentSelected.equals("") || invoice_number.equals("")) {
+        if(tr_status.equals("No")){
 
-            Toast.makeText(getActivity(), "Please fill up required fields", Toast.LENGTH_SHORT).show();
-            btn_save.setEnabled(true);
-            showLoading(loadingScan, null).dismiss();
+            String URL = getString(R.string.URL_online)+"swine_sales/add_dr2.php";
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
 
-        } else {
+                    try{
+                        btn_save.setEnabled(true);
+                        showLoading(loadingScan, null).dismiss();
+                        String status="";
+                        JSONObject Object = new JSONObject(response);
+                        JSONArray diag = Object.getJSONArray("data");
+                        JSONObject cusObj = (JSONObject) diag.get(0);
+                        status =  cusObj.getString("status");
 
-            if(tr_status.equals("No")){
+                        if(status.equals("1")){
+                            init_add_edit("edit");
+                            add_status="yes";
+                            dr_header_id = cusObj.getString("dr_header_id");
+
+                            set_modal("System Message","Swine delivery added","green");
+                        } else if (status.equals("2")){
+                            set_modal("System Message","Invoice Number already used, Please Refresh. ","red");
+                        } else{
+                            set_modal("System Message","Swine delivery insert failed","red");
+                        }
+                    }
+                    catch (JSONException e){}
+                    catch (Exception e){}
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    try{
+                        Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
+                        btn_save.setEnabled(true);
+                        showLoading(loadingScan, null).dismiss();
+                    } catch (Exception e){}
+                }
+            }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    HashMap<String,String> hashMap = new HashMap<>();
+                    hashMap.put("company_id", company_id);
+                    hashMap.put("company_code", company_code);
+                    hashMap.put("branch_id", branch_id);
+                    hashMap.put("category_id",category_id);
+                    hashMap.put("user_id", user_id);
+                    hashMap.put("delivery_number", delivery_number);
+                    hashMap.put("dr_date", dateSelected);
+                    hashMap.put("customer_id", customerSelected);
+                    hashMap.put("pay_type", paymentSelected);
+                    hashMap.put("remarks", remarks);
+                    hashMap.put("invoice_number", invoice_number);
+                    hashMap.put("trucking_amount", "");
+                    hashMap.put("trucking_account", "");
+                    hashMap.put("trucking_accountExpense","");
+                    hashMap.put("tr_status",tr_status);
+                    hashMap.put("a_discount",discount);
+                    hashMap.put("checkbox_val",checkbox_val);
+
+                    //not used
+                    hashMap.put("warehouse_id","");
+                    hashMap.put("withholding","");
+                    hashMap.put("supplier_name","");
+                    hashMap.put("withholding_amount","");
+                    hashMap.put("vat","");
+                    hashMap.put("tr_undeclared","");
+                    hashMap.put("output_vat","");
+                    return hashMap;
+                }
+            };
+            AppController.getInstance().setVolleyDuration(stringRequest);
+            AppController.getInstance().addToRequestQueue(stringRequest);
+        }else if(tr_status.equals("Yes")){
+
+            if(truckersSelected.equals("")||trucking_amount.equals("")||trucking_expenseSelected.equals("")){
+                Toast.makeText(getActivity(), "Please fill up required fields", Toast.LENGTH_SHORT).show();
+                showLoading(loadingScan, null).dismiss();
+            }else{
                 String URL = getString(R.string.URL_online)+"swine_sales/add_dr2.php";
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
 
                         try{
+                            btn_save.setEnabled(true);
                             showLoading(loadingScan, null).dismiss();
                             String status="";
                             JSONObject Object = new JSONObject(response);
@@ -913,16 +1132,11 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                             status =  cusObj.getString("status");
 
                             if(status.equals("1")){
-                                init_add_edit("edit");
                                 add_status="yes";
+                                init_add_edit("edit");
                                 dr_header_id = cusObj.getString("dr_header_id");
-                                btn_save.setEnabled(true);
-
                                 set_modal("System Message","Swine delivery added","green");
-                            } else if (status.equals("2")){
-                                set_modal("System Message","Invoice Number already used, Please Refresh. ","red");
-                            } else{
-                                btn_save.setEnabled(true);
+                            }else{
                                 set_modal("System Message","Swine delivery insert failed","red");
                             }
                         }
@@ -933,9 +1147,9 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
                             btn_save.setEnabled(true);
                             showLoading(loadingScan, null).dismiss();
+                            Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
                         } catch (Exception e){}
                     }
                 }){
@@ -953,9 +1167,9 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                         hashMap.put("pay_type", paymentSelected);
                         hashMap.put("remarks", remarks);
                         hashMap.put("invoice_number", invoice_number);
-                        hashMap.put("trucking_amount", "");
-                        hashMap.put("trucking_account", "");
-                        hashMap.put("trucking_accountExpense","");
+                        hashMap.put("trucking_amount", trucking_amount);
+                        hashMap.put("trucking_account", truckersSelected);
+                        hashMap.put("trucking_accountExpense",trucking_expenseSelected);
                         hashMap.put("tr_status",tr_status);
                         hashMap.put("a_discount",discount);
                         hashMap.put("checkbox_val",checkbox_val);
@@ -973,85 +1187,6 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 };
                 AppController.getInstance().setVolleyDuration(stringRequest);
                 AppController.getInstance().addToRequestQueue(stringRequest);
-            }else if(tr_status.equals("Yes")){
-                btn_save.setEnabled(true);
-
-                if(truckersSelected.equals("")||trucking_amount.equals("")||trucking_expenseSelected.equals("")){
-                    Toast.makeText(getActivity(), "Please fill up required fields", Toast.LENGTH_SHORT).show();
-                    showLoading(loadingScan, null).dismiss();
-                }else{
-                    String URL = getString(R.string.URL_online)+"swine_sales/add_dr2.php";
-                    StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-
-                            try{
-                                showLoading(loadingScan, null).dismiss();
-                                String status="";
-                                JSONObject Object = new JSONObject(response);
-                                JSONArray diag = Object.getJSONArray("data");
-                                JSONObject cusObj = (JSONObject) diag.get(0);
-                                status =  cusObj.getString("status");
-
-                                if(status.equals("1")){
-                                    add_status="yes";
-                                    init_add_edit("edit");
-                                    dr_header_id = cusObj.getString("dr_header_id");
-                                    btn_save.setEnabled(true);
-                                    set_modal("System Message","Swine delivery added","green");
-                                }else{
-                                    btn_save.setEnabled(true);
-                                    set_modal("System Message","Swine delivery insert failed","red");
-                                }
-                            }
-                            catch (JSONException e){}
-                            catch (Exception e){}
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            try{
-                                btn_save.setEnabled(true);
-                                showLoading(loadingScan, null).dismiss();
-                                Toast.makeText(getActivity(), "Error internet connection", Toast.LENGTH_SHORT).show();
-                            } catch (Exception e){}
-                        }
-                    }){
-                        @Override
-                        protected Map<String, String> getParams() throws AuthFailureError {
-                            HashMap<String,String> hashMap = new HashMap<>();
-                            hashMap.put("company_id", company_id);
-                            hashMap.put("company_code", company_code);
-                            hashMap.put("branch_id", branch_id);
-                            hashMap.put("category_id",category_id);
-                            hashMap.put("user_id", user_id);
-                            hashMap.put("delivery_number", delivery_number);
-                            hashMap.put("dr_date", dateSelected);
-                            hashMap.put("customer_id", customerSelected);
-                            hashMap.put("pay_type", paymentSelected);
-                            hashMap.put("remarks", remarks);
-                            hashMap.put("invoice_number", invoice_number);
-                            hashMap.put("trucking_amount", trucking_amount);
-                            hashMap.put("trucking_account", truckersSelected);
-                            hashMap.put("trucking_accountExpense",trucking_expenseSelected);
-                            hashMap.put("tr_status",tr_status);
-                            hashMap.put("a_discount",discount);
-                            hashMap.put("checkbox_val",checkbox_val);
-
-                            //not used
-                            hashMap.put("warehouse_id","");
-                            hashMap.put("withholding","");
-                            hashMap.put("supplier_name","");
-                            hashMap.put("withholding_amount","");
-                            hashMap.put("vat","");
-                            hashMap.put("tr_undeclared","");
-                            hashMap.put("output_vat","");
-                            return hashMap;
-                        }
-                    };
-                    AppController.getInstance().setVolleyDuration(stringRequest);
-                    AppController.getInstance().addToRequestQueue(stringRequest);
-                }
             }
         }
     }
@@ -1067,13 +1202,11 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
             public void onResponse(String response) {
 
                 try {
+                    btn_save.setEnabled(true);
                     showLoading(loadingScan, null).dismiss();
                     if(response.equals("1")){
-                        btn_save.setEnabled(true);
                         set_modal("System Message","Swine delivery updated","green");
-
                     }else{
-                        btn_save.setEnabled(true);
                         set_modal("System Message","Swine delivery insert failed","red");
                     }
                 } catch (Exception e){}

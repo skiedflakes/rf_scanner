@@ -137,7 +137,7 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
         // set default power level
         Constant.power_level = "Medium";
         tx_range.setText(Constant.power_level);
-        ((ActivityMain)getActivity()).setPower("med");
+        //((ActivityMain)getActivity()).setPower("med");
     }
 
     @Override
@@ -348,7 +348,7 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
             public void onResponse(String response) {
 
                 String id, count,delivery_number,pay_type,invoice_no,date_added,customer,total_amount,trSwine_a,trSwine,trSwine_e,
-                        vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount;
+                        vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount, declared_status;
 
                 try {
                     swineSales_models.clear();
@@ -382,9 +382,10 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
                         status = cusObj.getString("status");
                         discount = cusObj.getString("discount");
                         month = cusObj.getString("month");
+                        declared_status = cusObj.getString("declared_status");
 
                         swineSales_models.add(new SwineSales_model(id,delivery_number,pay_type,invoice_no,date_added,customer,
-                                total_amount,trSwine_a,trSwine,trSwine_e,vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount,0));
+                                total_amount,trSwine_a,trSwine,trSwine_e,vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount,0,declared_status));
                     }
 
                     displayCurrentMonth();
@@ -472,7 +473,9 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
     }
 
     @Override
-    public void onEvent(String status, String delivery_number, String invoice, String payment_type, String date, String customer, String tv_total, String remarks, String tr_swine, String tr_swine_a, String tr_swine_e,String discount,String id) {
+    public void onEvent(String status, String delivery_number, String invoice, String payment_type, String date,
+                        String customer, String tv_total, String remarks, String tr_swine, String tr_swine_a,
+                        String tr_swine_e,String discount,String id, String declared_status) {
 
         Bundle bundle = new Bundle();
         bundle.putString("add_edit","edit");
@@ -491,6 +494,7 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
         bundle.putString("tv_total",tv_total);
         bundle.putString("company_code", company_code);
         bundle.putString("company_id", company_id);
+        bundle.putString("declared_status",declared_status);
 
         if(status.equals("Saved")){
             Fragment fragment = new SwineSales_add();
@@ -562,7 +566,7 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
         //dialogBox("hello");
         ArrayList<SwineSales_model> new_ss_list = new ArrayList<>();
         String id, count,delivery_number,pay_type,invoice_no,date_added,customer,total_amount,trSwine_a,trSwine,trSwine_e,
-                vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount;
+                vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount,declared_status;
         try {
             JSONArray jsonArray = new JSONArray(new Gson().toJson(swineSales_models));
 
@@ -586,10 +590,11 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
                 remarks = r.getString("remarks");
                 status = r.getString("status");
                 discount = r.getString("discount");
+                declared_status = r.getString("declared_status");
                 if(status.equals("Saved")){
 
                     swineSales_models.set(i,new SwineSales_model(id,delivery_number,pay_type,invoice_no,date_added,customer,
-                            total_amount,trSwine_a,trSwine,trSwine_e,vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount,1));
+                            total_amount,trSwine_a,trSwine,trSwine_e,vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount,1,declared_status));
                     checked_ids.add(id);
                     swineSales_adapter.notifyItemChanged(i);
                 }else{
@@ -606,7 +611,7 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
 
         ArrayList<SwineSales_model> new_ss_list = new ArrayList<>();
         String id, count,delivery_number,pay_type,invoice_no,date_added,customer,total_amount,trSwine_a,trSwine,trSwine_e,
-                vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount;
+                vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount,declared_status;
         try {
             JSONArray jsonArray = new JSONArray(new Gson().toJson(swineSales_models));
 
@@ -630,6 +635,7 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
                 remarks = r.getString("remarks");
                 status = r.getString("status");
                 discount = r.getString("discount");
+                declared_status = r.getString("declared_status");
 
                 if(status.equals("Saved")){
 
@@ -637,7 +643,7 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
                         checked_ids.remove(id);
 
                         swineSales_models.set(i,new SwineSales_model(id,delivery_number,pay_type,invoice_no,date_added,customer,
-                                total_amount,trSwine_a,trSwine,trSwine_e,vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount,0));
+                                total_amount,trSwine_a,trSwine,trSwine_e,vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount,0,declared_status));
                         swineSales_adapter.notifyItemChanged(i);
                     }
 

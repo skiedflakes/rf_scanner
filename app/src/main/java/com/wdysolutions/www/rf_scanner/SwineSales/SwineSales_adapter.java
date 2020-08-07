@@ -52,6 +52,7 @@ public class SwineSales_adapter extends RecyclerView.Adapter<SwineSales_adapter.
         final String tr_swine_e =mdata.get(position).getTrSwine_e();
         final String discount = mdata.get(position).getDiscount();
         final int checked_status = mdata.get(position).getChecked_status();
+        final String declared_status = mdata.get(position).getDeclared_status();
 
         if(checked_status==0){
             myHolder.cb_selected.setChecked(false);
@@ -74,7 +75,9 @@ public class SwineSales_adapter extends RecyclerView.Adapter<SwineSales_adapter.
                         tr_swine,
                         tr_swine_a,
                         tr_swine_e,
-                        discount,id);
+                        discount,
+                        id,
+                        declared_status);
             }
         });
 
@@ -153,7 +156,7 @@ public class SwineSales_adapter extends RecyclerView.Adapter<SwineSales_adapter.
     public interface EventListener {
         void onEvent(String status, String delivery_number, String invoice, String payment_type, String date,
                      String customer, String tv_total, String remarks, String tr_swine, String tr_swine_a,
-                     String tr_swine_e, String discount, String id);
+                     String tr_swine_e, String discount, String id, String declared_status);
         void onChecked(String dr_header_id);
         void removeChecked(String dr_header_id);
     }
