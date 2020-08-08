@@ -134,7 +134,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
     String checkbox_val="0";
     ArrayList<Sub_Range_model> sub_range_charge = new ArrayList<>();
     ArrayList<Sub_Range_model> sub_range_cash = new ArrayList<>();
-    LinearLayout layout_sub_range;
+    LinearLayout layout_sub_range,trucking_layout_amount,trucking_layout_,trucking_layout_expense,layout_finish;
 
     private ProgressDialog showLoading(ProgressDialog loading, String msg){
         loading.setMessage(msg);
@@ -159,6 +159,10 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         subrange_spinner = view.findViewById(R.id.subrange_spinner);
         undeclared_chckbox = view.findViewById(R.id.undeclared_chckbox);
         layout_sub_range = view.findViewById(R.id.layout_sub_range);
+        trucking_layout_amount = view.findViewById(R.id.trucking_layout_amount);
+        trucking_layout_ = view.findViewById(R.id.trucking_layout_);
+        trucking_layout_expense = view.findViewById(R.id.trucking_layout_expense);
+        layout_finish = view.findViewById(R.id.layout_finish);
 
         //date
         tv_date = view.findViewById(R.id.tv_date);
@@ -268,6 +272,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 trucking_expenseSelected_name = bundle.getString("tr_swine_e");
                 dr_header_id = bundle.getString("id");
                 checkbox_val = bundle.getString("declared_status");
+                tr_status = bundle.getString("tr_status");
 
                 if(payment_type.equals("CASH")){
                     paymentSelected = "C";
@@ -454,6 +459,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 }
             });
 
+            layout_finish.setVisibility(View.VISIBLE);
             layout_sub_range.setVisibility(View.GONE);
             undeclared_chckbox.setClickable(false);
             payment_spinner.setEnabled(false);
@@ -463,6 +469,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
             cb_trucking.setEnabled(false);
             truckers_spinner.setEnabled(false);
             trucking_expense_spinner.setEnabled(false);
+            tv_date.setEnabled(false);
 
             tv_dr_num.setText(delivery_number);
             tv_invoice.setText(invoice_number);
@@ -475,6 +482,12 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 undeclared_chckbox.setChecked(true);
             } else {
                 undeclared_chckbox.setChecked(false);
+            }
+
+            if (tr_status.equals("No")){
+                trucking_layout_.setVisibility(View.GONE);
+                trucking_layout_amount.setVisibility(View.GONE);
+                trucking_layout_expense.setVisibility(View.GONE);
             }
 
             // Populate customer Spinner
@@ -643,7 +656,6 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         }
     }
 
-    int counter = 0;
     public void generate_NRD(final String company_id, final String company_code){
         if (!paymentSelected.equals("")){
             btn_save.setEnabled(false);
@@ -953,7 +965,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         
         if (paymentSelected.equals("H")){
             if (sub_range_charge.size() > 0){
-                lables.add("Select sub range");
+                lables.add("Please select sub range");
                 for (int i = 0; i < sub_range_charge.size(); i++) {
                     lables.add(sub_range_charge.get(i).getSub_range());
                 }
@@ -963,7 +975,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
 
         } else if (paymentSelected.equals("C")){
             if (sub_range_cash.size() > 0){
-                lables.add("Select sub range");
+                lables.add("Please select sub range");
                 for (int i = 0; i < sub_range_cash.size(); i++) {
                     lables.add(sub_range_cash.get(i).getSub_range());
                 }
@@ -986,7 +998,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 if (sub_range_charge.size() > 0 || sub_range_cash.size() > 0){
                     if (paymentSelected.equals("H")){ // charge
                         Sub_Range_model click = sub_range_charge.get(position);
-                        if (!click.getSub_range().equals("Select sub range")){
+                        if (!click.getSub_range().equals("Please select sub range")){
                             selectedSubRange = String.valueOf(click.getInvoice_id());
                         } else {
                             selectedSubRange = "";
@@ -997,7 +1009,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
 
                     } else if (paymentSelected.equals("C")){ // cash
                         Sub_Range_model click = sub_range_cash.get(position);
-                        if (!click.getSub_range().equals("Select sub range")){
+                        if (!click.getSub_range().equals("Please select sub range")){
                             selectedSubRange = String.valueOf(click.getInvoice_id());
                         } else {
                             selectedSubRange = "";
@@ -1114,8 +1126,9 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         }else if(tr_status.equals("Yes")){
 
             if(truckersSelected.equals("")||trucking_amount.equals("")||trucking_expenseSelected.equals("")){
-                Toast.makeText(getActivity(), "Please fill up required fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Please fill up trucking details", Toast.LENGTH_SHORT).show();
                 showLoading(loadingScan, null).dismiss();
+                btn_save.setEnabled(true);
             }else{
                 String URL = getString(R.string.URL_online)+"swine_sales/add_dr2.php";
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {

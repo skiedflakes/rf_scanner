@@ -19,6 +19,7 @@ public class SwineSales_model {
     String status;
     String discount;
     String declared_status;
+    String tr_status;
     int checked_status;
 
     public SwineSales_model(String id,
@@ -38,7 +39,8 @@ public class SwineSales_model {
                             String status,
                             String discount,
                             int checked_status,
-                            String declared_status
+                            String declared_status,
+                            String tr_status
                             ){
         this.id=id;
         this.delivery_number=delivery_number;
@@ -58,6 +60,11 @@ public class SwineSales_model {
         this.discount = discount;
         this.checked_status=checked_status;
         this.declared_status = declared_status;
+        this.tr_status = tr_status;
+    }
+
+    public String getTr_status() {
+        return tr_status;
     }
 
     public String getDeclared_status() {
