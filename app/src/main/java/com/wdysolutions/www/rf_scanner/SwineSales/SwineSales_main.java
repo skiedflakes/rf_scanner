@@ -248,11 +248,9 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
         fragmentTransaction.commit();
     }
 
-
     @Override
     public void onDetach() {
         super.onDetach();
-//        if(epcReceiver != null){getActivity().unregisterReceiver(epcReceiver);}
         ((ActivityMain)getActivity()).setPower("max");
     }
 
@@ -358,7 +356,6 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
                     sv_swine_sales.setVisibility(View.VISIBLE);
                     l_layout.setClickable(true);
 
-
                     JSONObject Object = new JSONObject(response);
                     JSONArray diag = Object.getJSONArray("data");
 
@@ -381,13 +378,17 @@ public class SwineSales_main extends Fragment implements Modal_fragment.dialog_i
                         remarks = cusObj.getString("remarks");
                         status = cusObj.getString("status");
                         discount = cusObj.getString("discount");
-                        month = cusObj.getString("month");
                         declared_status = cusObj.getString("declared_status");
                         tr_status = cusObj.getString("tr_status");
 
                         swineSales_models.add(new SwineSales_model(id,delivery_number,pay_type,invoice_no,date_added,customer,
                                 total_amount,trSwine_a,trSwine,trSwine_e,vatSwine,SwinewithHold,SwinewithHold_a,remarks,status,discount,0,declared_status,tr_status));
                     }
+
+                    // month
+                    JSONArray diag_ = Object.getJSONArray("selectedMonth");
+                    JSONObject cusObj = (JSONObject) diag_.get(0);
+                    month = cusObj.getString("month");
 
                     displayCurrentMonth();
 

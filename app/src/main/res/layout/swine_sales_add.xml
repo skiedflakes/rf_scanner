@@ -62,7 +62,8 @@
                             android:layout_weight="1"
                             android:background="@drawable/bg_border"
                             android:padding="10dp"
-                            android:text="Delivery No.:*" />
+                            android:text="Delivery No.:*"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_dr_num"
@@ -120,7 +121,8 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_border"
                             android:padding="10dp"
-                            android:text="Date:*" />
+                            android:text="Date:*"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_date"
@@ -146,7 +148,8 @@
 
                             android:background="@drawable/bg_border"
                             android:padding="10dp"
-                            android:text="Customer:*" />
+                            android:text="Customer:*"
+                            android:textStyle="bold" />
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -179,7 +182,8 @@
 
                             android:background="@drawable/bg_border"
                             android:padding="10dp"
-                            android:text="Payment Type:*" />
+                            android:text="Payment Type:*"
+                            android:textStyle="bold" />
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -213,7 +217,8 @@
 
                             android:background="@drawable/bg_border"
                             android:padding="10dp"
-                            android:text="Sub Range:*" />
+                            android:text="Sub Range:*"
+                            android:textStyle="bold" />
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -235,7 +240,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
-                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -244,7 +248,8 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_border"
                             android:padding="10dp"
-                            android:text="Invoice No.:*" />
+                            android:text="Invoice No.:*"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_invoice"
@@ -264,6 +269,15 @@
                             android:text="w/Reciept"
                             android:visibility="gone" />
                     </LinearLayout>
+
+                    <Button
+                        android:id="@+id/btn_skip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center|left"
+                        android:text="Skip/Cancel"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
 
                     <View
                         style="@style/Divider"
@@ -287,7 +301,8 @@
                             android:layout_height="match_parent"
                             android:background="@drawable/bg_border"
                             android:padding="10dp"
-                            android:text="Discount:*" />
+                            android:text="Discount:*"
+                            android:textStyle="bold" />
 
                         <EditText
                             android:id="@+id/tv_discount"
@@ -322,7 +337,8 @@
                             android:layout_height="match_parent"
                             android:background="@drawable/bg_border"
                             android:padding="10dp"
-                            android:text="Trucking:" />
+                            android:text="Trucking:"
+                            android:textStyle="bold" />
 
                         <EditText
                             android:id="@+id/et_trucking"
@@ -361,7 +377,8 @@
 
                             android:background="@drawable/bg_border"
                             android:padding="10dp"
-                            android:text="Trucker:*" />
+                            android:text="Trucker:*"
+                            android:textStyle="bold" />
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -393,7 +410,8 @@
                             android:layout_height="match_parent"
                             android:background="@drawable/bg_border"
                             android:padding="10dp"
-                            android:text="Trucking Expense:*" />
+                            android:text="Trucking Expense:*"
+                            android:textStyle="bold" />
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -426,7 +444,8 @@
 
                             android:background="@drawable/bg_border"
                             android:padding="10dp"
-                            android:text="Remarks:*" />
+                            android:text="Remarks:*"
+                            android:textStyle="bold" />
 
                         <EditText
                             android:id="@+id/et_remarks"

@@ -16,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.wdysolutions.www.rf_scanner.AppController;
+import com.wdysolutions.www.rf_scanner.Home.ActivityMain;
 import com.wdysolutions.www.rf_scanner.R;
 import com.wdysolutions.www.rf_scanner.SessionManager.SessionPreferences;
 
@@ -30,13 +31,12 @@ public class Dialog_Authenticate extends DialogFragment {
     SessionPreferences sessionPreferences;
     String company_code, company_id, user_id,user_code;
 
-    String branch_id;
+    String branch_id, module;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.dialog_authenticate, container, false);
         sessionPreferences = new SessionPreferences(getActivity());
-        //session
         company_code = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_CODE);
         company_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_COMPANY_ID);
         user_id = sessionPreferences.getUserDetails().get(sessionPreferences.KEY_USER_ID);
@@ -45,11 +45,8 @@ public class Dialog_Authenticate extends DialogFragment {
         //bundle
         Bundle bundle = getArguments();
         if(bundle != null){
-
             branch_id = bundle.getString("branch_id");
-
-        }else{
-            Toast.makeText(getContext(), "error", Toast.LENGTH_SHORT).show();
+            module = bundle.getString("module");
         }
 
         et_password = view.findViewById(R.id.et_password);
@@ -67,7 +64,7 @@ public class Dialog_Authenticate extends DialogFragment {
                     Toast.makeText(getActivity(), "Please enter password", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    save(company_id,company_code,"check_changeprice_discount_module",username,password);
+                    auth(company_id,company_code,module,username,password);
                 }
             }
         });
@@ -97,31 +94,37 @@ public class Dialog_Authenticate extends DialogFragment {
 
     uploadDialogInterface interfaceObj;
 
-    public void save(final String company_id, final String company_code,final String module,final String username,final String password){
-        String URL = getString(R.string.URL_online)+"swine_sales/owner_authentication.php";
+    public void auth(final String company_id, final String company_code,final String module,final String username,final String password){
+        btn_save.setEnabled(false);
+        btn_save.setText("Checking...");
+        String URL = getString(R.string.URL_online)+"swine_sales/owner_authentication2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-               if(response.equals("1")){
-                    dismiss();
-                   interfaceObj.senddata_auth("okay");
+               try {
+                   btn_save.setEnabled(true);
+                   btn_save.setText("Continue");
 
-               }else if(response.equals("2")){
-                   Toast.makeText(getActivity(), "Invalid Account", Toast.LENGTH_SHORT).show();
-                   dismiss();
-                   interfaceObj.senddata_auth("invalid");
-                }else{
-                   dismiss();
-                   interfaceObj.senddata_auth("invalid");
-                   Toast.makeText(getActivity(), "You don't have the privilege to continue this transaction", Toast.LENGTH_SHORT).show();
-               }
+                   if(response.equals("1")){
+                       dismiss();
+                       interfaceObj.senddata_auth("okay");
+                   }else if(response.equals("2")){
+                       Toast.makeText(getActivity(), "Invalid Account", Toast.LENGTH_SHORT).show();
+                       interfaceObj.senddata_auth("invalid");
+                   }else{
+                       interfaceObj.senddata_auth("invalid");
+                       Toast.makeText(getActivity(), "You don't have the privilege to continue this transaction", Toast.LENGTH_SHORT).show();
+                   }
+
+               } catch (Exception e){}
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try{
-                    Toast.makeText(getActivity(), "Connection error, please try again.", Toast.LENGTH_SHORT).show();
+                    btn_save.setEnabled(true);
+                    Toast.makeText(getActivity(), getString(R.string.volley_error), Toast.LENGTH_SHORT).show();
                 } catch (Exception e){}
             }
         }){
@@ -134,7 +137,7 @@ public class Dialog_Authenticate extends DialogFragment {
                 hashMap.put("branch_id", branch_id);
                 hashMap.put("owner_username", username);
                 hashMap.put("owner_password", password);
-                hashMap.put("module", module);
+                hashMap.put("security_module", module);
                 hashMap.put("user_code", user_code);
                 return hashMap;
             }

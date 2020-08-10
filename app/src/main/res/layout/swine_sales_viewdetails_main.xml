@@ -12,7 +12,7 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,7 +40,8 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_border"
                         android:padding="10dp"
-                        android:text="Delivery No.:*" />
+                        android:text="Delivery No.:*"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_dr_num"
@@ -64,7 +65,8 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_border"
                         android:padding="10dp"
-                        android:text="Date:*" />
+                        android:text="Date:*"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_date"
@@ -89,7 +91,8 @@
 
                         android:background="@drawable/bg_border"
                         android:padding="10dp"
-                        android:text="Customer:*" />
+                        android:text="Customer:*"
+                        android:textStyle="bold" />
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
@@ -121,7 +124,8 @@
                         android:layout_height="match_parent"
                         android:background="@drawable/bg_border"
                         android:padding="10dp"
-                        android:text="Discount:*" />
+                        android:text="Discount:*"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_discount"
@@ -148,7 +152,8 @@
 
                         android:background="@drawable/bg_border"
                         android:padding="10dp"
-                        android:text="Payment Type:*" />
+                        android:text="Payment Type:*"
+                        android:textStyle="bold" />
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
@@ -178,7 +183,8 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_border"
                         android:padding="10dp"
-                        android:text="Invoice No.:*" />
+                        android:text="Invoice No.:*"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_invoice"
@@ -203,7 +209,8 @@
                         android:background="@drawable/bg_border"
                         android:gravity="center"
                         android:padding="10dp"
-                        android:text="Remarks:*" />
+                        android:text="Remarks:*"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_remarks"
@@ -229,7 +236,8 @@
                         android:background="@drawable/bg_border"
                         android:gravity="center"
                         android:padding="10dp"
-                        android:text="Trucking Amount:" />
+                        android:text="Trucking Amount:"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_tracking_amount"
@@ -255,7 +263,8 @@
                         android:layout_height="match_parent"
                         android:background="@drawable/bg_border"
                         android:padding="10dp"
-                        android:text="Trucker:*" />
+                        android:text="Trucker:*"
+                        android:textStyle="bold" />
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
@@ -286,7 +295,8 @@
                         android:layout_height="match_parent"
                         android:background="@drawable/bg_border"
                         android:padding="10dp"
-                        android:text="Trucking Expense:*" />
+                        android:text="Trucking Expense:*"
+                        android:textStyle="bold" />
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
@@ -360,7 +370,8 @@
                                 android:padding="2dp"
                                 android:paddingLeft="10dp"
                                 android:text="Ear Tag"
-                                android:textSize="14sp" />
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="110dp"
@@ -373,7 +384,8 @@
                                 android:padding="2dp"
                                 android:paddingLeft="10dp"
                                 android:text="Age(days)"
-                                android:textSize="14sp" />
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="110dp"
@@ -386,7 +398,8 @@
                                 android:padding="2dp"
                                 android:paddingLeft="10dp"
                                 android:text="Feed Consumed(kg)"
-                                android:textSize="14sp" />
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="110dp"
@@ -398,7 +411,8 @@
                                 android:padding="2dp"
                                 android:paddingLeft="10dp"
                                 android:text="Weight(kg)"
-                                android:textSize="14sp" />
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="110dp"
@@ -410,7 +424,8 @@
                                 android:padding="2dp"
                                 android:paddingLeft="10dp"
                                 android:text="Price/kg"
-                                android:textSize="14sp" />
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="110dp"
@@ -423,7 +438,8 @@
                                 android:padding="2dp"
                                 android:paddingLeft="10dp"
                                 android:text="Subtotal"
-                                android:textSize="14sp" />
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
 
                         </LinearLayout>
 

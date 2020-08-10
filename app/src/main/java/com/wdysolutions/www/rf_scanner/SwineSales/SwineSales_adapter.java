@@ -64,7 +64,7 @@ public class SwineSales_adapter extends RecyclerView.Adapter<SwineSales_adapter.
         myHolder.btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                myHolder.btn_edit.setEnabled(false);
+
                 listener.onEvent(status,
                         delivery_number,
                         invoice,

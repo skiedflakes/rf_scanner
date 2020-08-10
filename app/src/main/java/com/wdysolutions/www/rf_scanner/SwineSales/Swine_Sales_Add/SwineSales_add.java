@@ -124,13 +124,14 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
 
     //addstatus
     String add_status="";
-    Button btn_finish;
+    Button btn_finish, btn_skip;
     ProgressDialog loadingScan;
     ProgressBar loading_undeclared;
 
     SwineSales_add_adapter swineSales_add_adapter;
     CheckBox undeclared_chckbox;
 
+    boolean isSkipButton = false;
     String checkbox_val="0";
     ArrayList<Sub_Range_model> sub_range_charge = new ArrayList<>();
     ArrayList<Sub_Range_model> sub_range_cash = new ArrayList<>();
@@ -163,6 +164,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         trucking_layout_ = view.findViewById(R.id.trucking_layout_);
         trucking_layout_expense = view.findViewById(R.id.trucking_layout_expense);
         layout_finish = view.findViewById(R.id.layout_finish);
+        btn_skip = view.findViewById(R.id.btn_skip);
 
         //date
         tv_date = view.findViewById(R.id.tv_date);
@@ -198,15 +200,20 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         et_discount = view.findViewById(R.id.tv_discount);
         et_discount.setEnabled(false);
 
-        cb_discount.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
+        cb_discount.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-            {
-                if ( isChecked )
-                {
-                    // perform logic
-                    open_authentication();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked ) {
+
+                    if (isAuthGranted){
+                        et_discount.setEnabled(true);
+                    } else {
+                        isSkipButton = false;
+                        open_authentication("check_changeprice_discount_module");
+                    }
+                } else {
+                    et_discount.setEnabled(false);
                 }
             }
         });
@@ -230,6 +237,14 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                     trucking_expense_spinner.setEnabled(false);
                     tr_status ="No";
                 }
+            }
+        });
+
+        btn_skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isSkipButton = true;
+                open_authentication("deliveries_skip_cancel_invoice_module");
             }
         });
 
@@ -295,7 +310,6 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
             }
         });
 
-        getBottomTable();
         return view;
     }
 
@@ -334,7 +348,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
     }
 
     public void getBottomTable(){
-        showLoading(loadingScan, "loading...").show();
+        showLoading(loadingScan, "Loading...").show();
         String URL = getString(R.string.URL_online)+"swine_sales/deliveryDetails_swine.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -398,8 +412,10 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
 
     public void init_add_edit(String add_edit){
         if(add_edit.equals("add")){
-            btn_delivery.setVisibility(View.GONE);
+
             get_details(company_id,company_code,"dr_num");
+            btn_delivery.setVisibility(View.GONE);
+
             btn_save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -414,6 +430,9 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
             });
 
         } else { // Edit
+
+            getBottomTable();
+
             btn_delivery.setVisibility(View.VISIBLE);
             btn_delivery.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -459,6 +478,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                 }
             });
 
+            cb_discount.setVisibility(View.GONE);
             layout_finish.setVisibility(View.VISIBLE);
             layout_sub_range.setVisibility(View.GONE);
             undeclared_chckbox.setClickable(false);
@@ -532,9 +552,10 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         }
     }
 
-    public void open_authentication(){
+    public void open_authentication(String module){
         Bundle bundle = new Bundle();
         bundle.putString("branch_id",branch_id);
+        bundle.putString("module",module);
         Dialog_Authenticate fragment = new Dialog_Authenticate();
         fragment.setTargetFragment(this, 0);
         FragmentManager manager = getFragmentManager();
@@ -604,6 +625,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                         } else {
                             invoice_number = response;
                             tv_invoice.setText(invoice_number);
+                            btn_skip.setEnabled(false);
                             btn_save.setEnabled(true);
 
                             undeclared_chckbox.setClickable(true);
@@ -668,6 +690,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
                         undeclared_chckbox.setClickable(true);
                         subrange_spinner.setEnabled(true);
                         payment_spinner.setEnabled(true);
+                        btn_skip.setEnabled(false);
                         loading_undeclared.setVisibility(View.GONE);
 
                         invoice_number = response;
@@ -718,14 +741,94 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         }
     }
 
+    void dialogBox_cofirmation_Skip(){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setMessage("Are you sure you want to proceed?");
+        alertDialog.setPositiveButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialog.setNegativeButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        skipInvoiceReceipt();
+                    }
+                });
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+    }
+
+    public void skipInvoiceReceipt(){
+        btn_save.setEnabled(false);
+        Toast.makeText(getActivity(), "Loading please wait...", Toast.LENGTH_SHORT).show();
+        String URL = getString(R.string.URL_online)+"swine_sales/skip_InvoiceReceipt.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
+                    btn_save.setEnabled(true);
+
+                    if(response.equals("0")){
+                        dialogBox_msg("You reach the maximum range of invoice available");
+                        btn_skip.setEnabled(false);
+                    }else{
+                        invoice_number = response;
+                        tv_invoice.setText(invoice_number);
+                    }
+
+                } catch (Exception e){}
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                try{
+                    btn_save.setEnabled(true);
+                    Toast.makeText(getActivity(), getString(R.string.volley_error), Toast.LENGTH_SHORT).show();
+                } catch (Exception e){}
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> hashMap = new HashMap<>();
+                hashMap.put("company_id", company_id);
+                hashMap.put("company_code", company_code);
+                hashMap.put("branch_id", branch_id);
+                hashMap.put("pay_type", paymentSelected);
+                hashMap.put("invoice_number", invoice_number);
+                hashMap.put("sub_range", selectedSubRange);
+                return hashMap;
+            }
+        };
+        AppController.getInstance().setVolleyDuration(stringRequest);
+        AppController.getInstance().addToRequestQueue(stringRequest);
+    }
+
+    void dialogBox_msg(String msg){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setMessage(msg);
+        alertDialog.setPositiveButton("Close",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+    }
+
     public void get_details(final String company_id, final String company_code,final String get_type){
-        customer_list_spinner.clear();
+        showLoading(loadingScan, "Loading please wait...").show();
         String URL = getString(R.string.URL_online)+"swine_sales/add_swine_sales_details.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try {
+                    showLoading(loadingScan, "Loading please wait...").dismiss();
                     JSONObject Object = new JSONObject(response);
 
                     // json dr number and current date
@@ -742,6 +845,7 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
 
                     //json customers
                     String customer,customer_id;
+                    customer_list_spinner.clear();
                     customer_list_spinner.add(new Customers_model("Please Select",""));
                     JSONArray customers = Object.getJSONArray("customers");
 
@@ -1030,13 +1134,24 @@ public class SwineSales_add extends Fragment implements DatePickerSelectionInter
         });
     }
 
+    boolean isAuthGranted = false;
     @Override
     public void senddata_auth(String data) {
         if(data.equals("okay")){
+
             Toast.makeText(getActivity(), "User granted", Toast.LENGTH_SHORT).show();
-            et_discount.setEnabled(true);
+            isAuthGranted = true;
+
+            if (isSkipButton){
+                dialogBox_cofirmation_Skip();
+            } else {
+                et_discount.setEnabled(true);
+            }
+
         }else{
-            cb_discount.setChecked(false);
+            if (!isSkipButton){
+                cb_discount.setChecked(false);
+            }
         }
     }
 
