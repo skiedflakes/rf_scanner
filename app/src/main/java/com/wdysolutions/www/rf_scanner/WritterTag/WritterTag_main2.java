@@ -433,7 +433,6 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
         selectedPen = "";
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
         penLoading(true);
-        writter_pen_model_list_pen = new ArrayList<>();
         spinner_pen.setAdapter(null);
         count_scanned=0;
         count_total_pigs=0;
@@ -444,6 +443,7 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
 
                 try {
                     penLoading(false);
+                    writter_pen_model_list_pen = new ArrayList<>();
                     writter_pen_model_list_pen.add(new WritterTag_model_pen(0,"Please Select"));
                     JSONObject Object = new JSONObject(response);
                     JSONArray diag = Object.getJSONArray("response_pen");
@@ -453,7 +453,6 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
 
                         writter_pen_model_list_pen.add(new WritterTag_model_pen(cusObj.getInt("pen_assignment_id"),
                                 cusObj.getString("pen_name")));
-
                     }
 
                     // Populate Spinner branch
@@ -531,7 +530,6 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
         selected_swine = 0;
         rec_pigs.setAdapter(null);
         listLoading(true);
-        writter_pen_model_list_pig = new ArrayList<>();
         count_scanned=0;
         count_total_pigs=0;
         txt_error.setVisibility(View.GONE);
@@ -545,6 +543,7 @@ public class WritterTag_main2 extends Fragment  implements WritterTag_adapter.Ev
                     getPigsStatus = "1";
                     scan_status();
                     listLoading(false);
+                    writter_pen_model_list_pig = new ArrayList<>();
 
                     if(!response.equals("{\"response_swine\":[]}")){
                         JSONObject Object = new JSONObject(response);

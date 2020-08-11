@@ -383,7 +383,6 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
         sqlite.audit_delete_all_table_pig();
         buildingLoading(true);
         tv_scaned_total.setText("");
-        audit_pen_model_list_building = new ArrayList<>();
         count_nip=0;
         tv_nip.setText(String.valueOf(count_nip));
         String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
@@ -393,7 +392,7 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
 
                 try {
                     buildingLoading(false);
-
+                    audit_pen_model_list_building = new ArrayList<>();
                     audit_pen_model_list_building.add(new AuditPen_model_building(0,"Please Select"));
                     JSONObject Object = new JSONObject(response);
                     JSONArray diag = Object.getJSONArray("response_building");
@@ -479,7 +478,6 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
         tv_nip.setText(String.valueOf(count_nip));
         sqlite.audit_delete_all_table_pig();
         penLoading(true);
-        audit_pen_model_list_pen = new ArrayList<>();
         tv_scaned_total.setText("");
         spinner_pen.setAdapter(null);
         count_scanned=0;
@@ -491,6 +489,7 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
 
                 try {
                     penLoading(false);
+                    audit_pen_model_list_pen = new ArrayList<>();
                     audit_pen_model_list_pen.add(new AuditPen_model_pen(0,"Please Select"));
                     JSONObject Object = new JSONObject(response);
                     JSONArray diag = Object.getJSONArray("response_pen");
@@ -571,7 +570,6 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
     public void get_pigs(final String company_id, final String company_code, final String get_type,final String branch_id,final String pen_code){
         sqlite.audit_delete_all_table_pig();
         listLoading(true);
-        audit_pen_model_list_pig = new ArrayList<>();
         txt_error.setVisibility(View.GONE);
         txt_error.setTextColor(getResources().getColor(R.color.color_text_light_black));
         tv_scaned_total.setText("");
@@ -587,10 +585,10 @@ public class AuditPen_main extends Fragment implements AuditPen_adapter.EventLis
             public void onResponse(String response) {
 
                 try{
-                    //dialogBox(response);
                     listLoading(false);
                     getPigsStatus = "1";
                     scan_status();
+                    audit_pen_model_list_pig = new ArrayList<>();
 
                     if(!response.equals("{\"response_swine\":[]}")){
                         JSONObject Object = new JSONObject(response);

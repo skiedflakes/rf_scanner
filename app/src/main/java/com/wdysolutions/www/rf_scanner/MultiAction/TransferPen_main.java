@@ -836,14 +836,13 @@ public class TransferPen_main extends Fragment implements Transfer_adapter.Event
         showLoading(loadingScan, "Loading...").show();
         getPigsStatus = "";
         scan_status();
-        transfer_model_pig_views = new ArrayList<>();
         String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try{
-                    //((ActivityMain)getActivity()).dialogBox(response);
+                    transfer_model_pig_views = new ArrayList<>();
                     showLoading(loadingScan, null).dismiss();
                     getPigsStatus = "1";
                     scan_status();

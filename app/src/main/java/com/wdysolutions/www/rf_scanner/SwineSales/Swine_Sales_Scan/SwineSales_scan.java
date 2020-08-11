@@ -869,21 +869,6 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
         }catch (Exception e){}
     }
 
-    void dialogBox(String name){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        EditText text = new EditText(getActivity());
-        text.setText(name);
-        alertDialog.setView(text);
-        alertDialog.setPositiveButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog.setCancelable(false);
-        alertDialog.show();
-    }
-
     void dialogBox_cofirmation(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
         alertDialog.setMessage("Are you sure you wan't to save?");
@@ -918,7 +903,6 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
 
                         try {
                             isLoading = false;
-                            //dialogBox(response);
                             String str = "";
                             showLoading(loadingScan, null).dismiss();
                             JSONObject jsonObject = new JSONObject(response);
@@ -1275,7 +1259,6 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
 
     public void get_building(final String company_id, final String company_code, final String get_type,final String branch_id){
         selectedBuilding = "";
-
         bg_building.setBackgroundResource(R.drawable.bg_border_red);
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
         buildingLoading(true);
@@ -1285,8 +1268,8 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
             public void onResponse(String response) {
 
                 try {
+                    buildingLoading(false);
                     audit_pen_model_list_building = new ArrayList<>();
-                   buildingLoading(false);
                     audit_pen_model_list_building.add(new AuditPen_model_building(0,"Please Select"));
                     JSONObject Object = new JSONObject(response);
                     JSONArray diag = Object.getJSONArray("response_building");
@@ -1365,16 +1348,16 @@ public class SwineSales_scan extends Fragment implements SwineSales_scan_adapter
 
     public void get_pen(final String company_id, final String company_code, final String get_type,final String branch_id,final String building_id){
         selectedPen = "";
-
         penLoading(true);
         bg_pen.setBackgroundResource(R.drawable.bg_border_red);
         String URL = getString(R.string.URL_online)+"transfer_pen/pen_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                audit_pen_model_list_pen = new ArrayList<>();
+
                 try {
                     penLoading(false);
+                    audit_pen_model_list_pen = new ArrayList<>();
                     audit_pen_model_list_pen.add(new AuditPen_model_pen(0,"Please Select"));
                     JSONObject Object = new JSONObject(response);
                     JSONArray diag = Object.getJSONArray("response_pen");
