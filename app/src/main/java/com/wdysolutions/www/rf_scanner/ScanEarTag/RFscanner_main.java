@@ -434,6 +434,7 @@ public class RFscanner_main extends Fragment {
     public void showPigletCard(){
         isAction = true;
         isPiglets = true;
+        isPigletScanned = false;
         btn_piglets.setBackgroundResource(R.drawable.btn_ripple_light_blue);
         btn_snowcard.setBackgroundResource(R.drawable.btn_ripple_blue);
         getPiglets(company_code, company_id, swine_scanned_id, pen_code);
@@ -585,6 +586,7 @@ public class RFscanner_main extends Fragment {
                     isPiglets = false;
                     arrayList_rfscan.clear();
                     recycler_pigletsWeight.setVisibility(View.GONE);
+                    layout_actions.setVisibility(View.VISIBLE);
                     showLoading(loadingScan,null).dismiss();
 
                     JSONObject Object = new JSONObject(response);
@@ -721,6 +723,12 @@ public class RFscanner_main extends Fragment {
                             layout_switch.setVisibility(View.VISIBLE);
                             layout_buttons.setVisibility(View.VISIBLE);
                             isAction = true;
+
+                            if (swine_type.equals("Piglet")){
+                                isPigletScanned = true;
+                                getPiglets(company_code, company_id, swine_scanned_id, pen_code);
+                            }
+
                         } else if (pen_type.equals("Dry")){
                             txt_building.setTextColor(getResources().getColor(R.color.btn_light_red_color1));
                             bg_title.setBackgroundResource(R.drawable.bg_custom_light_red);
@@ -1647,6 +1655,7 @@ public class RFscanner_main extends Fragment {
     String piglet_genetic_breed="",piglet_genetic_line="",piglet_date_of_birth="",piglet_age="",piglet_progeny="",
             piglet_cost_of_piglets="",days_stayed="",days_stayed_color="";
 
+    boolean isPigletScanned = false;
     private void getPiglets(final String company_code, final String company_id, final String swine_id, final String pen_code) {
         piglet_genetic_breed =  "";
         piglet_genetic_line =  "";
@@ -1657,7 +1666,7 @@ public class RFscanner_main extends Fragment {
         days_stayed="";
         days_stayed_color="";
         layout_.setVisibility(View.GONE);
-        showLoading(loadingScan,"Loading data...").show();
+        showLoading(loadingScan,"Loading piglet data...").show();
         String URL = getString(R.string.URL_online)+"scan_eartag/pig_piglets.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -1675,6 +1684,12 @@ public class RFscanner_main extends Fragment {
                     arrayList_piglets.clear();
                     RFscannerpiglets_add_models.clear();
                     showLoading(loadingScan,null).dismiss();
+
+                    if (isPigletScanned){
+                        layout_actions.setVisibility(View.GONE);
+                    } else {
+                        layout_actions.setVisibility(View.VISIBLE);
+                    }
 
                     setActionButtonPiglets(true);
                     setButtonColor(true);
@@ -1725,6 +1740,7 @@ public class RFscanner_main extends Fragment {
                     recycler_pigletsWeight.setNestedScrollingEnabled(false);
                     recycler_pigletsWeight.setAdapter(adapterPigletsWeight);
                 }
+                catch (JSONException e){}
                 catch (Exception e){}
             }
         }, new Response.ErrorListener() {
